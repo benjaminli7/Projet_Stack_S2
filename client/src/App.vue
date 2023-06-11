@@ -1,7 +1,13 @@
+<script setup>
+  import Navbar from './components/assets/Navbar.vue'
+</script>
 
 <template>
-  <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+  <div>
+    <Navbar v-if="$route.name !== 'Login' && $route.name !== 'Register'" class="w-screen"></Navbar>
+    <div id="app" class="m-4 p-4">
+      <router-view></router-view>
+    </div>
+  </div>
 </template>
 

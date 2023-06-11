@@ -1,0 +1,21 @@
+# #REGISTER REQUEST
+# POST http://localhost:3000/auth/register HTTP/1.1
+# content-type: application/json
+
+# {
+#     "username": "username1",
+#     "email": "user1@gmail.com",
+#     "password": "test123",
+#     "firstname": "firstName1",
+#     "lastname": "lastName1"
+# }
+
+
+#LOGIN REQUEST
+POST http://localhost:3000/auth/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "user1@gmail.com",
+    "password": "test123"
+}
