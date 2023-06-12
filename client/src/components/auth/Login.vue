@@ -21,6 +21,8 @@
   
   <script>
   import axios from 'axios';
+  import { setCurrentUser } from '../../auth.js';
+
   
   export default {
     name: 'Login',
@@ -42,8 +44,14 @@
           const token = response.data.token;
           localStorage.setItem('token', token);
 
-          // Redirect to a different route upon successful login
+          // Set the current user 
+          setCurrentUser(response.data.user);
+
+          console.log(response.data.user);
+
           this.$router.push('/');
+
+
         } catch (error) {
           // Redirect to Unauthorized.vue if login fails
           this.$router.push('/login');

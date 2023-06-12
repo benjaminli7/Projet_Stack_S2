@@ -32,6 +32,9 @@ db.mongoose
 // Routeur pour les routes d'authentification
 app.use('/auth', require('./routes/auth.routes'));
 
+// Routeur pour les routes d'utilisateur
+app.use('/user', require('./routes/user.routes'));
+
 // Démarrage du serveur
 app.listen(process.env.PORT, () => {
   console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);

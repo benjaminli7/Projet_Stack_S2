@@ -34,7 +34,19 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-    res.status(200).json({ token });
+    res.status(200).json({ 
+      token: token,
+      user: {
+        id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        username: user.username,
+        email: user.email,
+        roles: user.roles,
+        status: user.status,
+        friends: user.friends
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
@@ -65,7 +77,8 @@ const register = async (req, res) => {
       email,
       password: hashedPassword,
       roles: ["user"],
-      status: 0
+      status: 0,
+      friends: []
     });
 
     await newUser.save();

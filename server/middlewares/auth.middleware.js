@@ -9,6 +9,7 @@ const authenticateToken = (req, res, next) => {
     // Vérifie si l'en-tête d'autorisation existe et extrait le jeton d'authentification
     const token = authHeader && authHeader.split(' ')[1];
 
+    // console.log(token);
     // authHeader : contient la valeur de l'en-tête d'autorisation de la requête
     // token : contient le jeton d'authentification extrait de l'en-tête d'autorisation
     // Vérification si le jeton est présent
