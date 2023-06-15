@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   status: Boolean,
   roles: Array,
   friends: [friendSchema], // Array of friend objects
+  verificationToken: String,
+  isVerified: Boolean,
 });
 
 const User = mongoose.model("User", userSchema);
