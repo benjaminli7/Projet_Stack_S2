@@ -54,9 +54,20 @@ const deleteFriend = async (req, res) => {
     }
   };
   
+const updateProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { firstName, lastName, email} = req.body;
+    const user = await User.updateOne({ _id: id }, { $set: { firstName, lastName, email } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+};
 
 module.exports = {
   createFriend,
   getAllFriendsByUser,
   deleteFriend,
+  updateProfile,
 };
