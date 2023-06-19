@@ -47,10 +47,7 @@
           // Set the current user 
           setCurrentUser(response.data.user);
 
-          console.log(response.data.user);
-
           this.$router.push('/');
-
 
         } catch (error) {
           // Redirect to Unauthorized.vue if login fails

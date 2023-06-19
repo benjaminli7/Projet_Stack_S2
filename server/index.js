@@ -3,14 +3,15 @@ const app = express();
 require('dotenv').config();
 
 
+
 const db = require("./models");
 
 // Middleware pour parser les requêtes au format JSON
 // allow all CORS requests
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*"); // allow all headers
-  res.header("Access-Control-Allow-Methods", "*"); // allow all methods
+  res.header("Access-Control-Allow-Headers", "*"); 
+  res.header("Access-Control-Allow-Methods", "*");
   next();
 });
 app.use(express.json());

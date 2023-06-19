@@ -1,15 +1,17 @@
  <template>   
-    <div class="relative">
-        <div class="friend-bar w-16 h-10 bg-blue-500 text-white flex items-center justify-center">
-            <span class="font-bold">Friend</span>
-        </div>
-        <div class="friend-details bg-blue-500 text-white w-40 h-10 absolute right-0 top-0 transform translate-x-full transition-transform duration-300 ease-in-out">
-            
-        </div>
-    </div>
+<div class="flex">
+  <div class="flex-1">
+    <!-- Main content -->
+  </div>
+  <div class="w-1/4 bg-gray-200">
+    <!-- Right sidebar content -->
+  </div>
+</div>
+
 </template>
 
 <script>
+
 import { getCurrentUser } from '../../auth.js';
 
 // Inside your component
