@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from './views/Home.vue';
+import Home from './components/Home.vue';
 import Login from './components/auth/Login.vue';
 import Register from './components/auth/Register.vue';
-
+import NotFound from './components/NotFound.vue';
 
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomePage,
-    meta: { requiresAuth: true }
+    component: Home,
+    // meta: { requiresAuth: true }
   },
   {
     path: '/login',
@@ -25,6 +25,11 @@ const routes = [
   {
     path: '/logout',
     name : 'Logout',
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name : 'NotFound',
+    component: NotFound
   }
 ];
 
@@ -36,7 +41,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('token');
-  
+
   if (to.name === 'Login' || to.name === 'Register') {
     if (isAuthenticated) {
       // User is already authenticated, redirect to the home page
@@ -47,7 +52,8 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === 'Logout') {
     // User is logging out, remove token from localStorage and redirect to the login page
     localStorage.removeItem('token');
-    next('/login');
+    location.reload();
+    next('/');
   } else {
     if (to.matched.some(record => record.meta.requiresAuth)) {
       if (isAuthenticated) {
@@ -62,5 +68,5 @@ router.beforeEach((to, from, next) => {
 });
 
 
-  
+
 export default router;
