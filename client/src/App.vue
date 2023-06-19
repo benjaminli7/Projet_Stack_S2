@@ -7,7 +7,7 @@
   <div>
     <Navbar v-if="$route.name !== 'Login' && $route.name !== 'Register'" class="w-screen"></Navbar>
     <!-- <Friends v-if="$route.name !== 'Login' && $route.name !== 'Register'" class="w-screen"></Friends> -->
-    <div id="app" class="p-4 m-4">
+    <div id="app" class="container mx-auto">
       <router-view></router-view>
     </div>
   </div>
