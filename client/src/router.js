@@ -57,7 +57,6 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === 'Logout') {
     // User is logging out, remove token from localStorage and redirect to the login page
     localStorage.removeItem('token');
-    location.reload();
     next('/');
   } else {
     if (to.matched.some(record => record.meta.requiresAuth)) {

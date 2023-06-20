@@ -6,6 +6,11 @@
       >Home</router-link
     >
     <router-link
+      to="/friends"
+      class="px-3 py-2 font-bold rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+      >Friends</router-link
+    >
+    <router-link
       v-if="!isAuthenticated"
       to="/login"
       class="px-3 py-2 font-bold rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900"
