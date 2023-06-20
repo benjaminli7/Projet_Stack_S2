@@ -1,6 +1,6 @@
 <script setup>
   import Navbar from './components/commons/Navbar.vue'
-  // import Friends from './components/assets/Friends.vue'
+
 </script>
 
 <template>

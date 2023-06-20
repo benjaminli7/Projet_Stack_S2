@@ -1,25 +1,26 @@
- <template>   
-    <div class="relative">
-        <div class="friend-bar w-16 h-10 bg-blue-500 text-white flex items-center justify-center">
-            <span class="font-bold">Friend</span>
+<script setup>
+    import { Avatar } from 'flowbite-vue'
+    import { useUserStore } from '../../userStore'
+
+    const store = useUserStore();
+
+
+    console.log(store.getUser)
+
+</script>
+<template>
+    <div class="relative w-1/6 p-4 bg-white rounded-lg shadow-lg">
+        <button class="absolute top-0 right-0 mt-2 mr-4 text-gray-500 hover:text-red-500">
+            <img src="/delete_user.svg" alt="delete user" class="w-6 h-6">
+        </button>
+
+
+        <div class="flex items-center justify-center mb-4">
+            <Avatar rounded size="lg" class="mr-4">JD</Avatar>
         </div>
-        <div class="friend-details bg-blue-500 text-white w-40 h-10 absolute right-0 top-0 transform translate-x-full transition-transform duration-300 ease-in-out">
-            
+
+        <div class="text-center">
+            <h1 class="text-lg font-bold">John Doe</h1>
         </div>
     </div>
 </template>
-
-<script>
-import { getCurrentUser } from '../../auth.js';
-
-// Inside your component
-export default {
-    name: 'Friends',
-    created() {
-        const currentUser = getCurrentUser();
-        console.log(currentUser);
-    }
-};
-
-
-</script>

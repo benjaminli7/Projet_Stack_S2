@@ -39,6 +39,11 @@ const routes = [
     path: '/:pathMatch(.*)*',
     name : 'NotFound',
     component: NotFound
+  },
+  {
+    path: '/friends',
+    name : 'Friends',
+    component: () => import('./components/assets/Friends.vue'),
   }
 
 ];
