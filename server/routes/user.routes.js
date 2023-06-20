@@ -22,4 +22,16 @@ router.delete('/friends', authenticateToken, userControleler.deleteFriend);
 // Route pour la récupération de tous les amis d'un utilisateur
 router.get('/friends/:id', authenticateToken, userControleler.getAllFriendsByUser);
 
+//Route pour la modification du profil
+router.patch('/:id', userControleler.updateProfile);
+
+// Route pour la récupération de tout les utilisateurs
+router.get('/', userControleler.getAllUsers);
+
+// Route pour la récupération d'un utilisateur
+router.get('/:id', userControleler.getOneUser);
+
+// Route pour la suppression d'un utilisateur
+router.delete('/:id', userControleler.deleteUser);
+
 module.exports = router;
