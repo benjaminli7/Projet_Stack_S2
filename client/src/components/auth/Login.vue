@@ -1,3 +1,29 @@
+<script setup>
+  import { useUserStore } from '../../userStore';
+  import router from '../../router';
+  import { ref } from 'vue';
+
+  const userStore = useUserStore();
+
+  const email = ref('');
+  const password = ref('');
+
+  const login = async () => {
+    try {
+      await userStore.login(email.value, password.value);
+
+      router.push('/');
+    } catch (error) {
+      router.push('/login');
+      alert(error);
+    }
+  };
+
+
+
+</script>
+
+
 <template>
     <div>
       <form @submit.prevent="login" class="max-w-xs mx-auto">
@@ -17,46 +43,4 @@
 
     </div>
   </template>
-  
-  
-  <script>
-  import axios from 'axios';
-  import { setCurrentUser } from '../../auth.js';
-
-  
-  export default {
-    name: 'Login',
-    data() {
-      return {
-        email: '',
-        password: '',
-      };
-    },
-    methods: {
-      async login() {
-        try {
-          const response = await axios.post('http://localhost:3000/auth/login', {
-              email: this.email,
-              password: this.password,
-          });
-
-          // Assuming the backend returns a token upon successful login
-          const token = response.data.token;
-          localStorage.setItem('token', token);
-
-          // Set the current user 
-          setCurrentUser(response.data.user);
-
-          this.$router.push('/');
-
-        } catch (error) {
-          // Redirect to Unauthorized.vue if login fails
-          this.$router.push('/login');
-          // shwo error message
-          alert('Erreur de connexion');
-        }
-      },
-    },
-  };
-  </script>
   
