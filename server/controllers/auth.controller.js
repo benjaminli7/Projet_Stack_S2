@@ -1,7 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const db = require('../models');
 const { validationResult } = require('express-validator');
+const SendinBlueTransport = require('nodemailer-sendinblue-transport');
+
 
 // Fonction de connexion
 const login = async (req, res) => {
@@ -71,6 +75,9 @@ const register = async (req, res) => {
     // Hashage du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Création d'un token de vérification
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
     // Création d'un nouvel utilisateur
     const newUser = new db.user({
       firstname,
@@ -80,12 +87,63 @@ const register = async (req, res) => {
       password: hashedPassword,
       roles: ["user"],
       status: 0,
-      friends: []
+      friends: [],
+      verificationToken: verificationToken,
+      isVerified: false
     });
 
     await newUser.save();
 
+    // Configuration de Nodemailer
+    let transporter = nodemailer.createTransport(
+        new SendinBlueTransport({
+          apiKey: process.env.SENDINBLUE_API_KEY,
+        })
+    );
+
+    // Configuration du message
+    let mailOptions = {
+      from: 'semainechallenge@gmail.com',
+      to: newUser.email,
+      subject: 'Vérification de l\'email',
+      text: `Merci de vous être inscrit. Veuillez cliquer sur le lien suivant pour vérifier votre email: http://127.0.0.1:5173/verify-email?token=${verificationToken}`
+    };
+
+    // Envoi de l'email
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info);
+      }
+    });
+
     res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+};
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+
+    // Vérifier le token et mettre à jour le statut de l'utilisateur, supprimer le token si l'utilisateur est trouvé
+    const user = await db.user.findOneAndUpdate(
+        { verificationToken: token },
+        { $set: { isVerified: true, verificationToken: null } },
+        { new: true }
+    );
+
+    console.log("User found: ", user);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Token invalide ou utilisateur non trouvé' });
+    }
+
+    res.status(200).json({ message: 'L\'e-mail a été vérifié avec succès' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
@@ -101,5 +159,6 @@ const logout = (req, res) => {
 module.exports = {
   login,
   register,
-  logout
+  logout,
+  verifyEmail
 };
