@@ -112,7 +112,7 @@ const register = async (req, res) => {
       if (error) {
         console.log(error);
       } else {
-        console.log('Email sent: ' + info.response);
+        console.log('Email sent: ' + info);
       }
     });
 
@@ -127,12 +127,11 @@ const verifyEmail = async (req, res) => {
   try {
     const { token } = req.query;
 
-    console.log("Token from request: ", token);
 
-    // Vérifier le token et mettre à jour le statut de l'utilisateur
+    // Vérifier le token et mettre à jour le statut de l'utilisateur, supprimer le token si l'utilisateur est trouvé
     const user = await db.user.findOneAndUpdate(
         { verificationToken: token },
-        { $set: { isVerified: true } },
+        { $set: { isVerified: true, verificationToken: null } },
         { new: true }
     );
 
