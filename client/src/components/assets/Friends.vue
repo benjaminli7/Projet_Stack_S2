@@ -3,10 +3,6 @@
     import { useUserStore } from '../../userStore'
 
     const store = useUserStore();
-
-
-    console.log(store.getUser)
-
 </script>
 <template>
     <div class="relative w-1/6 p-4 bg-white rounded-lg shadow-lg">
