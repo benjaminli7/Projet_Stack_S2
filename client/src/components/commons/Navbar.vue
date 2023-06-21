@@ -42,6 +42,7 @@ const isAuthenticated = computed(() => {
         <NavbarLink>Jouer</NavbarLink>
         <NavbarLink>Classement</NavbarLink>
         <NavbarLink>Profil</NavbarLink>
+        <NavbarLink link="/friends">Friends</NavbarLink>
       </NavbarCollapse>
     </template>
     <template #right-side>

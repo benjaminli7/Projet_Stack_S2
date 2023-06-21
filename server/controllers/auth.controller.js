@@ -12,7 +12,6 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // console.log(req.body);
 
     // Vérification des erreurs de validation
     const errors = validationResult(req);
@@ -38,8 +37,6 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-
-    console.log(user);
     res.status(200).json({ 
       token: token,
       user: {

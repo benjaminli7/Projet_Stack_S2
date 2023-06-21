@@ -1,38 +1,51 @@
 const User = require('../models').user;
 
 const createFriend = async (req, res) => {
+  const { userId, friendId } = req.body;
+
   try {
-    const { userId, friendId } = req.body;
-
-    const friend = {
-      friendId,
-      status: false,
-    };
-
-
-
+    // Find the user and friend by their IDs
     const user = await User.findById(userId);
-    const friendExists = user.friends.find((friend) => friend.friendId === friendId);
-    if (friendExists) {
-      return res.status(409).json({ error: 'Demande d\'ami déjà envoyée' });
+    const friend = await User.findById(friendId);
+
+    if (!user || !friend) {
+      return res.status(404).json({ message: 'User or friend not found' });
     }
 
-    user.friends.push(friend);
+    // Check if the friend is already in the user's friends list
+    const existingFriend = user.friends.find(f => f.friendId.toString() === friendId);
+    if (existingFriend) {
+      return res.status(400).json({ message: 'Friend already added' });
+    }
+
+    // Add the friend to the user's friends list with the provided status
+    user.friends.push({ friendId, status: false });
     await user.save();
 
-    res.status(201).json(friend);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur interne du serveur' });
+    return res.status(200).json({ message: 'Friend added successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
-const getAllFriendsByUser = async (req, res) => {
+const getAllFriendsByUser = async (req, res) => { 
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
-    const friends = user.friends;
+
+    //console.log(id);
+
+    const user = await User.findById(id).populate('friends.friendId', 'username firstname lastname email');
+    
+    // console.log(user);
+    if(!user){
+      return res.status(404).json({ error: "Utilisateur introuvable" });
+    }
+
+    const friends = user.friends.map(friend => friend.friendId);
+
     res.status(200).json(friends);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
@@ -52,7 +65,7 @@ const deleteFriend = async (req, res) => {
       console.error(err);
       res.status(500).json({ error: 'Erreur interne du serveur' });
     }
-  };
+};
   
 const updateProfile = async (req, res) => {
   const { id } = req.params;
@@ -86,6 +99,9 @@ const getAllUsers = async (req, res) => {
 
 const getOneUser = async (req, res) => {
   try {
+//     console.log("AA")
+// console.log(req.params);
+
     const { id } = req.params;
 
     const user = await User.findById(id);
@@ -93,8 +109,8 @@ const getOneUser = async (req, res) => {
     res.status(200).json(user);
   }
   catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur interne du serveur' });
+    // console.error(err);
+    res.status(500).json({ error: 'Erreur interne du seFFrveur' });
   }
 }
 
