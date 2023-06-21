@@ -29,21 +29,20 @@ const createFriend = async (req, res) => {
   }
 };
 
-const getAllFriendsByUser = async (req, res) => {
+const getAllFriendsByUser = async (req, res) => { 
   try {
     const { id } = req.params;
 
-    console.log(id);
+    //console.log(id);
 
-    const user = await User.findById(id).populate('friends');
-
-
+    const user = await User.findById(id).populate('friends.friendId', 'username firstname lastname email');
+    
+    // console.log(user);
     if(!user){
       return res.status(404).json({ error: "Utilisateur introuvable" });
     }
 
-    const friends = user.friends;
-    console.log(friends);
+    const friends = user.friends.map(friend => friend.friendId);
 
     res.status(200).json(friends);
 
@@ -66,7 +65,7 @@ const deleteFriend = async (req, res) => {
       console.error(err);
       res.status(500).json({ error: 'Erreur interne du serveur' });
     }
-  };
+};
   
 const updateProfile = async (req, res) => {
   const { id } = req.params;
@@ -100,8 +99,8 @@ const getAllUsers = async (req, res) => {
 
 const getOneUser = async (req, res) => {
   try {
-    console.log("AA")
-console.log(req.params);
+//     console.log("AA")
+// console.log(req.params);
 
     const { id } = req.params;
 
