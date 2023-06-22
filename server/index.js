@@ -50,11 +50,11 @@ const io = require('socket.io')(server, {
 })
 
 io.on("connection", function (socket) {
-  io.emit("connection", "A NEW USER CONNECTED")
+  io.emit("connection",  `${socket.id} is connected`)
 
   // Handle disconnections
   socket.on("disconnect", () => {
-    io.emit("disconnection", "A USER DISCONNECTED")
+    io.emit("disconnection", `${socket.id} disconnected `);
   });
 
   socket.on("sendMessage", (message) => {

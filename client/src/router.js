@@ -16,7 +16,6 @@ const routes = [
     path: '/',
     name: 'Home',
     component: HomeView,
-    // meta: { requiresAuth: true }
   },
   {
     path: '/login',

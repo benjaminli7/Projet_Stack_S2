@@ -1,12 +1,17 @@
 <script setup>
 import { io } from "socket.io-client";
 import { onMounted, ref } from "vue";
+import { Button, Input } from "flowbite-vue"
+import { useUserStore } from "../../userStore";
 
 const messages = ref([]);
 const newMessage = ref("");
 let socket;
+const store = useUserStore();
 
 onMounted(() => {
+  const user = store.getUser;
+  console.log(user)
   socket = io("http://localhost:3000");
 
   socket.on("connection", (message) => {
@@ -42,11 +47,11 @@ const sendMessage = () => {
 
 <template>
   <h1>Multiplayer view</h1>
-  <button @click="test">Jouer</button>
+  <Button color="default">Jouer</Button>
 
   <div>
     <div v-for="message in messages" :key="message.id">{{ message.text }}</div>
-    <input
+    <Input
       type="text"
       v-model="newMessage"
       @keyup.enter="sendMessage"
