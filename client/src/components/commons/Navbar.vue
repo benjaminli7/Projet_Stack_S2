@@ -1,5 +1,5 @@
 <script setup>
-import { Navbar, NavbarCollapse, NavbarLink, NavbarLogo } from "flowbite-vue";
+import { Navbar, NavbarCollapse, NavbarLink } from "flowbite-vue";
 import { computed } from "vue";
 
 const isAuthenticated = computed(() => {
@@ -8,30 +8,6 @@ const isAuthenticated = computed(() => {
 </script>
 
 <template>
-  <!-- <nav class="flex justify-center space-x-4">
-    <router-link
-      to="/"
-      class="px-3 py-2 font-bold rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-      >Home</router-link
-    >
-    <router-link
-      to="/friends"
-      class="px-3 py-2 font-bold rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-      >Friends</router-link
-    >
-    <router-link
-      v-if="!isAuthenticated"
-      to="/login"
-      class="px-3 py-2 font-bold rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-      >Login</router-link
-    >
-    <router-link
-      v-else
-      to="/logout"
-      class="px-3 py-2 font-bold rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-      >Logout</router-link
-    >
-  </nav> -->
   <Navbar>
     <template #logo>
       <a href="/">ChallengeGuessr</a>
@@ -41,7 +17,7 @@ const isAuthenticated = computed(() => {
         <NavbarLink link="/" is-active>Accueil</NavbarLink>
         <NavbarLink link="/gamemode">Jouer</NavbarLink>
         <NavbarLink>Classement</NavbarLink>
-        <NavbarLink>Profil</NavbarLink>
+        <NavbarLink link="/profile">Profil</NavbarLink>
         <NavbarLink link="/friends">Friends</NavbarLink>
       </NavbarCollapse>
     </template>

@@ -1,21 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from './components/Home.vue';
-import Login from './components/auth/Login.vue';
-import Register from './components/auth/Register.vue';
-import VerifyEmail from "./components/auth/VerifyEmail.vue";
+import HomeView from './views/HomeView.vue';
+import Login from './views/auth/Login.vue';
+import Register from './views/auth/Register.vue';
+import VerifyEmail from "./views/auth/VerifyEmail.vue";
 
-import Profile from './components/user/Profile.vue';
+import Profile from './views/user/Profile.vue';
 
 import NotFound from './components/NotFound.vue';
-import GamemodeView from "./components/game/GamemodeView.vue";
-import MultiplayerView from "./components/game/MultiplayerView.vue";
-
+import GamemodeView from "./views/game/GamemodeView.vue";
+import MultiplayerView from "./views/game/MultiplayerView.vue";
+import Friends from "./views/user/Friends.vue"
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: HomeView,
     // meta: { requiresAuth: true }
   },
   {
@@ -38,19 +38,21 @@ const routes = [
     name : 'Logout',
   },
   {
-    path: '/profile/:id',
-    name : 'Profile',
-    component: Profile
-  },
-  {
     path: '/:pathMatch(.*)*',
     name : 'NotFound',
     component: NotFound
   },
   {
+    path: '/profile',
+    name : 'Profile',
+    component: Profile,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/friends',
     name : 'Friends',
-    component: () => import('./components/assets/Friends.vue'),
+    component: Friends,
+    meta: { requiresAuth: true }
   },
   {
     path : '/gamemode',
