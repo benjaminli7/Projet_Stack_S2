@@ -7,7 +7,8 @@ import VerifyEmail from "./components/auth/VerifyEmail.vue";
 import Profile from './components/user/Profile.vue';
 
 import NotFound from './components/NotFound.vue';
-
+import GamemodeView from "./components/game/GamemodeView.vue";
+import MultiplayerView from "./components/game/MultiplayerView.vue";
 
 
 const routes = [
@@ -50,6 +51,18 @@ const routes = [
     path: '/friends',
     name : 'Friends',
     component: () => import('./components/assets/Friends.vue'),
+  },
+  {
+    path : '/gamemode',
+    name: 'Gamemode',
+    component: GamemodeView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/multiplayer',
+    name : 'Multiplayer',
+    component: MultiplayerView,
+    meta: { requiresAuth: true }
   }
 
 ];

@@ -10,7 +10,7 @@ const db = require("./models");
 // allow all CORS requests
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*"); 
+  res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "*");
   next();
 });
@@ -39,6 +39,25 @@ app.use('/user', require('./routes/user.routes'));
 // Routeur /me
 
 // Démarrage du serveur
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
+});
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+})
+
+io.on("connection", function (socket) {
+  io.emit("connection", "A NEW USER CONNECTED")
+
+  // Handle disconnections
+  socket.on("disconnect", () => {
+    io.emit("disconnection", "A USER DISCONNECTED")
+  });
+
+  socket.on("sendMessage", (message) => {
+    io.emit("message", message)
+  })
 });

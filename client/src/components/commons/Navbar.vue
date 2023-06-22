@@ -39,7 +39,7 @@ const isAuthenticated = computed(() => {
     <template #default="{ isShowMenu }">
       <NavbarCollapse :isShowMenu="isShowMenu">
         <NavbarLink link="/" is-active>Accueil</NavbarLink>
-        <NavbarLink>Jouer</NavbarLink>
+        <NavbarLink link="/gamemode">Jouer</NavbarLink>
         <NavbarLink>Classement</NavbarLink>
         <NavbarLink>Profil</NavbarLink>
         <NavbarLink link="/friends">Friends</NavbarLink>
