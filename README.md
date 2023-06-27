@@ -23,3 +23,4 @@ PORT=3000
 
 ```
 
+docker exec projet_stack_s2-server-1  npm run dev
