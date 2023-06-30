@@ -84,13 +84,7 @@ app.use('/users', users)
 // app.use("/users", require("./routes/user"));
 // app.use("/users2", new GenericRouter(new GenericController(userService)));
 
-app.get("/", (req, res) => {
-  res.send("Hello world");
-});
 
-app.post("/", (req, res) => {
-  res.json(req.body);
-});
 
 app.use(errorHandler);
 
