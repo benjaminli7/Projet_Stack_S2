@@ -22,6 +22,20 @@ router.delete('/friends', authenticateToken, userControler.deleteFriend);
 // Route pour la récupération de tous les amis d'un utilisateur
 router.get('/friends/:id', authenticateToken, userControler.getAllFriendsByUser);
 
+// Route pour la récupération de toutes les demandes d'amis en attente d'un utilisateur
+router.get('/friends/pending/:id', authenticateToken, userControler.getReceivedFriendRequests);
+
+// Route pour l'acceptation d'une demande d'ami
+router.patch('/friends/accept', authenticateToken, userControler.acceptFriendRequest);
+
+// Route pour le refus d'une demande d'ami
+router.patch('/friends/reject', authenticateToken, userControler.declineFriendRequest);
+
+// Route pour l'annulation d'une demande d'ami
+router.patch('/friends/cancel', authenticateToken, userControler.cancelFriendRequest);
+
+
+
 //Route pour la modification du profil
 router.patch('/:id', userControler.updateProfile);
 

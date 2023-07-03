@@ -9,7 +9,7 @@ import Profile from './views/user/Profile.vue';
 import NotFound from './components/NotFound.vue';
 import GamemodeView from "./views/game/GamemodeView.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
-import Friends from "./views/user/Friends.vue"
+import Friends from "./views/user/friends/Friends.vue"
 
 const routes = [
   {
