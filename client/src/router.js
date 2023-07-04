@@ -10,6 +10,7 @@ import NotFound from './components/NotFound.vue';
 import GamemodeView from "./views/game/GamemodeView.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Friends from "./views/user/friends/Friends.vue"
+import BackDashboard from "./views/back/BackDashboard.vue"
 
 const routes = [
   {
@@ -64,6 +65,14 @@ const routes = [
     name : 'Multiplayer',
     component: MultiplayerView,
     meta: { requiresAuth: true }
+  },
+
+  // Back office routes
+  {
+    path: '/back',
+    name : 'BackDashboard',
+    component: BackDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true }
   }
 
 ];
@@ -73,19 +82,16 @@ const router = createRouter({
   routes
 });
 
-
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('token');
-
+  
   if (to.name === 'Login' || to.name === 'Register') {
     if (isAuthenticated) {
-      // User is already authenticated, redirect to the home page
       next('/');
     } else {
       next();
     }
   } else if (to.name === 'Logout') {
-    // User is logging out, remove token from localStorage and redirect to the login page
     localStorage.removeItem('token');
     location.reload();
   } else {
@@ -95,11 +101,23 @@ router.beforeEach((to, from, next) => {
       } else {
         next('/login');
       }
+    } else if (to.matched.some(record => record.meta.requiresAdmin)) {
+      if (isAuthenticated) {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user.roles.includes('admin')) {
+          next();
+        } else {
+          next('/');
+        }
+      } else {
+        next('/login');
+      }
     } else {
       next();
     }
   }
 });
+
 
 
 
