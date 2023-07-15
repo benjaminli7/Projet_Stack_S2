@@ -76,7 +76,7 @@ app.use(function (req, res, next) {
       return res.sendStatus(400);
     }
   }
-
+});
 // const db = require("./models");
 
 // Middleware pour parser les requêtes au format JSON
