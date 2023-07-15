@@ -1,8 +1,8 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const db = require('../models');
+const {User} = require('../db');
 const { validationResult } = require('express-validator');
 const SendinBlueTransport = require('nodemailer-sendinblue-transport');
 
@@ -11,7 +11,6 @@ const SendinBlueTransport = require('nodemailer-sendinblue-transport');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
 
     // Vérification des erreurs de validation
     const errors = validationResult(req);
@@ -22,7 +21,7 @@ const login = async (req, res) => {
     }
 
     // Recherche de l'utilisateur dans la base de données
-    const user = await db.user.findOne({ email });
+    const user = await User.findOne({where : {'email' : email}});
 
     if (!user) {
       return res.status(401).json({ error: 'Identifiants invalides' });
@@ -63,7 +62,7 @@ const register = async (req, res) => {
     const { username, firstname, lastname, email, password } = req.body;
 
     // Vérification si le nom d'utilisateur est déjà pris
-    const existingUser = await db.user.findOne({ username });
+    const existingUser = await User.findOne({where: {'username' : username} });
 
     if (existingUser) {
       return res.status(400).json({ error: 'Ce nom d\'utilisateur est déjà pris' });
@@ -76,7 +75,7 @@ const register = async (req, res) => {
     const verificationToken = crypto.randomBytes(20).toString('hex');
 
     // Création d'un nouvel utilisateur
-    const newUser = new db.user({
+    const newUser = new User({
       firstname,
       lastname,
       username,
@@ -89,7 +88,18 @@ const register = async (req, res) => {
       isVerified: false
     });
 
-    await newUser.save();
+    await User.create({
+      firstname : firstname,
+      lastname : lastname,
+      username : username,
+      email : email,
+      password : hashedPassword,
+      roles : ["user"],
+      status : 0,
+      friends : [],
+      verificationToken : verificationToken,
+      isVerified : false
+    });
 
     // Configuration de Nodemailer
     let transporter = nodemailer.createTransport(
@@ -123,34 +133,34 @@ const register = async (req, res) => {
 };
 
 const verifyEmail = async (req, res) => {
-  try {
-    const { token } = req.query;
+//   try {
+//     const { token } = req.query;
 
 
-    // Vérifier le token et mettre à jour le statut de l'utilisateur, supprimer le token si l'utilisateur est trouvé
-    const user = await db.user.findOneAndUpdate(
-        { verificationToken: token },
-        { $set: { isVerified: true, verificationToken: null } },
-        { new: true }
-    );
+//     // Vérifier le token et mettre à jour le statut de l'utilisateur, supprimer le token si l'utilisateur est trouvé
+//     const user = await db.user.findOneAndUpdate(
+//         { verificationToken: token },
+//         { $set: { isVerified: true, verificationToken: null } },
+//         { new: true }
+//     );
 
-    console.log("User found: ", user);
+//     console.log("User found: ", user);
 
-    if (!user) {
-      return res.status(404).json({ error: 'Token invalide ou utilisateur non trouvé' });
-    }
+//     if (!user) {
+//       return res.status(404).json({ error: 'Token invalide ou utilisateur non trouvé' });
+//     }
 
-    res.status(200).json({ message: 'L\'e-mail a été vérifié avec succès' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur interne du serveur' });
-  }
+//     res.status(200).json({ message: 'L\'e-mail a été vérifié avec succès' });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Erreur interne du serveur' });
+//   }
 };
 
-// Fonction de déconnexion
+ // Fonction de déconnexion
 const logout = (req, res) => {
-  // A FAIRE
-  res.status(200).json({ message: 'Déconnexion réussie' });
+//   // A FAIRE
+//   res.status(200).json({ message: 'Déconnexion réussie' });
 };
 
 module.exports = {
