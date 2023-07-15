@@ -70,13 +70,13 @@ var friends = require('./routes/friend')
 var auth = require('./routes/auth')
 
 app.use(cors());
-app.use(function (req, res, next) {
-  if (["POST", "PUT", "PATCH"].includes(req.method)) {
-    if (!req.is("application/json")) {
-      return res.sendStatus(400);
-    }
-  }
-});
+// app.use(function (req, res, next) {
+//   if (["POST", "PUT", "PATCH"].includes(req.method)) {
+//     if (!req.is("application/json")) {
+//       return res.sendStatus(400);
+//     }
+//   }
+// });
 // const db = require("./models");
 
 // Middleware pour parser les requêtes au format JSON
@@ -102,8 +102,6 @@ app.get("/", (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(3000, () => console.log("Serverr started on port 3000")); 
-
 // const express = require("express");
 
 // app.use(express.urlencoded({ extended: true }));
@@ -121,14 +119,7 @@ app.listen(3000, () => console.log("Serverr started on port 3000"));
 //     console.error("Erreur de connexion", err);
 //   });
 
-// // Routeur pour les routes d'authentification
-// app.use('/auth', require('./routes/auth.routes'));
-
-// // Routeur pour les routes d'utilisateur
-// app.use('/user', require('./routes/user.routes'));
-
-// // Routeur /me
-
+  app.listen(3000, () => console.log("Serverr started on port 3000")); 
 // // Démarrage du serveur
 // const server = app.listen(process.env.PORT, () => {
 //   console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
