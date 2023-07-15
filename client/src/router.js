@@ -1,21 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from './components/Home.vue';
-import Login from './components/auth/Login.vue';
-import Register from './components/auth/Register.vue';
-import VerifyEmail from "./components/auth/VerifyEmail.vue";
+import HomeView from './views/HomeView.vue';
+import Login from './views/auth/Login.vue';
+import Register from './views/auth/Register.vue';
+import VerifyEmail from "./views/auth/VerifyEmail.vue";
 
-import Profile from './components/user/Profile.vue';
+import Profile from './views/user/Profile.vue';
 
 import NotFound from './components/NotFound.vue';
-
-
+import GamemodeView from "./views/game/GamemodeView.vue";
+import MultiplayerView from "./views/game/MultiplayerView.vue";
+import Friends from "./views/user/friends/Friends.vue"
+import BackDashboard from "./views/back/BackDashboard.vue"
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
-    // meta: { requiresAuth: true }
+    component: HomeView,
   },
   {
     path: '/login',
@@ -37,19 +38,41 @@ const routes = [
     name : 'Logout',
   },
   {
-    path: '/profile/:id',
-    name : 'Profile',
-    component: Profile
-  },
-  {
     path: '/:pathMatch(.*)*',
     name : 'NotFound',
     component: NotFound
   },
   {
+    path: '/profile',
+    name : 'Profile',
+    component: Profile,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/friends',
     name : 'Friends',
-    component: () => import('./components/assets/Friends.vue'),
+    component: Friends,
+    meta: { requiresAuth: true }
+  },
+  {
+    path : '/gamemode',
+    name: 'Gamemode',
+    component: GamemodeView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/multiplayer',
+    name : 'Multiplayer',
+    component: MultiplayerView,
+    meta: { requiresAuth: true }
+  },
+
+  // Back office routes
+  {
+    path: '/back',
+    name : 'BackDashboard',
+    component: BackDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true }
   }
 
 ];
@@ -59,19 +82,16 @@ const router = createRouter({
   routes
 });
 
-
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('token');
-
+  
   if (to.name === 'Login' || to.name === 'Register') {
     if (isAuthenticated) {
-      // User is already authenticated, redirect to the home page
       next('/');
     } else {
       next();
     }
   } else if (to.name === 'Logout') {
-    // User is logging out, remove token from localStorage and redirect to the login page
     localStorage.removeItem('token');
     location.reload();
   } else {
@@ -81,11 +101,23 @@ router.beforeEach((to, from, next) => {
       } else {
         next('/login');
       }
+    } else if (to.matched.some(record => record.meta.requiresAdmin)) {
+      if (isAuthenticated) {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user.roles.includes('admin')) {
+          next();
+        } else {
+          next('/');
+        }
+      } else {
+        next('/login');
+      }
     } else {
       next();
     }
   }
 });
+
 
 
 
