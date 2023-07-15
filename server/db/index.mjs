@@ -5,6 +5,7 @@ const connection = new Sequelize(process.env.DATABASE_URL);
 const db = {
   connection,
 };
+console.log("db", db);
 
 fs.readdir(path.join(__dirname, "models"))
   .then((files) =>

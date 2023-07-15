@@ -6,27 +6,27 @@
 
 // module.exports = db;
 
-const fs = require("fs");
-const path = require("path");
-const Sequelize = require("sequelize");
-const connection = new Sequelize(process.env.DATABASE_URL);
-const db = {
-  connection,
-};
+// const fs = require("fs");
+// const path = require("path");
+// const Sequelize = require("sequelize");
+// const connection = new Sequelize(process.env.DATABASE_URL);
+// const db = {
+//   connection,
+// };
 
-fs.readdirSync(path.join(__dirname,"models")).forEach((file) => {
-  const model = require(path.join(__dirname,"models", file))(connection);
-  db[model.name] = model;
-});
+// fs.readdirSync(path.join(__dirname,"models")).forEach((file) => {
+//   const model = require(path.join(__dirname,"models", file))(connection);
+//   db[model.name] = model;
+// });
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+// Object.keys(db).forEach(modelName => {
+//   if (db[modelName].associate) {
+//     db[modelName].associate(db);
+//   }
+// });
 
 // console.log(db);
-module.exports = db;
+// module.exports = db;
 
 // 'use strict';
 
@@ -63,3 +63,24 @@ module.exports = db;
 // db.Sequelize = Sequelize;
 
 // module.exports = db;
+
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
+const connection = new Sequelize(process.env.DATABASE_URL);
+const db = {
+  connection,
+};
+
+fs.readdirSync(path.join(__dirname, "models")).forEach((file) => {
+  try {
+    const model = require(path.join(__dirname, "models", file))(connection);
+    console.log(model.name, model.prototype.constructor.name);
+    db[model.name] = model;
+  } catch (error) {
+    console.log(error);
+  }
+
+});
+
+module.exports = db;

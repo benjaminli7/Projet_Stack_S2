@@ -59,13 +59,14 @@
 
 const express = require("express");
 const app = express();
-const GenericRouter = require("./routes/genericCRUD");
-const GenericController = require("./controllers/genericCRUD");
-const userService = require("./services/user");
+//const GenericRouter = require("./routes/genericCRUD");
+//const GenericController = require("./controllers/genericCRUD");
+// const userService = require("./services/user");
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
-var users = require('./routes/user2')
-
+var users = require('./routes/user')
+var friends = require('./routes/friend')
+var auth = require('./routes/auth')
 
 app.use(cors());
 app.use(function (req, res, next) {
@@ -79,13 +80,16 @@ app.use(function (req, res, next) {
 
 app.use(express.json());
 app.use('/users', users)
-// app.use(require("./routes/security")(userService));
+// app.use('/friends', friends)
+app.use('/auth', auth)
 
-// app.use("/users", require("./routes/user"));
-// app.use("/users2", new GenericRouter(new GenericController(userService)));
-
+app.get("/", (req, res) => {
+  res.send("Hello world");
+});
 
 
 app.use(errorHandler);
 
-app.listen(3000, () => console.log("Server started on port 3000"));
+app.listen(3000, () => console.log("Serverr started on port 3000")); 
+
+// const express = require("express");
