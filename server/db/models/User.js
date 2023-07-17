@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 
+
 module.exports = function (connection) {
   class User extends Model {
     async checkPassword(password) {
@@ -51,11 +52,6 @@ module.exports = function (connection) {
         allowNull: false,
         defaultValue: 0,
       },
-      friends: {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
-        allowNull: false,
-        defaultValue: [],
-      },
       verificationToken: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -85,6 +81,22 @@ module.exports = function (connection) {
   User.addHook("beforeCreate", encryptPassword);
   User.addHook("beforeUpdate", encryptPassword);
 
+  // On delete, delete all associated friends
+  User.addHook("beforeDestroy", async (user, options) => {
+    const Friend = require("./Friend")(connection);
+    await Friend.destroy({
+      where: {
+        [Op.or]: [{ userId: user.id }, { friendId: user.id }],
+      },
+    });
+  });
+
+  User.associate = function (models) {
+    User.hasMany(models.Friend, {
+      foreignKey: 'userId',
+      as: 'friends',
+    });
+  };
+  
   return User;
 };
-
