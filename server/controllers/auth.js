@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const {User} = require('../db');
 const { validationResult } = require('express-validator');
 const SendinBlueTransport = require('nodemailer-sendinblue-transport');
+const gAuth = require('../services/Google/google-auth');
 
 
 // Fonction de connexion
@@ -157,6 +158,40 @@ const verifyEmail = async (req, res) => {
 //   }
 };
 
+const googleAuth = async (req, res) => {
+  try {
+    const authUrl = gAuth.url;
+    res.status(200).json({ authUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+};
+
+const googleAuthCallback = async (req, res) => {
+  try {
+    const { code } = req.query;
+    const oauth2Client = gAuth.oAuth2Client;
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+    const oauth2 = google.oauth2({
+      auth: oauth2Client,
+      version: 'v2'
+    });
+    const { data } = await oauth2.userinfo.get();
+    const { email, given_name, family_name } = data;
+    
+    res.status(200).json({ email, given_name, family_name });
+    
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+};
+
+
+
  // Fonction de déconnexion
 const logout = (req, res) => {
 //   // A FAIRE
@@ -167,5 +202,7 @@ module.exports = {
   login,
   register,
   logout,
-  verifyEmail
+  verifyEmail,
+  googleAuth,
+  googleAuthCallback
 };

@@ -11,7 +11,7 @@ module.exports = function (connection) {
       //   type: DataTypes.INTEGER,
       //   allowNull: false,
       // },
-      // friendId: {
+      // friendUsername: {
       //   type: DataTypes.INTEGER,
       //   allowNull: false,
       // },

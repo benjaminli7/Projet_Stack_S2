@@ -1,26 +1,18 @@
-// var express = require('express');
-// var router = express.Router();
-const userController = require("../controllers/user");
-const friendController = require("../controllers/friend");
-
-// const use = fn => (req,res,next)=>
-//   Promise.resolve(fn(req, res, next)).catch(next)
 
 
-// router.post('/', use(userController.post));
-// router.get('/', use(userController.cget));
 
-// module.exports = router;
 const express = require('express');
 const router = express.Router();
-//const userControler = require('../controllers/user.controller');
+const userController = require("../controllers/user");
+const friendController = require("../controllers/friend");
 const authenticateToken = require('../middlewares/auth.middleware');
 
 
-// Route pour la récupération de tout les amis d'un utilisateur
-router.get("/:id/friends", friendController.getAllFriendsByUser);
 
-router.get("/:id/friend-requests", friendController.getReceivedFriendRequests);
+// Route pour la récupération de tout les amis d'un utilisateur
+router.get("/friends", authenticateToken , friendController.getAllFriendsByUser);
+
+router.get("/friend-requests", authenticateToken , friendController.getReceivedFriendRequests);
 
 //Route pour la modification du profil
 router.patch('/:id', userController.patch);

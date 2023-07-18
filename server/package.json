@@ -18,10 +18,10 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
-
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
+    "googleapis": "^122.0.0",
     "jsonwebtoken": "^9.0.1",
     "module-alias": "^2.2.3",
     "mongoose": "^7.2.3",
@@ -31,7 +31,6 @@
     "pg": "^8.11.0",
     "sequelize": "^6.32.1",
     "socket.io": "^4.6.2"
-
   },
   "nodemonConfig": {
     "legacyWatch": true

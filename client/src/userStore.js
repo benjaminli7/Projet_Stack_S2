@@ -37,15 +37,24 @@ export const useUserStore = defineStore("user", {
       this.user = user;
       localStorage.setItem("user", JSON.stringify(user));
     },
-    async getUserFriends(userId) {
+    async getUserFriends(username) {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/user/friends/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
 
+        console.log(typeof username + " " + username + " " + typeof token + " " + token)
+        const response = await axios.get(
+          `http://localhost:3000/users/friends`,
+          {
+            params: {
+              username: username,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        
+        //console.log(response.data);
         const friends = response.data;
         return friends;
 
@@ -54,18 +63,43 @@ export const useUserStore = defineStore("user", {
         throw new Error('Failed to get friends');
       }
     },
-    async addFriend(userId,friendId) {
+    async getReceivedFriendRequests(username) {
+      try {
+        const token = localStorage.getItem('token');
+        console.log(typeof username + " " + username + " " + typeof token + " " + token)
+        const response = await axios.get(
+          `http://localhost:3000/users/friend-requests`,
+          {
+            params: {
+              username: username,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        console.log(response.data);
+
+        const friends = response.data;
+        return friends;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to get friends');
+      }
+    },  
+    async addFriend(username,friendUsername) {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-          'http://localhost:3000/user/friends',
+          'http://localhost:3000/friends',
           {
-            userId,
-            friendId,
+            username,
+            friendUsername,
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
             },
           }
         ).catch((err) => {
@@ -76,35 +110,21 @@ export const useUserStore = defineStore("user", {
         alert(error);
       }
     },
-    async getReceivedFriendRequests(userId) {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/user/friends/pending/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const friends = response.data;
-        return friends;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to get friends');
-      }
-    },    
-    async acceptFriendRequest(userId, friendId) {
+  
+    async acceptFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
-        // alert(userId + " " + friendId);
-        const response = await axios.patch(
-          `http://localhost:3000/user/friends/accept`,
+        // alert(username + " " + friendUsername);
+        const response = await axios.put(
+          `http://localhost:3000/friends/friend-requests/accept`,
           {
-            userId,
-            friendId,
+            username,
+            friendUsername,
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
             },
           }
         );
@@ -114,18 +134,19 @@ export const useUserStore = defineStore("user", {
         throw new Error("Failed to accept friend request");
       }
     },
-    async declineFriendRequest(userId, friendId) {
+    async declineFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.patch(
-          `http://localhost:3000/user/friends/reject`,
+        const response = await axios.put(
+          `http://localhost:3000/friends/friend-requests/decline`,
           {
-            userId,
-            friendId,
+            username,
+            friendUsername,
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
+'Content-Type': 'application/json',
             },
           }
         );
@@ -136,19 +157,20 @@ export const useUserStore = defineStore("user", {
         throw new Error("Failed to decline friend request");
       }
     },
-    async cancelFriendRequest(userId, friendId) {
+    async cancelFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
-        console.log(userId + " " + friendId);
-        const response = await axios.patch(
-          `http://localhost:3000/user/friends/cancel`,
+        console.log(username + " " + friendUsername);
+        const response = await axios.put(
+          `http://localhost:3000/friends/friend-requests/cancel`,
           {
-            userId,
-            friendId,
+            username,
+            friendUsername,
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
             },
           }
         );
@@ -158,18 +180,19 @@ export const useUserStore = defineStore("user", {
         throw new Error("Failed to cancel friend request");
       }
     },
-    async removeFriend(userId, friendId) {
+    async removeFriend(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.delete(
-          `http://localhost:3000/user/friends`,
+          `http://localhost:3000/friends`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
             },
             data: {
-              userId,
-              friendId,
+              username,
+              friendUsername,
             },
           }
         );

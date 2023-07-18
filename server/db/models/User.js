@@ -86,7 +86,7 @@ module.exports = function (connection) {
     const Friend = require("./Friend")(connection);
     await Friend.destroy({
       where: {
-        [Op.or]: [{ userId: user.id }, { friendId: user.id }],
+        [Op.or]: [{ userId: user.id }, { friendUsername: user.id }],
       },
     });
   });

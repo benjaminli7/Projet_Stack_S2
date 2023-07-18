@@ -4,6 +4,9 @@ const authController = require('../controllers/auth');
 const authenticateToken = require('../middlewares/auth.middleware');
 
 
+router.get('/google/url', authController.googleAuth);
+
+router.get('/google/callback', authController.googleAuthCallback);
 // Route pour la connexion
 router.post('/login', authController.login);
 

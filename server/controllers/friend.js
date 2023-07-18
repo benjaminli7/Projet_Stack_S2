@@ -2,18 +2,18 @@ const { User, Friend } = require("../db");
 const { Op } = require("sequelize");
 
 const createFriend = async (req, res) => {
-  const { userId, friendId } = req.body;
+  const { username, friendUsername } = req.body;
 
   try {
-    const user = await User.findByPk(userId);
-    const friend = await User.findByPk(friendId);
+    const user = await User.findOne({ where:{ username: username } })
+    const friend = await User.findOne({ where: { username: friendUsername } })
 
     if (!user || !friend) {
       console.log("User or friend not found");
       return res.status(404).json({ message: "User or friend not found" });
     }
 
-    if (userId === friendId) {
+    if (username === friendUsername) {
       console.log("You can't add yourself as a friend");
       return res.status(400).json({ message: "You can't add yourself as a friend" });
     }
@@ -22,13 +22,13 @@ const createFriend = async (req, res) => {
       where: {
         [Op.or]: [
           {
-            userId: friendId,
-            friendId: userId,
+            userId: friend.id,
+            friendId: user.id,
             status: { [Op.in]: ["pending", "accepted"] },
           },
           {
-            userId: userId,
-            friendId: friendId,
+            userId: user.id,
+            friendId: friend.id,
             status: { [Op.in]: ["pending", "accepted"] },
           },
         ],
@@ -40,7 +40,7 @@ const createFriend = async (req, res) => {
       return res.status(400).json({ message: "There is already a pending or accepted friend request between the users" });
     }
 
-    await Friend.create({ userId, friendId, status: "pending", actionUserId: userId });
+    await Friend.create({ userId: user.id, friendId: friend.id, status: "pending", actionUserId: user.id });
 
     return res.status(200).json({ message: "Friend request sent" });
   } catch (error) {
@@ -50,56 +50,90 @@ const createFriend = async (req, res) => {
 };
   
 const getAllFriendsByUser = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { username } = req.query;
+    console.log("Username:", username);
 
-        const user = await User.findByPk(id);
-        
-        if (!user) {
-          return res.status(404).json({ error: "User not found" });
-        }
-        
-        const friends = await Friend.findAll({
-          where: { id: user.id },
-          include: [{ model: User, as: "friend" }] // Include the associated friend's details
-        });
-        
-        res.status(200).json(friends);
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal server error" });
-      }
+    const test = await User.findOne({ where: { username: username } });
+
+    if (!test) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // look for all requests initiated by the user or the ones where actionUserId is the user and status is accepted
+    const friends = await Friend.findAll({
+      where: {
+        [Op.or]: [
+          {
+            userId: test.id,
+          },
+          {
+            actionUserId: test.id,
+            status: "accepted",
+          },
+        ],
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "email"],
+        },
+      ],
+    });
+
+    res.status(200) .json(friends);
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 const getReceivedFriendRequests = async (req, res) => {
   try {
-      const { id } = req.params;
+    const { username } = req.query;
+    console.log("Username:", username);
 
-      const user = await User.findByPk(id);
+    const test = await User.findOne({ where: { username: username } });
 
-      if (!user) {
-        return res.status(404).json({ error: "Utilisateur introuvable" });
-      }
+    if (!test) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const pendingRequests = await Friend.findAll({
+      where: {
+        friendId: test.id,
+        status: "pending",
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "email"],
+        },
+      ],
+    });
+    res.status(200) .json(pendingRequests);
 
-      const pendingRequests = await Friend.findAll({
-        where: { userId: user.id, status: "pending" },
-        include: [{ model: User, as: "user" }] // Include the associated user's details
-      });
-
-      res.status(200).json(pendingRequests);
   } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Erreur interne du serveur" });
+    console.error(err);
+    res.status(500).json({ error: "Erreur interne du serveur" });
   }
 };
 
+
 const acceptFriendRequest = async (req, res) => {
 try {
-    const { userId, friendId } = req.body;
+    const { username, friendUsername } = req.body;
+
+    const user = await User.findOne({ where: { username: username 
+ } });
+    const friend = await User.findOne({ where: { username: friendUsername } });
 
     // check if the friend request exists
     const existingFriendRequest = await Friend.findOne({
-      where: { userId: friendId, friendId: userId, status: "pending" }
+      where: { userId: friend.id, friendId: user.id, status: "pending" }
     });
 
     if (!existingFriendRequest) {
@@ -108,8 +142,8 @@ try {
 
 
     const updatedRows = await Friend.update(
-      { status: "accepted", actionUserId: userId },
-      { where: { userId: friendId, friendId: userId, status: "pending" } }
+      { status: "accepted", actionUserId: user.id },
+      { where: { userId: friend.id, friendId: user.id, status: "pending" } }
     );
 
 
@@ -122,10 +156,13 @@ try {
 
 const declineFriendRequest = async (req, res) => {
 try {
-    const { userId, friendId } = req.body;
+    const { username, friendUsername } = req.body;
 
+    const user = await User.findOne({ where: { username: username  } });
+    const friend = await User.findOne({ where: { username: friendUsername  } });
+    
     const existingFriendRequest = await Friend.findOne({
-      where: { userId: friendId, friendId: userId, status: "pending" }
+      where: { userId: friend.id, friendId: user.id, status: "pending" }
     });
 
     if (!existingFriendRequest) {
@@ -133,7 +170,7 @@ try {
     }
 
     const deletedRows = await Friend.destroy({
-    where: { userId: friendId, friendId: userId, status: "pending" }
+    where: { userId: friend.id, friendId: user.id, status: "pending" }
     });
 
     if (deletedRows === 0) {
@@ -149,10 +186,15 @@ try {
 
 const cancelFriendRequest = async (req, res) => {
 try {
-    const { userId, friendId } = req.body;
+    const { username, friendUsername } = req.body;
+
+    console.log("Username:", username);
+    console.log("FriendUsername:", friendUsername);
+    const user = await User.findOne({ where: { username: username  } });
+    const friend = await User.findOne({ where: { username: friendUsername } });
 
     const deletedRows = await Friend.destroy({
-      where: { userId: userId, friendId: friendId, status: "pending" }
+      where: { userId: user.id, friendId: friend.id, status: "pending" }
     });
 
     if (deletedRows === 0) {
@@ -168,19 +210,23 @@ try {
 
 const deleteFriend = async (req, res) => {
 try {
-    const { userId, friendId } = req.body;
+    const { username, friendUsername } = req.body;
+
+    
+    const user = await User.findOne({ where: { username: username  } });
+    const friend = await User.findOne({ where: { username: friendUsername } });
 
     const deletedRows = await Friend.destroy({
       where: {
         [Op.or]: [
           {
-            userId: friendId,
-            friendId: userId,
+            userId: user.id,
+            friendId: friend.id,
             status: { [Op.in]: ["accepted"] },
           },
           {
-            userId: userId,
-            friendId: friendId,
+            userId: friend.id,
+            friendId: user.id,
             status: { [Op.in]: ["accepted"] },
           },
         ],
