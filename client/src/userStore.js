@@ -33,7 +33,7 @@ export const useUserStore = defineStore("user", {
         throw new Error("Failed to login");
       }
     },
-    setUser(user) {
+    async setUser(user) {
       this.user = user;
       localStorage.setItem("user", JSON.stringify(user));
     },

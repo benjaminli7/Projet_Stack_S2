@@ -11,6 +11,8 @@ import GamemodeView from "./views/game/GamemodeView.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Friends from "./views/user/friends/Friends.vue"
 import BackDashboard from "./views/back/BackDashboard.vue"
+import { googleAuthCallback } from "./services/google-auth";
+import GoogleSetpwd from "./views/auth/GoogleSetpwd.vue";
 
 const routes = [
   {
@@ -24,6 +26,10 @@ const routes = [
     component: Login
   },
   {
+    path: '/google/callback',
+    name : 'GoogleCallback',
+  },
+  {
     path: '/register',
     name : 'Register',
     component: Register
@@ -32,6 +38,11 @@ const routes = [
     path: '/verify-email',
     name: 'VerifyEmail',
     component: VerifyEmail
+  },
+  {
+    path: '/setGooglePassword',
+    name: 'GoogleSetpwd',
+    component: GoogleSetpwd
   },
   {
     path: '/logout',
@@ -73,7 +84,7 @@ const routes = [
     name : 'BackDashboard',
     component: BackDashboard,
     meta: { requiresAuth: true, requiresAdmin: true }
-  }
+  },
 
 ];
 
@@ -82,7 +93,7 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach( async (to, from, next) => {
   const isAuthenticated = localStorage.getItem('token');
   
   if (to.name === 'Login' || to.name === 'Register') {
@@ -94,7 +105,8 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === 'Logout') {
     localStorage.removeItem('token');
     location.reload();
-  } else {
+  } 
+  else {
     if (to.matched.some(record => record.meta.requiresAuth)) {
       if (isAuthenticated) {
         next();
@@ -112,7 +124,30 @@ router.beforeEach((to, from, next) => {
       } else {
         next('/login');
       }
-    } else {
+    }
+    else if(to.name === 'GoogleCallback') {
+      const code = to.query.code; 
+      try {
+        const data = await googleAuthCallback(code) 
+        if (data.status === 200) {
+          localStorage.setItem('token', data.data.token);
+          
+          next('/');
+        } else if (data.status === 201) {
+          // The user has been created but has to set his password
+          localStorage.setItem('token', data.data.token);
+          return next('/setGooglePassword');
+        } else {
+          alert('Une erreur est survenue')
+          return next('/');
+        }
+      } catch (error) {
+        console.error(error);
+        next('/'); // Redirect to an error page or fallback route
+      }
+
+    }
+    else {
       next();
     }
   }

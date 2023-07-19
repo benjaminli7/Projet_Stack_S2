@@ -61,6 +61,11 @@ module.exports = function (connection) {
         allowNull: false,
         defaultValue: false,
       },
+      isGoogle: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       sequelize: connection,

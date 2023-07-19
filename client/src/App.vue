@@ -7,7 +7,7 @@
   const route = useRoute();
 
   const showNavbar = computed(() => {
-    const hiddenRoutes = ['Login', 'Register'];
+    const hiddenRoutes = ['Login', 'Register', 'GoogleSetpwd' ,undefined];
     const isHiddenRoute = hiddenRoutes.includes(route.name);
     return !isHiddenRoute;
   });

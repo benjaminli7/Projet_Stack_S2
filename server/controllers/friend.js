@@ -54,42 +54,59 @@ const getAllFriendsByUser = async (req, res) => {
     const { username } = req.query;
     console.log("Username:", username);
 
-    const test = await User.findOne({ where: { username: username } });
+    const user = await User.findOne({ where: { username: username } });
 
-    if (!test) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // look for all requests initiated by the user or the ones where actionUserId is the user and status is accepted
     const friends = await Friend.findAll({
       where: {
         [Op.or]: [
-          {
-            userId: test.id,
-          },
-          {
-            actionUserId: test.id,
-            status: "accepted",
-          },
+          { userId: user.id, status: "accepted" },
+          { actionUserId: user.id },
         ],
       },
       include: [
-        {
-          model: User,
-          as: "user",
-          attributes: ["id", "username", "email"],
-        },
+        { model: User, as: 'user' },
+        { model: User, as: 'friend' },
       ],
     });
 
-    res.status(200) .json(friends);
+    //if friends.user included user infos return friends.friend else return friends.user but keep request params
+    const friendsList = friends.map((friend) => {
+      if (friend.user.id === user.id) {
+        return {
+          status: friend.status,
+          actionUserId: friend.actionUserId,
+          user: {
+            id: friend.friend.id,
+            username: friend.friend.username,
+            email: friend.friend.email,
+          },
+        };
+      } else {
+        return {
+          status: friend.status,
+          actionUserId: friend.actionUserId,
+          user: {
+            id: friend.user.id,
+            username: friend.user.username,
+            email: friend.user.email,
+          },
+        };
+      }
+    });
+    
 
 
+    res.status(200).json(friendsList);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 const getReceivedFriendRequests = async (req, res) => {
   try {

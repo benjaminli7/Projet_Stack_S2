@@ -26,7 +26,8 @@ const url = oauth2Client.generateAuthUrl({
 
 module.exports = {
     url,
-    oauth2Client
+    oauth2Client: oauth2Client  
+
 };
 
 
