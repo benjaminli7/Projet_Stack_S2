@@ -17,6 +17,14 @@ jobs:
         with:
           node-version: '20' 
         
+      - name: Where are we
+        run: ls 
+        working-directory: ./server
+                
+      - name: JSON Package
+        run: cat package.json
+        working-directory: ./server
+
       - name: install dependencies
         run: npm install 
         working-directory: ./server
