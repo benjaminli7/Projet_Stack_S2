@@ -12,10 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2 
 
-      - name: Setup Node.js and run tests
+      - name: Setup Node.js
         uses: actions/setup-node@v2
+        with:
+          node-version: '20' 
         
-      - working-directory: ./server
-        run : |
-          run: npm install 
-          run: npm test  
+      - name: install dependencies
+        run: npm install 
+        working-directory: ./server
+
+      - name: Start tests
+        run: npm test
+        working-directory: ./server
