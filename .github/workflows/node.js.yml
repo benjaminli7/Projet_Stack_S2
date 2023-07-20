@@ -18,6 +18,7 @@ jobs:
           node-version: '20.2'
           
       - run: cd server
+      - run: ls
       - run: cat package.json
 
       - name: Install dependencies
