@@ -36,3 +36,5 @@ jobs:
       - name: Start tests
         run: npm test
         working-directory: ./server
+        
+        
