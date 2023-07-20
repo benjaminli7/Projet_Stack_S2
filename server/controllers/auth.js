@@ -7,13 +7,17 @@ const { validationResult } = require('express-validator');
 const SendinBlueTransport = require('nodemailer-sendinblue-transport');
 const { oauth2Client, url } = require('../services/Google/google-auth');
 const { google } = require('googleapis');
-const { isGeneratorObject } = require('util/types');
 
 
 // Fonction de connexion
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(req.body);
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Veuillez saisir tous les champs' });
+    }
 
     // Vérification des erreurs de validation
     const errors = validationResult(req);
@@ -24,22 +28,27 @@ const login = async (req, res) => {
     }
 
     // Recherche de l'utilisateur dans la base de données
-    const user = await User.findOne({where : {'email' : email}});
+    const user = await User.findOne({ where: { email: email } });
 
+    console.log("User found: ", user);
     if (!user) {
       return res.status(401).json({ error: 'Identifiants invalides' });
     }
 
     // Vérification du mot de passe
-    const isPasswordValid = bcrypt.compare(password, user.password);
-
+    console.log("Password: ", password.trim(), user.password);
+    const isPasswordValid = await bcrypt.compare(password.trim(), user.password);
+    console.log("Password is valid: ", isPasswordValid);
     if (!isPasswordValid) {
+      console.log("Password is invalid");
       return res.status(401).json({ error: 'Identifiants invalides' });
+    } else {
+      console.log("Password is valid");
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-    res.status(200).json({ 
+    res.status(200).json({
       token: token,
       user: {
         id: user._id,
@@ -49,8 +58,8 @@ const login = async (req, res) => {
         email: user.email,
         roles: user.roles,
         status: user.status,
-        friends: user.friends
-      }
+        friends: user.friends,
+      },
     });
   } catch (err) {
     console.error(err);
@@ -61,7 +70,6 @@ const login = async (req, res) => {
 // Fonction d'inscription
 const register = async (req, res) => {
   try {
-    console.log(req.body);
     const { username, firstname, lastname, email, password } = req.body;
 
     // Vérification si le nom d'utilisateur est déjà pris
@@ -72,7 +80,7 @@ const register = async (req, res) => {
     }
 
     // Hashage du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
     // Création d'un token de vérification
     const verificationToken = crypto.randomBytes(20).toString('hex');
@@ -105,28 +113,28 @@ const register = async (req, res) => {
     });
 
     // Configuration de Nodemailer
-    let transporter = nodemailer.createTransport(
-        new SendinBlueTransport({
-          apiKey: process.env.SENDINBLUE_API_KEY,
-        })
-    );
+    // let transporter = nodemailer.createTransport(
+    //     new SendinBlueTransport({
+    //       apiKey: process.env.SENDINBLUE_API_KEY,
+    //     })
+    // );
 
-    // Configuration du message
-    let mailOptions = {
-      from: 'semainechallenge@gmail.com',
-      to: newUser.email,
-      subject: 'Vérification de l\'email',
-      text: `Merci de vous être inscrit. Veuillez cliquer sur le lien suivant pour vérifier votre email: http://127.0.0.1:5173/verify-email?token=${verificationToken}`
-    };
+    // // Configuration du message
+    // let mailOptions = {
+    //   from: 'semainechallenge@gmail.com',
+    //   to: newUser.email,
+    //   subject: 'Vérification de l\'email',
+    //   text: `Merci de vous être inscrit. Veuillez cliquer sur le lien suivant pour vérifier votre email: http://127.0.0.1:5173/verify-email?token=${verificationToken}`
+    // };
 
-    // Envoi de l'email
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info);
-      }
-    });
+    // // Envoi de l'email
+    // transporter.sendMail(mailOptions, function(error, info){
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     console.log('Email sent: ' + info);
+    //   }
+    // });
 
     res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
   } catch (err) {
@@ -270,12 +278,16 @@ const setGooglePassword = async (req, res) => {
 }
 
 
+const sanitizeUser = (user) => {
+
+};
 
  // Fonction de déconnexion
 const logout = (req, res) => {
-//   // A FAIRE
-//   res.status(200).json({ message: 'Déconnexion réussie' });
+  // A FAIRE
+  res.status(200).json({ message: 'Déconnexion réussie' });
 };
+
 
 module.exports = {
   login,

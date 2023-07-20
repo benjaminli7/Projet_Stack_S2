@@ -101,7 +101,12 @@ module.exports = function (connection) {
       foreignKey: 'userId',
       as: 'friends',
     });
+    User.belongsToMany(models.Achievement, {
+      through: 'user_achievements',
+      as: 'achievements',
+    });
   };
+  
   
   return User;
 };
