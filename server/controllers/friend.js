@@ -5,17 +5,18 @@ const createFriend = async (req, res) => {
   const { username, friendUsername } = req.body;
 
   try {
+
+
+    if (username === friendUsername) {
+      console.log("You can't add yourself as a friend");
+      return res.status(400).json({ message: "You can't add yourself as a friend" });
+    }
     const user = await User.findOne({ where:{ username: username } })
     const friend = await User.findOne({ where: { username: friendUsername } })
 
     if (!user || !friend) {
       console.log("User or friend not found");
       return res.status(404).json({ message: "User or friend not found" });
-    }
-
-    if (username === friendUsername) {
-      console.log("You can't add yourself as a friend");
-      return res.status(400).json({ message: "You can't add yourself as a friend" });
     }
 
     const existingFriend = await Friend.findOne({
@@ -144,8 +145,7 @@ const acceptFriendRequest = async (req, res) => {
 try {
     const { username, friendUsername } = req.body;
 
-    const user = await User.findOne({ where: { username: username 
- } });
+    const user = await User.findOne({ where: { username: username } });
     const friend = await User.findOne({ where: { username: friendUsername } });
 
     // check if the friend request exists
