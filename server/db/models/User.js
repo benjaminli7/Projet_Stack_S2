@@ -85,6 +85,11 @@ module.exports = function (connection) {
   User.addHook("beforeCreate", encryptPassword);
   User.addHook("beforeUpdate", encryptPassword);
 
+  User.associate = models => {
+    User.hasMany(models.Token,{
+      onDelete: "CASCADE",
+    })
+  }
   return User;
 };
 

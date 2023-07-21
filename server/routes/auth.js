@@ -11,10 +11,14 @@ router.post('/login', authController.login);
 router.post('/register', authController.register);
 
 // // Route pour la vérification de l'e-mail
-router.get('/verify-email', authController.verifyEmail);
+router.get('/verify-email/:token', authController.verifyEmail);
 
-// // Route pour la déconnexion
-router.delete('/logout', authController.logout);
+// // Route pour la réinitialisation du mot de passe
+router.post('/forgot-password', authController.forgotPassword);
+
+// // Route pour la réinitialisation du mot de passe
+router.post('/reset-password', authController.resetPassword);
+
 
 module.exports = router;
 

@@ -80,7 +80,12 @@ fs.readdirSync(path.join(__dirname, "models")).forEach((file) => {
   } catch (error) {
     console.log(error);
   }
+});
 
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
 
 module.exports = db;
