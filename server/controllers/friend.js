@@ -2,9 +2,8 @@ const { User, Friend } = require("../db");
 const { Op } = require("sequelize");
 
 const createFriend = async (req, res) => {
-  const { username, friendUsername } = req.body;
-
   try {
+    const { username, friendUsername } = req.body;
 
 
     if (username === friendUsername) {

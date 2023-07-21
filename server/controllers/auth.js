@@ -236,9 +236,9 @@ const googleAuthCallback = async (req, res) => {
         isVerified: true,
         isGoogle: true,
       });
-      const randomPassword = crypto.randomBytes(20).toString('hex');
-      const hashedPassword = await bcrypt.hash(randomPassword, 10);
-      newUser.password = hashedPassword;
+      // create a random password 8 characters minimum
+      const randomPassword = Math.random().toString(36).slice(-8);
+      newUser.password = randomPassword;
       await newUser.save();
 
       
@@ -309,14 +309,13 @@ const resetPassword = async (req, res) => {
 const setGooglePassword = async (req, res) => {
   try {
       const { user , password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
 
       const existingUser = await User.findOne({where : {'email' : user.email}});
       if (existingUser === null) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      existingUser.password = hashedPassword;
+      existingUser.password = password;
       await existingUser.save();
 
       res.status(200).json({ message: 'Mot de passe enregistré avec succès' });
