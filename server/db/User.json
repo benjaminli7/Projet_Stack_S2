@@ -1,0 +1,58 @@
+[
+    {
+      "username": "user1",
+      "lastname": "Doe",
+      "firstname": "John",
+      "email": "john.doe@example.com",
+      "password": "$2a$10$Ug6bJ2SicZUn9lg0OPQZt.Pq4aFrrad2QYzljErPM0S60xQ51PyzK", 
+      "roles": ["user"],
+      "status": 0,
+      "isVerified": true,
+      "isGoogle": false
+    },
+    {
+      "username": "user2",
+      "lastname": "Smith",
+      "firstname": "Jane",
+      "email": "jane.smith@example.com",
+      "password": "$2a$10$Ug6bJ2SicZUn9lg0OPQZt.Pq4aFrrad2QYzljErPM0S60xQ51PyzK", 
+      "roles": ["user"],
+      "status": 0,
+      "isVerified": true,
+      "isGoogle": false
+    },
+    {
+      "username": "user3",
+      "lastname": "Johnson",
+      "firstname": "David",
+      "email": "david.johnson@example.com",
+      "password": "$2a$10$Ug6bJ2SicZUn9lg0OPQZt.Pq4aFrrad2QYzljErPM0S60xQ51PyzK",
+      "roles": ["user"],
+      "status": 0,
+      "isVerified": true,
+      "isGoogle": false
+    },
+    {
+      "username": "user4",
+      "lastname": "Brown",
+      "firstname": "Emily",
+      "email": "emily.brown@example.com",
+      "password": "$2a$10$Ug6bJ2SicZUn9lg0OPQZt.Pq4aFrrad2QYzljErPM0S60xQ51PyzK", 
+      "roles": ["user"],
+      "status": 0,
+      "isVerified": true,
+      "isGoogle": false
+    },
+    {
+      "username": "user5",
+      "lastname": "Lee",
+      "firstname": "Michael",
+      "email": "michael.lee@example.com",
+      "password": "$2a$10$Ug6bJ2SicZUn9lg0OPQZt.Pq4aFrrad2QYzljErPM0S60xQ51PyzK", 
+      "roles": ["user"],
+      "status": 0,
+      "isVerified": true,
+      "isGoogle": false
+    }
+  ]
+  

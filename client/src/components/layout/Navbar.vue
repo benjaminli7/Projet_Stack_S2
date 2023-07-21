@@ -12,6 +12,7 @@ const isAuthenticated = computed(() => {
       return JSON.parse(user);
     }
   });
+  
 </script>
 
 <template>

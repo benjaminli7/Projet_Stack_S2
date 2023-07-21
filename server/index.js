@@ -92,7 +92,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/users', users)
-// app.use('/friends', friends)
+app.use('/friends', friends)
 app.use('/auth', auth)
 
 app.get("/", (req, res) => {

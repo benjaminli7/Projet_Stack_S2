@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 
+
 module.exports = function (connection) {
   class User extends Model {
     async checkPassword(password) {
@@ -51,16 +52,16 @@ module.exports = function (connection) {
         allowNull: false,
         defaultValue: 0,
       },
-      friends: {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
-        allowNull: false,
-        defaultValue: [],
-      },
       verificationToken: {
         type: DataTypes.STRING,
         allowNull: true,
       },
       isVerified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      isGoogle: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
@@ -85,11 +86,30 @@ module.exports = function (connection) {
   User.addHook("beforeCreate", encryptPassword);
   User.addHook("beforeUpdate", encryptPassword);
 
-  User.associate = models => {
+
+  // On delete, delete all associated friends
+  User.addHook("beforeDestroy", async (user, options) => {
+    const Friend = require("./Friend")(connection);
+    await Friend.destroy({
+      where: {
+        [Op.or]: [{ userId: user.id }, { friendUsername: user.id }],
+      },
+    });
+  });
+
+  User.associate = function (models) {
     User.hasMany(models.Token,{
       onDelete: "CASCADE",
-    })
-  }
+    });
+    User.hasMany(models.Friend, {
+      foreignKey: 'userId',
+      as: 'friends',
+    });
+    User.belongsToMany(models.Achievement, {
+      through: 'user_achievements',
+      as: 'achievements',
+    });
+  };
+  
   return User;
 };
-

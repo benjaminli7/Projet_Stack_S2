@@ -1,6 +1,4 @@
-const { connection } = require("./db");
+const { syncDatabaseAndLoadFixtures } = require("./db");
 
-connection.sync({ force: true }).then(() => {
-  console.log("Database synchronized");
-  connection.close();
-});
+// Call the syncDatabaseAndLoadFixtures function
+syncDatabaseAndLoadFixtures();

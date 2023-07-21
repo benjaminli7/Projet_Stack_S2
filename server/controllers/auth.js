@@ -7,12 +7,20 @@ const {User, Token} = require('../db');
 const { validationResult } = require('express-validator');
 const SendinBlueTransport = require('nodemailer-sendinblue-transport');
 const exp = require('constants');
+const { oauth2Client, url } = require('../services/Google/google-auth');
+const { google } = require('googleapis');
+
 
 
 // Fonction de connexion
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(req.body);
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Veuillez saisir tous les champs' });
+    }
 
     // Vérification des erreurs de validation
     const errors = validationResult(req);
@@ -23,7 +31,8 @@ const login = async (req, res) => {
     }
 
     // Recherche de l'utilisateur dans la base de données
-    const user = await User.findOne({where : {'email' : email}});
+    const user = await User.findOne({ where: { email: email } });
+
 
     // Vérification du mot de passe
     if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
@@ -44,7 +53,6 @@ const login = async (req, res) => {
       });
     }   
     return res.status(401).json({ error: 'Identifiants invalides' });
-
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Erreur interne du serveur' });
@@ -55,7 +63,6 @@ const login = async (req, res) => {
 const register = async (req, res) => {
 
   try {
-    console.log(req.body);
     const { username, firstname, lastname, email, password } = req.body;
 
     // Vérification si le nom d'utilisateur est déjà pris
@@ -64,9 +71,6 @@ const register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ error: 'Ce nom d\'utilisateur est déjà pris' });
     }
-
-    // Hashage du mot de passe
-    // const hashedPassword = await bcrypt.hash(password, 10);
 
     // Création d'un token de vérification
     const verificationToken = crypto.randomBytes(20).toString('hex');
@@ -108,6 +112,7 @@ const register = async (req, res) => {
       }
     });
 
+
     res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
   } catch (err) {
     console.error(err);
@@ -147,6 +152,7 @@ const verifyEmail = async (req, res) => {
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 };
+
 
 const forgotPassword = async (req, res) => {
   try {
@@ -190,11 +196,100 @@ const forgotPassword = async (req, res) => {
     });
     return res.status(200).json({ message: 'Un email vous a été envoyé' });
 
-    
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
+}
+
+const googleAuth = async (req, res) => {
+  try {
+    const authUrl = url;
+    res.status(200).json({ authUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+};
+
+const googleAuthCallback = async (req, res) => {
+  try {
+    const { code } = req.query;
+
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    const oauth2 = google.oauth2({
+      auth: oauth2Client,
+      version: 'v2',
+    });
+    const { data } = await oauth2.userinfo.get();
+
+    const { email, given_name, family_name } = data;
+    // console.log(data);
+    // Vérifier si l'utilisateur existe déjà dans la base de données
+    const existingUser = await User.findOne({where : {'email' : email}});
+
+    if (existingUser === null) {
+      // Créer un nouvel utilisateur
+      const newUser = new User({
+        firstname: given_name,
+        lastname: family_name,
+        username: given_name +" "+ family_name,
+        email: email,
+        password: null,
+        roles: ["user"],
+        status: 0,
+        friends: [],
+        isVerified: true,
+        isGoogle: true,
+      });
+      const randomPassword = crypto.randomBytes(20).toString('hex');
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      newUser.password = hashedPassword;
+      await newUser.save();
+
+      
+      const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET);
+
+      return res.status(201).json({
+        token: token,
+        user: {
+          id: newUser.id,
+          firstname: newUser.firstname,
+          username: newUser.username,
+          lastname: newUser.lastname,
+          email: newUser.email,
+          roles: newUser.roles,
+          status: newUser.status,
+          friends: newUser.friends
+        }
+      });
+    } 
+
+    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET);
+
+    return res.status(200).json({
+      token: token,
+      user: {
+        id: existingUser.id,
+        username: existingUser.username,
+        firstname: existingUser.firstname,
+        lastname: existingUser.lastname,
+        email: existingUser.email,
+        roles: existingUser.roles,
+        status: existingUser.status,
+        friends: existingUser.friends,
+      }
+    });
+
+
+>>>>>>> dev
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+<<<<<<< HEAD
 };
 
 const resetPassword = async (req, res) => {
@@ -221,10 +316,35 @@ const resetPassword = async (req, res) => {
   }
  
 }
+
+const setGooglePassword = async (req, res) => {
+  try {
+      const { user , password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const existingUser = await User.findOne({where : {'email' : user.email}});
+      if (existingUser === null) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      existingUser.password = hashedPassword;
+      await existingUser.save();
+
+      res.status(200).json({ message: 'Mot de passe enregistré avec succès' });
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+}
+
 module.exports = {
   login,
   register,
-  verifyEmail,
   forgotPassword,
-  resetPassword
-};
+  resetPassword,
+  verifyEmail,
+  googleAuth,
+  googleAuthCallback,
+  setGooglePassword
+}

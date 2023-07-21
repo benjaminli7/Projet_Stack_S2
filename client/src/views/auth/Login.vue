@@ -2,6 +2,7 @@
   import { useUserStore } from '../../userStore';
   import router from '../../router';
   import { ref } from 'vue';
+  import { getGoogleAuthUrl } from '../../services/google-auth';
 
   const userStore = useUserStore();
 
@@ -18,6 +19,16 @@
       alert(error);
     }
   };
+  
+  const redirectToGoogle = async () => {
+    try {
+      const url = await getGoogleAuthUrl();
+      window.location.href = url;
+    } catch (error) {
+      router.push('/login');
+      alert(error);
+    }
+  }
 
 
 
@@ -36,6 +47,11 @@
         <div>
           <button type="submit" class="w-full px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600">Se connecter</button>
         </div>
+
+        <div class="mt-4">
+          <button @click.prevent="redirectToGoogle" @click="redirectToGoogle" class="text-sm text-red-500 hover:text-red-600">Continuer avec Google</button>
+        </div>
+
         <div class="mt-4">
           <router-link to="/register" class="text-sm text-red-500 hover:text-red-600">Pas encore inscrit ?</router-link>
       </div>
