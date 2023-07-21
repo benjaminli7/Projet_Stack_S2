@@ -36,9 +36,7 @@ const login = async (req, res) => {
     }
 
     // Vérification du mot de passe
-    console.log("Password: ", password.trim(), user.password);
     const isPasswordValid = await bcrypt.compare(password.trim(), user.password);
-    console.log("Password is valid: ", isPasswordValid);
     if (!isPasswordValid) {
       console.log("Password is invalid");
       return res.status(401).json({ error: 'Identifiants invalides' });
