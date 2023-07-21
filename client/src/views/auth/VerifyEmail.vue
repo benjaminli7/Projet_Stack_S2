@@ -24,7 +24,7 @@ export default {
     console.log("Token récupéré à partir de la requête : ", token);
 
     // URL de la requête
-    const url = 'http://localhost:3000/auth/verify-email?token=' + token;
+    const url = 'http://localhost:3000/auth/verify-email/' + token;
     // Requête API
     axios.get(url)
         .then(response => {

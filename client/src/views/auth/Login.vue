@@ -53,8 +53,12 @@
         </div>
 
         <div class="mt-4">
+          <router-link to="/forgetPassword" class="text-sm text-red-500 hover:text-red-600">Mot de passe oublié</router-link>
+        </div>
+        
+        <div class="mt-4">
           <router-link to="/register" class="text-sm text-red-500 hover:text-red-600">Pas encore inscrit ?</router-link>
-      </div>
+        </div>
       </form>
 
     </div>

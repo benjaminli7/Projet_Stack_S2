@@ -124,14 +124,6 @@ const verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
 
-
-    // Vérifier le token et mettre à jour le statut de l'utilisateur, supprimer le token si l'utilisateur est trouvé
-    // const user = await db.user.findOneAndUpdate(
-    //     { verificationToken: token },
-    //     { $set: { isVerified: true, verificationToken: null } },
-    //     { new: true }
-    // );
-
     const user = await User.findOne({where: {'verificationToken' : token} });
 
     if (!user) {
@@ -282,14 +274,11 @@ const googleAuthCallback = async (req, res) => {
         friends: existingUser.friends,
       }
     });
-
-
->>>>>>> dev
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
-<<<<<<< HEAD
+
 };
 
 const resetPassword = async (req, res) => {
