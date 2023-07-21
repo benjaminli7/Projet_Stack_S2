@@ -15,6 +15,13 @@ fs.readdirSync(path.join(__dirname, "models")).forEach((file) => {
   }
 });
 
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+
+});
+
 async function loadFixtures() {
   const fixtures = {};
 

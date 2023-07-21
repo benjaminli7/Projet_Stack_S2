@@ -86,6 +86,7 @@ module.exports = function (connection) {
   User.addHook("beforeCreate", encryptPassword);
   User.addHook("beforeUpdate", encryptPassword);
 
+
   // On delete, delete all associated friends
   User.addHook("beforeDestroy", async (user, options) => {
     const Friend = require("./Friend")(connection);
@@ -97,6 +98,9 @@ module.exports = function (connection) {
   });
 
   User.associate = function (models) {
+    User.hasMany(models.Token,{
+      onDelete: "CASCADE",
+    });
     User.hasMany(models.Friend, {
       foreignKey: 'userId',
       as: 'friends',
@@ -106,7 +110,6 @@ module.exports = function (connection) {
       as: 'achievements',
     });
   };
-  
   
   return User;
 };
