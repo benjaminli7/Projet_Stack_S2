@@ -5,6 +5,14 @@ import { computed } from "vue";
 const isAuthenticated = computed(() => {
   return localStorage.getItem("token") !== null;
 });
+// check if isAuthentificated then make a const with user data
+  const user = computed(() => {
+    let user = localStorage.getItem("user");
+    if (user) {
+      return JSON.parse(user);
+    }
+  });
+  
 </script>
 
 <template>
@@ -19,6 +27,8 @@ const isAuthenticated = computed(() => {
         <NavbarLink>Classement</NavbarLink>
         <NavbarLink link="/profile">Profil</NavbarLink>
         <NavbarLink link="/friends">Friends</NavbarLink>
+        <NavbarLink v-if="isAuthenticated && user.roles.includes('admin')" link="/back">Back Office</NavbarLink>
+
       </NavbarCollapse>
     </template>
     <template #right-side>

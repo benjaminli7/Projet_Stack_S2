@@ -12,7 +12,7 @@ const authenticateToken = (req, res, next) => {
     // console.log(token);
     // authHeader : contient la valeur de l'en-tête d'autorisation de la requête
     // token : contient le jeton d'authentification extrait de l'en-tête d'autorisation
-    // Vérification si le jeton est présent
+    // Vérification si le jeton est présent    
     if (!token) {
         return res.status(401).json({ error: 'Non autorisé' });
     }

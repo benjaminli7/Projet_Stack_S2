@@ -1,0 +1,7 @@
+version: '3.6'
+
+services:
+  server:
+    volumes:
+      - ./geoguessr/server:/usr/src/app
+    command: npm run watch

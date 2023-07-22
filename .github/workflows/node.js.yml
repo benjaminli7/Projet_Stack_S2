@@ -1,0 +1,40 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - dev 
+      - feature/unit-testing
+jobs:
+  test:
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2 
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20' 
+        
+      - name: Where are we
+        run: ls 
+        working-directory: ./server
+                
+      - name: install Jest
+        run: npm install jest -g
+        working-directory: ./server
+        
+      - name: JSON Package
+        run: cat package.json
+        working-directory: ./server
+
+      - name: install dependencies
+        run: npm install 
+        working-directory: ./server
+
+      - name: Start tests
+        run: npm test
+        working-directory: ./server
+        
+        

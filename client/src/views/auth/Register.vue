@@ -2,6 +2,8 @@
   import axios from 'axios';  
   import { reactive } from 'vue';
   import router from '../../router';
+  import { getGoogleAuthUrl } from '../../services/google-auth';
+
 
   const state = reactive({
     username: '',
@@ -10,6 +12,18 @@
     email: '',
     password: '',
   });
+
+  const redirectToGoogle = async () => {
+    try {
+      // Get the Google auth URL
+      const url = await getGoogleAuthUrl();
+      // Redirect the user to the Google auth URL
+      window.location.href = url;
+    } catch (error) {
+      router.push('/login');
+      alert(error);
+    }
+  }
 
   const register = async () => {
     try {
@@ -45,10 +59,13 @@
           <input type="email" v-model="state.email" placeholder="Email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />
         </div>
         <div class="mb-4">
-          <input type="password" v-model="state.password" placeholder="Mot de passe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />
+          <input type="password" v-model="state.password" placeholder="Mot de passe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" required/>
         </div>
         <div>
           <button type="submit" class="w-full px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600">S'inscrire</button>
+        </div>
+        <div class="mt-4">
+          <button @click.prevent="redirectToGoogle" @click="redirectToGoogle" class="text-sm text-red-500 hover:text-red-600">Continuer avec Google</button>
         </div>
         <div class="mt-4">
             <router-link to="/login" class="text-sm text-red-500 hover:text-red-600">Déjà inscrit ?</router-link>
