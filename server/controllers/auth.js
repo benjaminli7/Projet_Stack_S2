@@ -175,7 +175,7 @@ const forgotPassword = async (req, res) => {
       from: 'semainechallenge@gmail.com',
       to: user.email,
       subject: 'Changement de mot de passe',
-      text: `Vous souhaitez changer votre mot de passe ? Allez sur  http://127.0.0.1:5173/forgetPassword?token=${verificationToken}`
+      text: `Vous souhaitez changer votre mot de passe ? Allez sur  http://127.0.0.1:5173/reset-password?token=${verificationToken}`
     };
 
     // Envoi de l'email

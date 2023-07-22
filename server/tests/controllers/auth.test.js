@@ -139,3 +139,27 @@ describe("login function", () => {
         });
     });
 });
+
+
+// describe("register function", () => {
+//     afterEach(() => {
+//       jest.clearAllMocks();
+//     });
+//     describe("register function", () => {
+//         it("should return a 201 status and a token with user data when valid credentials are provided", async () => {
+//             const req = {
+//                 body: {
+//                     firstname: "John",
+//                     lastname: "Doe",
+//                     username: "johndoe",
+//                     email: "john@doe.fr",
+//                     password: "password123",
+//                 },
+//             };
+//             const res = {
+//                 status: jest.fn().mockReturnThis(),
+//                 json: jest.fn(),
+//             };
+//         });
+//     });
+// });
