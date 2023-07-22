@@ -2,6 +2,7 @@
 import { io } from "socket.io-client";
 import { onMounted, ref } from "vue";
 import { useUserStore } from "../../userStore";
+import MapView from "./MapView.vue";
 
 let socket;
 const store = useUserStore();
@@ -31,5 +32,7 @@ onMounted(() => {
 
 <template>
   <p v-if="loading">Searching opponent...</p>
-  <p v-else>Game is starting</p>
+  <p v-else>
+    <MapView />
+  </p>
 </template>
