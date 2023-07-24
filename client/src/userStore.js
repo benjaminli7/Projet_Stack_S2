@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { io } from 'socket.io-client';
+
 
 export const useUserStore = defineStore("user", {
   state: () => ({
     user: null,
+    socket: null,
   }),
   getters: {
     getUser: (state) => {
@@ -14,6 +17,9 @@ export const useUserStore = defineStore("user", {
       }
 
     },
+    agetSocket: (state) => {
+      return state.socket;
+    }
   },
   actions: {
     async login(email, password) {
@@ -26,8 +32,23 @@ export const useUserStore = defineStore("user", {
         const token = response.data.token;
         localStorage.setItem("token", token);
 
+
+
         const user = response.data.user;
-        this.setUser(user);
+        await this.setUser(user);
+
+        const socket = this.getSocket; // Get the existing socket from the state
+
+        if (!socket) {
+          // Create a new socket only if it doesn't exist
+          const newSocket = await io('http://localhost:3000');
+          newSocket.emit('authenticate',user.id ); 
+          //authentification
+
+          await this.setSocket(newSocket);
+        }
+
+
       } catch (error) {
         console.error(error);
         throw new Error("Failed to login");
@@ -37,6 +58,10 @@ export const useUserStore = defineStore("user", {
       this.user = user;
       localStorage.setItem("user", JSON.stringify(user));
     },
+    async setSocket(socket) {
+      this.socket = socket;
+    },
+    
     async getUserFriends(username) {
       try {
         const token = localStorage.getItem('token');
@@ -201,6 +226,12 @@ export const useUserStore = defineStore("user", {
         console.error(error);
         throw new Error("Failed to delete friend");
       }
-    }
+    },
+    disconnectSocket() {
+      if (this.socket) {
+        this.socket.disconnect();
+        this.socket = null; // Reset the socket instance in the state
+      }
+    },
   },
 });

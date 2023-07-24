@@ -14,6 +14,8 @@ onMounted(() => {
   console.log(user)
   socket = io("http://localhost:3000");
 
+  //console.log(socket);
+
   socket.on("connection", (message) => {
     messages.value.push({
       id: Date.now(),
@@ -29,6 +31,7 @@ onMounted(() => {
   });
 
   socket.on("message", (message) => {
+    
     messages.value.push(message);
   });
 });
