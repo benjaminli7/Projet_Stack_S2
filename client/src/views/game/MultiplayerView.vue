@@ -27,9 +27,10 @@ onMounted(() => {
   socket.on("gameStarting", (positionsData) => {
     loading.value = false;
     positions.value = positionsData;
-    console.log("game startingg");
-
+    console.log("game starting");
   });
+
+
 
 
 });
