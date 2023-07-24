@@ -1,0 +1,39 @@
+[
+    {
+      "name": "Maître du classement",
+      "description": "Atteindre un Elo de 2000",
+      "points": 100,
+      "type": "elo",
+      "targetValue": 2000
+    },
+    {
+      "name": "Acharné des parties",
+      "description": "Jouer 100 parties",
+      "points": 50,
+      "type": "gamesPlayed",
+      "targetValue": 100
+    },
+    {
+      "name": "Toujours présent",
+      "description": "Se connecter pendant 30 jours consécutifs",
+      "points": 75,
+      "type": "connections",
+      "targetValue": 30
+    },
+    {
+      "name": "Champion ultime",
+      "description": "Obtenir le score maximum dans une partie",
+      "points": 200,
+      "type": "special",
+      "targetValue": 5000
+    },
+    {
+        "name": "Retrouver les cramptés",
+        "description": "Reinitialiser son mot de passe",
+        "points": 300,
+        "type": "special",
+        "targetValue": 1
+    }
+    
+  ]
+  
