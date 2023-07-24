@@ -1,61 +1,52 @@
 <script setup>
 import { io } from "socket.io-client";
 import { onMounted, ref } from "vue";
-import { Button, Input } from "flowbite-vue"
 import { useUserStore } from "../../userStore";
+import StreetViewMap from "./StreetViewMap.vue";
+import GoogleMap from "./GoogleMap.vue";
 
-const messages = ref([]);
-const newMessage = ref("");
 let socket;
 const store = useUserStore();
+const user = store.getUser;
+const loading = ref(true);
+let positions = ref([]);
+const round = ref(0);
+let roomName = ref("");
+
 
 onMounted(() => {
-  const user = store.getUser;
-  console.log(user)
   socket = io("http://localhost:3000");
+  socket.emit("playerJoined", user.username)
+  socket.emit("findOpponent")
 
-  socket.on("connection", (message) => {
-    messages.value.push({
-      id: Date.now(),
-      text: message,
-    });
+  socket.on("joinRoom", (roomNameData) => {
+    roomName.value = roomNameData;
+    socket.emit("joinRoom", roomNameData)
+  })
+
+  socket.on("gameStarting", (positionsData) => {
+    loading.value = false;
+    positions.value = positionsData;
+    console.log("game starting");
+
   });
 
-  socket.on("disconnection", (message) => {
-    messages.value.push({
-      id: Date.now(),
-      text: message,
-    });
-  });
 
-  socket.on("message", (message) => {
-    messages.value.push(message);
-  });
 });
 
-const sendMessage = () => {
-  if (newMessage.value) {
-    const message = {
-      id: Date.now(),
-      text: newMessage.value,
-    };
-    socket.emit("sendMessage", message);
-    newMessage.value = "";
-  }
-};
 </script>
 
 <template>
-  <h1>Multiplayer view</h1>
-  <Button color="default">Jouer</Button>
-
-  <div>
-    <div v-for="message in messages" :key="message.id">{{ message.text }}</div>
-    <Input
-      type="text"
-      v-model="newMessage"
-      @keyup.enter="sendMessage"
-      placeholder="Type your message"
-    />
-  </div>
+  <p v-if="loading">Searching opponent...</p>
+  <p id="map-wrapper" v-else>
+    <StreetViewMap :positions="positions" :round="round"/>
+    <GoogleMap :positions="positions" :round="round" :roomName="roomName" />
+  </p>
 </template>
+
+<style scoped>
+#map-wrapper {
+  position: relative;
+}
+
+</style>
