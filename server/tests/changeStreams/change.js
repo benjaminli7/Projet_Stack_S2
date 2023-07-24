@@ -91,6 +91,6 @@ async function addGamePlayed() {
 }
 
 // execute the async function every 1 second
-setInterval(addGamePlayed, 1000);
+addGamePlayed()
 
   

@@ -69,6 +69,8 @@ var users = require('./routes/user')
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
 
+
+
 app.use(cors());
 // app.use(function (req, res, next) {
 //   if (["POST", "PUT", "PATCH"].includes(req.method)) {
@@ -119,27 +121,55 @@ app.use(errorHandler);
 //     console.error("Erreur de connexion", err);
 //   });
 
-  app.listen(3000, () => console.log("Serverr started on port 3000")); 
 // // Démarrage du serveur
-// const server = app.listen(process.env.PORT, () => {
-//   console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
-// });
+const server = app.listen(process.env.PORT, () => {
+  console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
+});
 
-// const io = require('socket.io')(server, {
-//   cors: {
-//     origin: '*',
-//   }
-// })
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+})
 
-// io.on("connection", function (socket) {
-//   io.emit("connection",  `${socket.id} is connected`)
+const socketUserMap = new Map();
 
-//   // Handle disconnections
-//   socket.on("disconnect", () => {
-//     io.emit("disconnection", `${socket.id} disconnected `);
-//   });
+io.on('connection', function (socket) {
+  io.emit('connection', `${socket.id} is connected`);
 
-//   socket.on("sendMessage", (message) => {
-//     io.emit("message", message)
-//   })
-// });
+  socket.on('authenticate', (userId) => {
+    console.log(`User ${userId} authenticated.`);
+    socket.join(userId); 
+    socketUserMap.set( userId, socket.id);
+    console.log(socketUserMap);
+  });
+
+  socket.on('disconnect', () => {
+    const userId = socketUserMap.get(socket.id);
+    if (userId) {
+      socketUserMap.delete(socket.id);
+      console.log(`User ${userId} disconnected.`);
+    }
+  });
+
+  socket.on('sendMessage', (message) => {
+    io.emit('message', message);
+  });
+
+  socket.on('sendFriendRequest', (message) => {
+    io.emit('friendRequest', message);
+  });
+
+});
+
+
+module.exports = {
+  io,
+  socketUserMap
+}
+require('./tests/changeStreams/test')
+
+
+
+

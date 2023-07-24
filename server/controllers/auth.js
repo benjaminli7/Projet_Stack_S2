@@ -16,7 +16,6 @@ const { google } = require('googleapis');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Veuillez saisir tous les champs' });
@@ -36,12 +35,14 @@ const login = async (req, res) => {
 
     // Vérification du mot de passe
     if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+
+      console.log("User found: ", user.id);
 
       return res.status(200).json({ 
         token: token,
         user: {
-          id: user._id,
+          id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
           username: user.username,
@@ -236,8 +237,8 @@ const googleAuthCallback = async (req, res) => {
         isVerified: true,
         isGoogle: true,
       });
-      // create a random password 8 characters minimum
-      const randomPassword = Math.random().toString(36).slice(-8);
+      // create a random password 10 characters minimum
+      const randomPassword = crypto.randomBytes(10).toString('hex');
       newUser.password = randomPassword;
       await newUser.save();
 
