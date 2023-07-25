@@ -1,4 +1,3 @@
-require('dotenv').config()
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -18,7 +17,6 @@ const ejs = require('ejs');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Veuillez saisir tous les champs' });
@@ -45,10 +43,12 @@ const login = async (req, res) => {
     if (await bcrypt.compare(password, user.password)){
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-      return res.status(200).json({ 
+      console.log("User found: ", user.id);
+
+      return res.status(200).json({
         token: token,
         user: {
-          id: user._id,
+          id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
           username: user.username,
@@ -58,7 +58,7 @@ const login = async (req, res) => {
           friends: user.friends
         }
       });
-    }   
+    }
     return res.status(401).json({ error: 'Identifiants invalides' });
   } catch (err) {
     console.error(err);

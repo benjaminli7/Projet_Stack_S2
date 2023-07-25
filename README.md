@@ -22,8 +22,20 @@ JWT_SECRET=5f4dcc3b5aa765d61d8327deb882cf99
 PORT=3000
 
 ```
+## Docker
+```
 
 docker exec projet_stack_s2-server-1  npm run dev
 
 Si modif sur la bdd 
 docker compose exec server node migrate.js
+```
+
+## Stripe
+```
+Cartes test :
+     success : 4242424242424242
+     fail : 4000000000000002
+     authentication_required : 4000000000003220
+
+```

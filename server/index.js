@@ -8,6 +8,8 @@ const cors = require("cors");
 var users = require('./routes/user')
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
+var stripeRoutes = require('./routes/stripe');
+
 
 var path = require('path');
 
@@ -20,15 +22,11 @@ const getRandomPositions = require("./utils");
 
 app.use(cors());
 
-app.use(express.json());
-
-app.use("/users", users);
-app.use("/friends", friends);
-app.use("/auth", auth);
 
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
+
 
 app.use(errorHandler);
 

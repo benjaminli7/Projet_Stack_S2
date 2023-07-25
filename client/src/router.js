@@ -15,6 +15,7 @@ import Friends from "./views/user/friends/Friends.vue"
 import BackDashboard from "./views/back/BackDashboard.vue"
 import { googleAuthCallback } from "./services/google-auth";
 import GoogleSetpwd from "./views/auth/GoogleSetpwd.vue";
+import Premium from './views/user/Premium.vue';
 
 const routes = [
   {
@@ -61,11 +62,6 @@ const routes = [
     name : 'Logout',
   },
   {
-    path: '/:pathMatch(.*)*',
-    name : 'NotFound',
-    component: NotFound
-  },
-  {
     path: '/profile',
     name : 'Profile',
     component: Profile,
@@ -89,6 +85,11 @@ const routes = [
     component: MultiplayerView,
     meta: { requiresAuth: true }
   },
+  {
+    path: '/premium',
+    name: 'Premium',
+    component: Premium
+  },
 
   // Back office routes
   {
@@ -96,6 +97,12 @@ const routes = [
     name : 'BackDashboard',
     component: BackDashboard,
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+
+  {
+    path: '/:pathMatch(.*)*',
+    name : 'NotFound',
+    component: NotFound
   },
 
 ];
