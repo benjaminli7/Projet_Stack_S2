@@ -2,6 +2,16 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { PurchasedItem } = require('../db');
 const { DateTime } = require('luxon');
 
+
+exports.checkIfItemPurchased = async (userId) => {
+    try {
+        const purchasedItem = await PurchasedItem.findOne({ userId });
+        return !!purchasedItem;
+    } catch (error) {
+        throw error;
+    }
+};
+
 exports.createPurchasedItem = async (data) => {
     try {
         const item = await PurchasedItem.create(data);
@@ -32,8 +42,8 @@ exports.createPaymentSession = async (userId, itemId, itemName, amount) => {
                 amount: amount.toString()
             },
             mode: 'payment',
-            success_url: `http://127.0.0.1:3000/stripe/purchaseSUCCESS?session_id={CHECKOUT_SESSION_ID}&userId=${userId}`,
-            cancel_url: 'http://127.0.0.1:5173/purchaseCANCEL',
+            success_url: `http://127.0.0.1:3000/stripe/purchaseSUCCESS?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: 'http://127.0.0.1:3000/stripe/purchaseSUCCESS?session_id={CHECKOUT_SESSION_ID}',
         });
         return session;
     } catch (error) {
