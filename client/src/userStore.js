@@ -10,12 +10,7 @@ export const useUserStore = defineStore("user", {
   }),
   getters: {
     getUser: (state) => {
-      // if(localStorage.getItem("user")) {
-      //   return JSON.parse(localStorage.getItem("user"));
-      // } else {
-        return state.user
-      //}
-
+      return state.user
     },
     getSocket: (state) => {
       return state.socket;
@@ -54,20 +49,14 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem('token');
 
-        console.log(typeof username + " " + username + " " + typeof token + " " + token)
         const response = await axios.get(
           `http://localhost:3000/users/friends`,
           {
-            params: {
-              username: username,
-            },
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         )
-        
-        //console.log(response.data);
         const friends = response.data;
         return friends;
 
@@ -79,19 +68,16 @@ export const useUserStore = defineStore("user", {
     async getReceivedFriendRequests(username) {
       try {
         const token = localStorage.getItem('token');
-        console.log(typeof username + " " + username + " " + typeof token + " " + token)
+        // console.log(typeof username + " " + username + " " + typeof token + " " + token)
         const response = await axios.get(
           `http://localhost:3000/users/friend-requests`,
           {
-            params: {
-              username: username,
-            },
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         )
-        console.log(response.data);
+        // console.log(response.data);
 
         const friends = response.data;
         return friends;
@@ -106,7 +92,6 @@ export const useUserStore = defineStore("user", {
         const response = await axios.post(
           'http://localhost:3000/friends',
           {
-            username,
             friendUsername,
           },
           {
@@ -126,11 +111,9 @@ export const useUserStore = defineStore("user", {
     async acceptFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
-        // alert(username + " " + friendUsername);
         const response = await axios.put(
           `http://localhost:3000/friends/friend-requests/accept`,
           {
-            username,
             friendUsername,
           },
           {
@@ -176,7 +159,6 @@ export const useUserStore = defineStore("user", {
         const response = await axios.put(
           `http://localhost:3000/friends/friend-requests/cancel`,
           {
-            username,
             friendUsername,
           },
           {
@@ -203,7 +185,6 @@ export const useUserStore = defineStore("user", {
               'Content-Type': 'application/json',
             },
             data: {
-              username,
               friendUsername,
             },
           }
@@ -236,7 +217,7 @@ export const useUserStore = defineStore("user", {
     disconnectSocket() {
       if (this.socket) {
         this.socket.disconnect();
-        this.socket = null; // Reset the socket instance in the state
+        this.socket = null; 
       }
     },
   },

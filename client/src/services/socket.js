@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import {eventBus}  from './eventBus';
 
 let socketInstance = null;
 
@@ -14,7 +15,7 @@ export const initSocket = async () => {
     socketInstance = newSocket;
 
     newSocket.on('achievement', function (data) {       
-        alert('User ' + user.username + ' has unlocked the achievement ' + data.achievement.name + ' !');
+      eventBus.dispatchEvent(new CustomEvent('achievementReceived', { detail: data.achievement }));
     //   }
     });
   }

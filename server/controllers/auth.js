@@ -35,7 +35,7 @@ const login = async (req, res) => {
 
     // Vérification du mot de passe
     if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
 
       console.log("User found: ", user.id);
 
@@ -242,8 +242,7 @@ const googleAuthCallback = async (req, res) => {
       newUser.password = randomPassword;
       await newUser.save();
 
-      
-      const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ infos: newUser}, process.env.JWT_SECRET);
 
       return res.status(201).json({
         token: token,
@@ -260,7 +259,7 @@ const googleAuthCallback = async (req, res) => {
       });
     } 
 
-    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ infos: existingUser}, process.env.JWT_SECRET);
 
     return res.status(200).json({
       token: token,
@@ -309,7 +308,7 @@ const resetPassword = async (req, res) => {
 
 const setGooglePassword = async (req, res) => {
   try {
-      const { user , password } = req.body;
+      const { password } = req.body;
 
       const existingUser = await User.findOne({where : {'email' : user.email}});
       if (existingUser === null) {

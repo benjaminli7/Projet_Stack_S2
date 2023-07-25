@@ -118,8 +118,7 @@ async function newAchievement(achievement, userId) {
     }
 
     await user.addAchievement(achievement);
-    const userSocket = socketUserMap.get(parseInt(3));
-    const test = socketUserMap.get(parseInt(userId));
+    const userSocket = socketUserMap.get(parseInt(userId));
 
     if (userSocket) {
         io.to(userSocket).emit('achievement', { achievement: achievement, userId: userId });

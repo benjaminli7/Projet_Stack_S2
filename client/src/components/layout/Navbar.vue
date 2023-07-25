@@ -1,7 +1,7 @@
 <script setup>
 import { Button, Navbar, NavbarCollapse, NavbarLink } from "flowbite-vue";
 import { computed } from "vue";
-import {useUserStore} from"../../userStore";
+import {useUserStore} from "../../userStore";
 
 const isAuthenticated = computed(() => {
   return localStorage.getItem("token") !== null;

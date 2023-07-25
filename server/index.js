@@ -68,10 +68,22 @@ const cors = require("cors");
 var users = require('./routes/user')
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
+var session = require('express-session');
+const env = require('dotenv').config();
+const passport = require('./services/passport');
 
 
 
 app.use(cors());
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: true }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 // app.use(function (req, res, next) {
 //   if (["POST", "PUT", "PATCH"].includes(req.method)) {
 //     if (!req.is("application/json")) {
