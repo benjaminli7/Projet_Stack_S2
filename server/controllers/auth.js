@@ -38,10 +38,10 @@ const login = async (req, res) => {
     if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-      return res.status(200).json({ 
+      return res.status(200).json({
         token: token,
         user: {
-          id: user._id,
+          id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
           username: user.username,
@@ -51,7 +51,7 @@ const login = async (req, res) => {
           friends: user.friends
         }
       });
-    }   
+    }
     return res.status(401).json({ error: 'Identifiants invalides' });
   } catch (err) {
     console.error(err);
@@ -87,7 +87,7 @@ const register = async (req, res) => {
       verificationToken : verificationToken,
       isVerified : false
     });
-    
+
     // Configuration de Nodemailer
     let transporter = nodemailer.createTransport(
         new SendinBlueTransport({
@@ -241,7 +241,7 @@ const googleAuthCallback = async (req, res) => {
       newUser.password = hashedPassword;
       await newUser.save();
 
-      
+
       const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET);
 
       return res.status(201).json({
@@ -257,7 +257,7 @@ const googleAuthCallback = async (req, res) => {
           friends: newUser.friends
         }
       });
-    } 
+    }
 
     const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET);
 
@@ -303,7 +303,7 @@ const resetPassword = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
- 
+
 }
 
 const setGooglePassword = async (req, res) => {

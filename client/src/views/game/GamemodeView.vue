@@ -12,6 +12,11 @@ import { Button } from "flowbite-vue"
             <router-link to="/multiplayer">
                 <Button color="default">1v1</Button>
             </router-link>
+
+            
+            <router-link to="/test">
+                <Button color="default">test</Button>
+            </router-link>
         </div>
     </div>
 </template>

@@ -8,7 +8,7 @@ const cors = require("cors");
 var users = require("./routes/user");
 var friends = require("./routes/friend");
 var auth = require("./routes/auth");
-const getRandomPositions = require("./utils");
+const { getRandomPositions } = require("./utils");
 
 app.use(cors());
 app.use(express.json());
@@ -79,6 +79,7 @@ io.on("connection", function (socket) {
   });
 
   socket.on("joinRoom", (roomName) => {
+
     socket.join(roomName);
     if (!rooms.has(roomName)) {
       rooms.set(roomName, {
@@ -98,34 +99,30 @@ io.on("connection", function (socket) {
   });
 
   socket.on("playerGuess", (roomName, guess, round) => {
-    console.log(guess);
+
     const room = rooms.get(roomName);
-    console.log("room", room)
     const currentPlayer = room.player1 === socket.id ? "player1" : "player2";
-    console.log(room.player1)
-    console.log(socket.id)
-    console.log(currentPlayer)
     if (currentPlayer === "player1") {
       room.player1_guesses.push(guess);
     } else {
       room.player2_guesses.push(guess);
     }
 
-
     if (
-      room.player1_guesses.length === 5 &&
-      room.player2_guesses.length === 5
+      room.player1_guesses.length === 2 &&
+      room.player2_guesses.length === 2
     ) {
-      socket.to(roomName).emit("gameFinished", room);
+      io.to(room.player1).emit("gameFinished");
+      io.to(room.player2).emit("gameFinished");
     }
 
-    // if one of the two players has guessed, notify the second player
     if (
       room.player1_guesses.length !== room.player2_guesses.length
     ) {
-      socket.to(roomName).emit("waitingGuess", "waiting for opponent guess");
+      socket.emit("waitingGuess");
     } else {
-      socket.to(roomName).emit("nextRound");
+      io.to(room.player1).emit("nextRound");
+      io.to(room.player2).emit("nextRound");
     }
 
   });
