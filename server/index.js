@@ -1,14 +1,11 @@
 const express = require("express");
 const app = express();
-//const GenericRouter = require("./routes/genericCRUD");
-//const GenericController = require("./controllers/genericCRUD");
-// const userService = require("./services/user");
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
 var users = require("./routes/user");
 var friends = require("./routes/friend");
 var auth = require("./routes/auth");
-const { getRandomPositions } = require("./utils");
+const { getRandomPositions, calculateScore } = require("./utils");
 
 app.use(cors());
 app.use(express.json());
@@ -38,6 +35,11 @@ const io = require("socket.io")(server, {
 
 let availablePlayers = [];
 const rooms = new Map();
+const RESULTS = {
+  WIN: "WIN",
+  LOSE: "LOSE",
+  DRAW: "DRAW",
+}
 
 io.on("connection", function (socket) {
 
@@ -49,6 +51,7 @@ io.on("connection", function (socket) {
   });
 
   socket.on("findOpponent", () => {
+    const positions = getRandomPositions(5);
     if (availablePlayers.length >= 2) {
       const player1 = availablePlayers.shift();
       const player2 = availablePlayers.shift();
@@ -56,9 +59,22 @@ io.on("connection", function (socket) {
       // Create a game room
       const roomName = `${Date.now()}`;
 
-      // Notify the players to join the room
-      io.to(player1.id).emit("joinRoom", roomName);
-      io.to(player2.id).emit("joinRoom", roomName);
+
+      rooms.set(roomName, {
+        player1: {
+          id: player1.id,
+          username: player1.username,
+        },
+        player2: {
+          id: player2.id,
+          username: player2.username,
+        },
+        player1_guesses: [],
+        player2_guesses: [],
+        positions: positions
+      });
+
+      socket.join(roomName);
 
       const socketIds = availablePlayers.filter((player) => {
         return (
@@ -67,29 +83,13 @@ io.on("connection", function (socket) {
         );
       });
 
-      const positions = getRandomPositions(5);
 
-      io.to(socketIds).emit("gameStarting", positions);
+      io.to(socketIds).emit("gameStarting", positions, roomName);
 
       // Remove the players from the available players list
       availablePlayers = availablePlayers.filter(
         (player) => player !== player1 && player !== player2
       );
-    }
-  });
-
-  socket.on("joinRoom", (roomName) => {
-
-    socket.join(roomName);
-    if (!rooms.has(roomName)) {
-      rooms.set(roomName, {
-        player1: socket.id,
-        player2: null,
-        player1_guesses: [],
-        player2_guesses: [],
-      });
-    } else {
-      rooms.get(roomName).player2 = socket.id;
     }
   });
 
@@ -101,19 +101,93 @@ io.on("connection", function (socket) {
   socket.on("playerGuess", (roomName, guess, round) => {
 
     const room = rooms.get(roomName);
-    const currentPlayer = room.player1 === socket.id ? "player1" : "player2";
-    if (currentPlayer === "player1") {
-      room.player1_guesses.push(guess);
+    const currentPlayer = room.player1.id === socket.id ? room.player1.username : room.player2.username;
+
+    let score = calculateScore(room.positions[round].lat, room.positions[round].lng, guess.lat, guess.lng);
+
+    if (currentPlayer === room.player1.username) {
+      room.player1_guesses.push({
+        lat: guess.lat,
+        lng: guess.lng,
+        score: score,
+      });
     } else {
-      room.player2_guesses.push(guess);
+      room.player2_guesses.push({
+        lat: guess.lat,
+        lng: guess.lng,
+        score: score,
+      });
     }
+
 
     if (
       room.player1_guesses.length === 2 &&
       room.player2_guesses.length === 2
     ) {
-      io.to(room.player1).emit("gameFinished");
-      io.to(room.player2).emit("gameFinished");
+      const player1Score = room.player1_guesses.reduce(
+        (total, guess) => total + guess.score,
+        0
+      );
+      const player2Score = room.player2_guesses.reduce(
+        (total, guess) => total + guess.score,
+        0
+      );
+
+      if (player1Score > player2Score) {
+        io.to(room.player1.id).emit("gameFinished", {
+          score: player1Score,
+          opponentScore: player2Score,
+          outcome: RESULTS.WIN,
+          data: room,
+          currentPlayer: room.player1.username,
+          winner: room.player1.username,
+          loser: room.player2.username,
+        });
+        io.to(room.player2.id).emit("gameFinished", {
+          score: player2Score,
+          opponentScore: player1Score,
+          outcome: RESULTS.LOSE,
+          data: room,
+          currentPlayer: room.player2.username,
+          winner: room.player1.username,
+          loser: room.player2.username,
+        });
+      } else if (player1Score < player2Score) {
+        io.to(room.player1.id).emit("gameFinished", {
+          score: player1Score,
+          opponentScore: player2Score,
+          outcome: RESULTS.LOSE,
+          data: room,
+          currentPlayer: room.player1.username,
+          winner: room.player2.username,
+          loser: room.player1.username,
+        });
+        io.to(room.player2).emit("gameFinished", {
+          score: player2Score,
+          opponentScore: player1Score,
+          outcome: RESULTS.WIN,
+          data: room,
+          currentPlayer: room.player2.username,
+          winner: room.player2.username,
+          loser: room.player1.username,
+        });
+      } else {
+        io.to(room.player1).emit("gameFinished", {
+          score: player1Score,
+          opponentScore: player2Score,
+          outcome: RESULTS.DRAW,
+          data: room,
+          currentPlayer: room.player1.username,
+          
+        });
+        io.to(room.player2).emit("gameFinished", {
+          score: player2Score,
+          opponentScore: player1Score,
+          outcome: RESULTS.DRAW,
+          data: room,
+          currentPlayer: room.player2.username,
+        });
+      }
     }
 
     if (
@@ -121,8 +195,8 @@ io.on("connection", function (socket) {
     ) {
       socket.emit("waitingGuess");
     } else {
-      io.to(room.player1).emit("nextRound");
-      io.to(room.player2).emit("nextRound");
+      io.to(room.player1.id).emit("nextRound");
+      io.to(room.player2.id).emit("nextRound");
     }
 
   });

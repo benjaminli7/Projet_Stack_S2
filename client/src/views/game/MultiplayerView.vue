@@ -4,6 +4,7 @@ import { onMounted, ref, watch } from "vue";
 import { useUserStore } from "../../userStore";
 import StreetViewMap from "./StreetViewMap.vue";
 import GoogleMap from "./GoogleMap.vue";
+import MultiplayerResultsView from "./MultiplayerResultsView.vue";
 
 let socket;
 const store = useUserStore();
@@ -14,6 +15,11 @@ let round = ref(0);
 let roomName = ref("");
 let waitingGuess = ref(false);
 let isGameFinished = ref(false);
+let outcome = ref("");
+let totalScore = ref(0);
+let opponentScore = ref(0);
+let roomData = ref(null)
+let currentPlayer = ref(null)
 
 socket = io("http://localhost:3000");
 
@@ -22,13 +28,14 @@ onMounted(() => {
   socket.emit("playerJoined", user.username)
   socket.emit("findOpponent")
 
-  socket.on("joinRoom", (roomNameData) => {
-    roomName.value = roomNameData;
-    socket.emit("joinRoom", roomNameData)
-  })
+  // socket.on("joinRoom", (roomNameData) => {
+  //   roomName.value = roomNameData;
+  //   socket.emit("joinRoom", roomNameData)
+  // })
 
-  socket.on("gameStarting", (positionsData) => {
+  socket.on("gameStarting", (positionsData, roomNameData) => {
     loading.value = false;
+    roomName.value = roomNameData
     positions.value = positionsData;
   });
 
@@ -42,14 +49,14 @@ onMounted(() => {
     round.value += 1;
   })
 
-  socket.on("gameFinished", (data) => {
+  socket.on("gameFinished", (result) => {
     isGameFinished.value = true
-    console.log("game finished");
+    outcome.value = result.outcome
+    totalScore.value = result.score
+    opponentScore.value = result.opponentScore
+    roomData.value = result.data
+    currentPlayer.value = result.currentPlayer
   })
-
-
-
-
 });
 
 watch(
@@ -62,13 +69,24 @@ watch(
   }
 );
 
+const getResultMessage = () => {
+  if (totalScore.value > opponentScore.value) {
+    return `You won! Your score is ${totalScore.value} and your opponent's score is ${opponentScore.value}`
+  } else if (totalScore.value < opponentScore.value) {
+    return `You lost! Your score is ${totalScore.value} and your opponent's score is ${opponentScore.value}`
+  } else {
+    return `It's a tie! You both scored ${totalScore.value} points.`
+  }
+}
+
+
 </script>
 
 <template>
   <p v-if="loading">Searching opponent...</p>
   <p v-else-if="waitingGuess">Waiting for opponent to guess...</p>
   <div v-else-if="isGameFinished">
-    <h1>Game finished</h1>
+    <MultiplayerResultsView :outcome="outcome" :roomData="roomData" :currentPlayer="currentPlayer" :getResultMessage="getResultMessage"/>
   </div>
   <div id="map-wrapper" v-else>
     <StreetViewMap :socket="socket" :positions="positions" :round="round"/>
