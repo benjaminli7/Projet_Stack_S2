@@ -3,7 +3,6 @@ require('dotenv').config();
 const { Achievement, User } = require('../../db');
 const { Sequelize } = require('sequelize');
 const {io, socketUserMap} = require('../../index');
-console.log("io", io);
 
 
 
@@ -69,6 +68,7 @@ console.log('waiting for changes...');
 statsChangeStream.on('change', (change) => {
 
   if(change.operationType === 'update') {
+    console.log('changement');
     checkAchievements(change.fullDocument);
   }
 });
@@ -118,22 +118,13 @@ async function newAchievement(achievement, userId) {
     }
 
     await user.addAchievement(achievement);
-    console.log(socketUserMap);
-    //look into socketUserMap to find the socket of the user
-    console.log("Key", socketUserMap.keys() , "Value", socketUserMap.values());
-    const userSocket = socketUserMap.get(parseInt(userId));
-
-    console.log("userSocket", userSocket);
+    const userSocket = socketUserMap.get(parseInt(3));
+    const test = socketUserMap.get(parseInt(userId));
 
     if (userSocket) {
-        console.log('emitting achievement to user ' + userId + ' socket ' + userSocket )
-        //emit to the user socket id
-        io.to(userSocket).emit('achievement', { achievement: achievement });
-    }    
+        io.to(userSocket).emit('achievement', { achievement: achievement, userId: userId });
+    }   
 
-
-
-    // console.log(`Achievement "${achievement.name}" achieved by user "${user.username}"`);
 }
 
   

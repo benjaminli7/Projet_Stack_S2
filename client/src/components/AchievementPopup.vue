@@ -2,6 +2,8 @@
   <script setup>
     import { ref, onBeforeMount } from 'vue';
     import { useUserStore } from '../userStore';
+    import { getSocket } from '../services/socket';
+
       
     const showPopup = ref(false);
     const achievementData = ref({});
@@ -9,30 +11,33 @@
 
     onBeforeMount(() => {
         const userStore = useUserStore();
-        const user = userStore.getUser;
-        const socket = userStore.getSocket;
 
-        console.log("User" ,user);
-
+        const socket = getSocket();
         console.log("Socket" ,socket);
-        // if( localStorage.getItem('token')){
-        // }
-        if(socket){
-            socket.on("connection", (message) => {
-                alert("connection");
-            
-            });
+    //     const user = userStore.getUser;
+    //     const socket = userStore.getSocket;
 
-            socket.on("achievement", (achievement) => {
+    //     console.log("User" ,user);
+
+    //     console.log("Socket" ,socket);
+    //     // if( localStorage.getItem('token')){
+    //     // }
+    //     if(socket){
+    //         socket.on("connection", (message) => {
+    //             alert("connection");
+            
+    //         });
+
+    //         socket.on("achievement", (achievement) => {
                 
-                alert(JSON.stringify(achievement));
-            });
-        }
-    });
+    //             alert(JSON.stringify(achievement));
+    //         });
+    //     }
+    // });
 //     onBeforeUnmount(() => {
 //     // Disconnect the socket when the component is unmounted
 //     socket.disconnect();
-//   });
+  });
   </script>
 
 <template>

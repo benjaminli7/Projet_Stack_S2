@@ -82,7 +82,7 @@ async function addGamePlayed() {
             { upsert: true, new: true }
 
         );
-
+        console.log("Ajout d'une partie jouée pour l'utilisateur ")
         
     } catch(err) {
         console.error(err);

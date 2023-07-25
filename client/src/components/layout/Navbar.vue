@@ -1,16 +1,15 @@
 <script setup>
 import { Button, Navbar, NavbarCollapse, NavbarLink } from "flowbite-vue";
 import { computed } from "vue";
+import {useUserStore} from"../../userStore";
 
 const isAuthenticated = computed(() => {
   return localStorage.getItem("token") !== null;
 });
 // check if isAuthentificated then make a const with user data
   const user = computed(() => {
-    let user = localStorage.getItem("user");
-    if (user) {
-      return JSON.parse(user);
-    }
+    const userStore = useUserStore();
+    return userStore.getUser;
   });
   
 </script>

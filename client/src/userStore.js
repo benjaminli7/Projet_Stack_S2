@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { io } from 'socket.io-client';
+
 
 
 export const useUserStore = defineStore("user", {
@@ -10,16 +10,19 @@ export const useUserStore = defineStore("user", {
   }),
   getters: {
     getUser: (state) => {
-      if(localStorage.getItem("user")) {
-        return JSON.parse(localStorage.getItem("user"));
-      } else {
+      // if(localStorage.getItem("user")) {
+      //   return JSON.parse(localStorage.getItem("user"));
+      // } else {
         return state.user
-      }
+      //}
 
     },
-    agetSocket: (state) => {
+    getSocket: (state) => {
       return state.socket;
     }
+  },  
+  persist: {
+    enabled: true
   },
   actions: {
     async login(email, password) {
@@ -32,22 +35,8 @@ export const useUserStore = defineStore("user", {
         const token = response.data.token;
         localStorage.setItem("token", token);
 
-
-
         const user = response.data.user;
-        await this.setUser(user);
-
-        const socket = this.getSocket; // Get the existing socket from the state
-
-        if (!socket) {
-          // Create a new socket only if it doesn't exist
-          const newSocket = await io('http://localhost:3000');
-          newSocket.emit('authenticate',user.id ); 
-          //authentification
-
-          await this.setSocket(newSocket);
-        }
-
+        this.user = user;
 
       } catch (error) {
         console.error(error);
@@ -61,7 +50,6 @@ export const useUserStore = defineStore("user", {
     async setSocket(socket) {
       this.socket = socket;
     },
-    
     async getUserFriends(username) {
       try {
         const token = localStorage.getItem('token');
@@ -134,8 +122,7 @@ export const useUserStore = defineStore("user", {
       } catch (error) {
         alert(error);
       }
-    },
-  
+    }, 
     async acceptFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
@@ -227,6 +214,25 @@ export const useUserStore = defineStore("user", {
         throw new Error("Failed to delete friend");
       }
     },
+    async getAchievements(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://localhost:3000/users/${id}/achievements`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
+        return response.data;
+        
+      }
+      catch (error) {
+        console.error(error);
+      }
+    },
     disconnectSocket() {
       if (this.socket) {
         this.socket.disconnect();
@@ -234,4 +240,5 @@ export const useUserStore = defineStore("user", {
       }
     },
   },
+  
 });

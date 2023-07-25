@@ -30,6 +30,7 @@
     "nodemailer": "^6.9.3",
     "nodemailer-sendinblue-transport": "^2.0.1",
     "nodemon": "^2.0.22",
+    "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "pg": "^8.11.0",
     "sequelize": "^6.32.1",
