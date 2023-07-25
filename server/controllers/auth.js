@@ -8,6 +8,8 @@ const SendinBlueTransport = require('nodemailer-sendinblue-transport');
 const exp = require('constants');
 const { oauth2Client, url } = require('../services/Google/google-auth');
 const { google } = require('googleapis');
+const path = require('path');
+const ejs = require('ejs');
 
 
 
@@ -25,16 +27,21 @@ const login = async (req, res) => {
     if (!errors.isEmpty()) {
       // Extraction des messages d'erreur
       const errorMessages = errors.array().map((error) => error.msg);
-      return res.status(400).json({ errors: errorMessages });
+      return res.status(400).json({ error: errorMessages });
     }
 
     // Recherche de l'utilisateur dans la base de données
     const user = await User.findOne({ where: { email: email } });
 
-
+    if (!user) {
+      return res.status(400).json({ error: 'Identifiants invalides' });
+    }
+    if(!user.isVerified){
+      return res.status(400).json({ error: 'Le compte n\'a pas été validé' });
+    }
     // Vérification du mot de passe
-    if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
-      const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
+    if (await bcrypt.compare(password, user.password)){
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
       console.log("User found: ", user.id);
 
@@ -72,6 +79,12 @@ const register = async (req, res) => {
       return res.status(400).json({ error: 'Ce nom d\'utilisateur est déjà pris' });
     }
 
+    const existingEmail = await User.findOne({where: {'email' : email} });
+
+    if (existingEmail) {
+      return res.status(400).json({ error: 'Cet email est déjà utilisé' });
+    }
+
     // Création d'un token de vérification
     const verificationToken = crypto.randomBytes(20).toString('hex');
 
@@ -95,18 +108,23 @@ const register = async (req, res) => {
         })
     );
 
-    // Configuration du message
+  //let mailOptions = emailVerification(`http://127.0.0.1:5173/verify-email?token=${verificationToken}`, email)
+
     let mailOptions = {
       from: 'semainechallenge@gmail.com',
       to: email,
       subject: 'Vérification de l\'email',
-      text: `Merci de vous être inscrit. Veuillez cliquer sur le lien suivant pour vérifier votre email: http://127.0.0.1:5173/verify-email?token=${verificationToken}`
+      text: await ejs
+      .renderFile("./views/verifyEmail.ejs", {
+        url : `http://127.0.0.1:5173/verify-email?token=${verificationToken}`,
+        firstname : firstname,
+      })
     };
-
-    // Envoi de l'email
+    // Envoi de l'email 
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
         console.log(error);
+        return res.status(500).json({ error: 'Problème lors de l\'envoie de mail' });
       } else {
         console.log('Email sent: ' + info);
       }
@@ -175,7 +193,11 @@ const forgotPassword = async (req, res) => {
       from: 'semainechallenge@gmail.com',
       to: user.email,
       subject: 'Changement de mot de passe',
-      text: `Vous souhaitez changer votre mot de passe ? Allez sur  http://127.0.0.1:5173/reset-password?token=${verificationToken}`
+      text: await ejs
+      .renderFile("./views/updatePassword.ejs", {
+        url : `http://127.0.0.1:5173/reset-password?token=${verificationToken}`,
+        firstname : user.firstname,
+      })
     };
 
     // Envoi de l'email
