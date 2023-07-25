@@ -1,4 +1,3 @@
-require('dotenv').config()
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -36,12 +35,12 @@ const login = async (req, res) => {
 
     // Vérification du mot de passe
     if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
 
       return res.status(200).json({ 
         token: token,
         user: {
-          id: user._id,
+          id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
           username: user.username,

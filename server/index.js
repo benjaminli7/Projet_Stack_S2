@@ -1,6 +1,5 @@
 // const express = require("express");
 // const app = express();
-// require('dotenv').config();
 // require('module-alias/register')
 
 // const db = require("@models/");
@@ -68,8 +67,11 @@ const cors = require("cors");
 var users = require('./routes/user')
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
+var stripeRoutes = require('./routes/stripe');
+
 
 app.use(cors());
+
 // app.use(function (req, res, next) {
 //   if (["POST", "PUT", "PATCH"].includes(req.method)) {
 //     if (!req.is("application/json")) {
@@ -94,10 +96,13 @@ app.use(express.json());
 app.use('/users', users)
 app.use('/friends', friends)
 app.use('/auth', auth)
+app.use('/stripe', stripeRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
+
 
 
 app.use(errorHandler);
