@@ -1,4 +1,6 @@
 const userService = require("../services/user");
+const bcrypt = require("bcryptjs");
+const {User} = require('../db');
 
 module.exports = {
   cget: async (req, res, next) => {
@@ -74,4 +76,5 @@ module.exports = {
       next(err);
     }
   },
-};
+
+}

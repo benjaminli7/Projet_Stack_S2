@@ -18,7 +18,6 @@ const ejs = require('ejs');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Veuillez saisir tous les champs' });
@@ -29,26 +28,28 @@ const login = async (req, res) => {
     if (!errors.isEmpty()) {
       // Extraction des messages d'erreur
       const errorMessages = errors.array().map((error) => error.msg);
-      return res.status(400).json({ error: errorMessages });
+      return res.status(400).json({ errors: errorMessages });
     }
 
     // Recherche de l'utilisateur dans la base de données
     const user = await User.findOne({ where: { email: email } });
-
+    console.log('user', user)
     if (!user) {
-      return res.status(400).json({ error: 'Identifiants invalides' });
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
     if(!user.isVerified){
-      return res.status(400).json({ error: 'Le compte n\'a pas été validé' });
+      return res.status(401).json({ error: 'Veuillez vérifier votre email' });
     }
     // Vérification du mot de passe
     if (await bcrypt.compare(password, user.password)){
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
+
+      console.log("User found: ", user.id);
 
       return res.status(200).json({ 
         token: token,
         user: {
-          id: user._id,
+          id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
           username: user.username,
@@ -58,7 +59,7 @@ const login = async (req, res) => {
           friends: user.friends
         }
       });
-    }   
+    }
     return res.status(401).json({ error: 'Identifiants invalides' });
   } catch (err) {
     console.error(err);
@@ -163,6 +164,36 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+const changePassword =  async (req, res) => {
+  try {
+    console.log('req',req)
+    let { oldPassword, password } = req.body;
+    let id = req.user.infos.id;
+    console.log('oldPassword', oldPassword)
+    console.log('password', password)
+    const userFound = await User.findByPk(id);
+    console.log('userFound', userFound)
+    if (!userFound) {
+      return res.status(404).json({ error: 'user invalide' });
+    }
+    try{
+      if(!await bcrypt.compare(oldPassword, userFound.password)){
+        return res.status(401).json({ error: 'Identifiants invalides' });
+      }
+      password = await bcrypt.hash(password, 10);
+      await User.update({password : password}, {where: {'id' : id} });
+      return res.status(200).json({ message: 'Mot de passe changé avec succès' });
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+ 
+}
 
 const forgotPassword = async (req, res) => {
   try {
@@ -313,7 +344,6 @@ const resetPassword = async (req, res) => {
       return res.status(404).json({ error: 'Token invalide' });
     }
     try{
-      password = await bcrypt.hash(password, 10);
       await User.update({password : password}, {where: {'id' : tokenFound.UserId} });
       return res.status(200).json({ message: 'Mot de passe changé avec succès' });
     }
@@ -355,6 +385,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  changePassword,
   googleAuth,
   googleAuthCallback,
   setGooglePassword

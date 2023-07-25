@@ -7,6 +7,7 @@ import ForgetPassword from './views/auth/ForgetPassword.vue';
 import ResetPassword from './views/auth/ResetPassword.vue';
 
 import Profile from './views/user/Profile.vue';
+import UpdateProfile from './views/user/UpdateProfile.vue';
 
 import NotFound from './components/NotFound.vue';
 import GamemodeView from "./views/game/GamemodeView.vue";
@@ -69,6 +70,12 @@ const routes = [
     path: '/profile',
     name : 'Profile',
     component: Profile,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/update-profile',
+    name : 'UpdateProfile',
+    component: UpdateProfile,
     meta: { requiresAuth: true }
   },
   {

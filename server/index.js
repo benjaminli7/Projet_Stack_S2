@@ -18,7 +18,17 @@ app.set('view engine', 'ejs');
 
 const getRandomPositions = require("./utils");
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+}));
+app.use(function (req, res, next) {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    if (!req.is("application/json")) {
+      return res.sendStatus(400);
+    }
+  }
+  next();
+});
 
 app.use(express.json());
 
