@@ -15,7 +15,6 @@ const { google } = require('googleapis');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Veuillez saisir tous les champs' });
@@ -35,9 +34,11 @@ const login = async (req, res) => {
 
     // Vérification du mot de passe
     if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
 
-      return res.status(200).json({ 
+      console.log("User found: ", user.id);
+
+      return res.status(200).json({
         token: token,
         user: {
           id: user.id,
@@ -50,7 +51,7 @@ const login = async (req, res) => {
           friends: user.friends
         }
       });
-    }   
+    }
     return res.status(401).json({ error: 'Identifiants invalides' });
   } catch (err) {
     console.error(err);

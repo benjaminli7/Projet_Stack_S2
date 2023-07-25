@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto p-4">
-    <h2 class="text-xl font-semibold mb-4">Devenez Premium</h2>
+    <h2 class="text-center text-xl font-semibold mb-4">Devenez Premium</h2>
     <div class="flex justify-center">
       <div class="border p-4 rounded shadow-md">
         <h3 class="text-lg font-medium mb-2">Premium Package</h3>
@@ -8,7 +8,7 @@
         <button
             @click="handleCheckout('premiumPackage', 'Premium Package', 10)"
             :disabled="!isAuthenticated || isPurchased"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed">
+            class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed">
           Acheter Premium pour 10$
         </button>
       </div>
