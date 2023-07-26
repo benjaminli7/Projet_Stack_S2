@@ -215,6 +215,27 @@ export const useUserStore = defineStore("user", {
         console.error(error);
       }
     },
+    async reportUser ( reportedUsername, reason) {
+      try {
+        const token = localStorage.getItem("token");
+        console.log(reportedUsername + " " + reason);
+        const response = await axios.post(
+          `http://localhost:3000/users/report`,
+          {
+            reportedUsername,
+            reason,
+          },{
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              }
+            }
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to report user");
+      }
+    },      
     disconnectSocket() {
       if (this.socket) {
         this.socket.disconnect();

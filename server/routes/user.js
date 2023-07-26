@@ -28,5 +28,7 @@ router.delete('/:id', userController.delete);
 
 router.get('/:id/achievements', authenticateToken, userController.getUserAchievements);
 
+router.post('/report', authenticateToken, userController.reportUser);
+
 
 module.exports = router;

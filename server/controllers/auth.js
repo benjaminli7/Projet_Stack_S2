@@ -10,6 +10,7 @@ const { oauth2Client, url } = require('../services/Google/google-auth');
 const { google } = require('googleapis');
 const path = require('path');
 const ejs = require('ejs');
+const { newAchievement} = require('../services/achievements');
 
 
 
@@ -312,6 +313,8 @@ const resetPassword = async (req, res) => {
       password = await bcrypt.hash(password, 10);
       await User.update({password : password}, {where: {'id' : tokenFound.UserId} });
       return res.status(200).json({ message: 'Mot de passe changé avec succès' });
+      newAchievement
+      
     }
     catch (err) {
       console.error(err);

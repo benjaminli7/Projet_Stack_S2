@@ -9,7 +9,9 @@ export const getSocket = () => {
 
 export const initSocket = async () => {
   const user = JSON.parse(localStorage.getItem("user"));
-  if (user && !socketInstance) {
+  console.log(user);
+
+  if (user != null && !socketInstance) {
     const newSocket = io('http://localhost:3000');
     newSocket.emit('authenticate', user.id);
     socketInstance = newSocket;

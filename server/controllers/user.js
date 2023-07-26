@@ -1,5 +1,6 @@
 const userService = require("../services/user");
-const { User , Achievement} = require("../db");
+const { User , Achievement, Moderation} = require("../db");
+const { Op } = require("sequelize");
 
 
 module.exports = {
@@ -100,6 +101,43 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  },
+  reportUser: async (req, res, next) => {
+    try {
+      const user = req.user.infos;
+      const { reportedUsername, reason } = req.body;
+      const reportedUser = await User.findOne({where: {username: reportedUsername}});
+      const lastReport = await Moderation.findOne({
+        where: {
+          reporterId: user.id,
+          reportedPlayerId: reportedUser.id,
+          createdAt: {
+            [Op.gte]: new Date(new Date() - 5 * 60 * 1000),
+          },
+        },
+      });
+      
+      if(lastReport) {
+        return res.status(400).json({message: "You have already reported this user recently"});
+      }
+
+
+      if(!reportedUser) {
+        return res.status(404).json({message: "User not found"});
+      }
+      const moderation = await Moderation.create({
+        reason: reason,
+        reporterId: user.id,
+        reportedPlayerId: reportedUser.id,
+      });
+
+      res.status(201).json(moderation);
+
+    } catch (err) {
+      next(err);
+    }
   }
+
+
   
 };
