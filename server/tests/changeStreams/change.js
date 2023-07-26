@@ -89,6 +89,17 @@ async function addGamePlayed() {
     }
    
 }
+async function getOneData() {
+    try{
+        Stats.findOne({ userId: '2' }, function (err, stats) {
+            if (err) return handleError(err);
+            console.log(stats);
+            });
+    } catch(err) {
+        console.error(err);
+    }
+}
+        
 
 // execute the async function every 1 second
 addGamePlayed()
