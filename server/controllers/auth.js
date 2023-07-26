@@ -1,4 +1,3 @@
-require('dotenv').config()
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -46,7 +45,9 @@ const login = async (req, res) => {
 
       console.log("User found: ", user.id);
 
-      return res.status(200).json({ 
+      console.log("User found: ", user.id);
+
+      return res.status(200).json({
         token: token,
         user: {
           id: user.id,
