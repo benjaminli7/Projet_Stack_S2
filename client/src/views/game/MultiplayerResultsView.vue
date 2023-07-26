@@ -36,8 +36,9 @@ const props = defineProps({
 
 onMounted(() => {
   initMap();
-
-  console.log(props.roomData);
+  google.maps.event.addListener(map, 'zoom_changed', function() {
+    if(map.getZoom() < map.minZoom) map.setZoom(map.minZoom);
+  });
 });
 
 const initMap = () => {
@@ -49,6 +50,7 @@ const initMap = () => {
     options: {
       gestureHandling: "greedy",
     },
+    minZoom: 3,
   });
   addMarkers();
   drawDashedLines();

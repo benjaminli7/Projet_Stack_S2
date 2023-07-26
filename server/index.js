@@ -10,6 +10,17 @@ var friends = require('./routes/friend')
 var auth = require('./routes/auth')
 var stripeRoutes = require('./routes/stripe');
 const { getRandomPositions, calculateScore } = require("./utils");
+// Démarrage du serveur
+const server = app.listen(process.env.PORT, () => {
+  console.log(
+    `Le serveur écoute sur le port ${process.env.PORT}.`
+  );
+});
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 // view engine setup
 
@@ -38,18 +49,7 @@ app.get("/", (req, res) => {
 
 app.use(errorHandler);
 
-// Démarrage du serveur
-const server = app.listen(process.env.PORT, () => {
-  console.log(
-    `Le serveur écoute sur le port ${process.env.PORT}.`
-  );
-});
 
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*",
-  },
-});
 
 let availablePlayers = [];
 const rooms = new Map();

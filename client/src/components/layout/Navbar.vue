@@ -12,16 +12,10 @@ const isAuthenticated = computed(() => {
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
-
-
-
   const user = computed(() => {
     const userStore = useUserStore();
     return userStore.getUser;
   });
-
-  console.log(user)
-
 </script>
 
 <template>
