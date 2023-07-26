@@ -15,7 +15,7 @@ export const useUserStore = defineStore("user", {
     getSocket: (state) => {
       return state.socket;
     }
-  },  
+  },
   persist: {
     enabled: true
   },
@@ -86,7 +86,7 @@ export const useUserStore = defineStore("user", {
         console.error(error);
         throw new Error('Failed to get friends');
       }
-    },  
+    },
     async addFriend(username,friendUsername) {
       try {
         const token = localStorage.getItem("token");
@@ -103,12 +103,12 @@ export const useUserStore = defineStore("user", {
           }
         ).catch((err) => {
           throw new Error(err.response.data.message);
-        })      
+        })
 
       } catch (error) {
         alert(error);
       }
-    }, 
+    },
     async acceptFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
@@ -207,9 +207,9 @@ export const useUserStore = defineStore("user", {
             },
           }
         );
-        
+
         return response.data;
-        
+
       }
       catch (error) {
         console.error(error);
@@ -218,9 +218,9 @@ export const useUserStore = defineStore("user", {
     disconnectSocket() {
       if (this.socket) {
         this.socket.disconnect();
-        this.socket = null; 
+        this.socket = null;
       }
     },
   },
-  
+
 });

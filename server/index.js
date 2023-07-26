@@ -2,20 +2,19 @@ const express = require("express");
 const app = express();
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
+app.use(cors({
+  origin: "*",
+}));
 var users = require('./routes/user')
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
 var stripeRoutes = require('./routes/stripe');
 const { getRandomPositions, calculateScore } = require("./utils");
-app.use(cors());
 
 // view engine setup
 
 app.set('view engine', 'ejs');
 
-app.use(cors({
-  origin: "*",
-}));
 
 app.use(express.json());
 
