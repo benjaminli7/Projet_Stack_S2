@@ -9,6 +9,7 @@ var users = require('./routes/user')
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
 var stripeRoutes = require('./routes/stripe');
+var gameStats = require('./routes/gameStats');
 const { getRandomPositions, calculateScore } = require("./utils");
 // Démarrage du serveur
 const server = app.listen(process.env.PORT, () => {
@@ -33,6 +34,7 @@ app.use('/users', users)
 app.use('/friends', friends)
 app.use('/auth', auth)
 app.use('/stripe', stripeRoutes);
+app.use('/game-stats', gameStats)
 
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
