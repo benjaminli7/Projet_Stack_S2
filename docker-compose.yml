@@ -39,6 +39,8 @@ services:
       GOOGLE_CALLBACK : ${GOOGLE_CALLBACK}
       GOOGLE_CLIENT_SECRET : ${GOOGLE_CLIENT_SECRET}
       GOOGLE_CLIENT_ID : ${GOOGLE_CLIENT_ID}
+
+      
     working_dir: /usr/src/app
     volumes:
       - ./server:/usr/src/app

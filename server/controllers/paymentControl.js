@@ -5,7 +5,7 @@ const { DateTime } = require('luxon');
 
 exports.checkIfItemPurchased = async (userId) => {
     try {
-        const purchasedItem = await PurchasedItem.findOne({ userId });
+        const purchasedItem = await PurchasedItem.findOne({ where: { userId } });
         return !!purchasedItem;
     } catch (error) {
         throw error;

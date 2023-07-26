@@ -10,7 +10,6 @@ import Profile from './views/user/Profile.vue';
 import UpdateProfile from './views/user/UpdateProfile.vue';
 
 import NotFound from './components/NotFound.vue';
-import GamemodeView from "./views/game/GamemodeView.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Friends from "./views/user/friends/Friends.vue"
 import BackDashboard from "./views/back/BackDashboard.vue"
@@ -20,53 +19,52 @@ import Premium from './views/user/Premium.vue';
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
+    path: "/",
+    name: "Home",
     component: HomeView,
   },
   {
-    path: '/login',
-    name : 'Login',
-    component: Login
+    path: "/login",
+    name: "Login",
+    component: Login,
   },
   {
-    path: '/google/callback',
-    name : 'GoogleCallback',
+    path: "/google/callback",
+    name: "GoogleCallback",
   },
   {
-    path: '/register',
-    name : 'Register',
-    component: Register
+    path: "/register",
+    name: "Register",
+    component: Register,
   },
   {
-    path: '/verify-email',
-    name: 'VerifyEmail',
-    component: VerifyEmail
+    path: "/verify-email",
+    name: "VerifyEmail",
+    component: VerifyEmail,
   },
   {
-    path: '/forget-password',
-    name : 'ForgetPassword',
-    component: ForgetPassword
+    path: "/forget-password",
+    name: "ForgetPassword",
+    component: ForgetPassword,
   },
   {
-    path: '/reset-password',
-    name : 'ResetPassword',
-    component: ResetPassword
+    path: "/reset-password",
+    name: "ResetPassword",
+    component: ResetPassword,
   },
   {
-    path: '/setGooglePassword',
-    name: 'GoogleSetpwd',
-    component: GoogleSetpwd
+    path: "/setGooglePassword",
+    name: "GoogleSetpwd",
+    component: GoogleSetpwd,
   },
   {
-    path: '/logout',
-    name : 'Logout',
+    path: "/logout",
+    name: "Logout",
   },
   {
-    path: '/profile',
-    name : 'Profile',
-    component: Profile,
-    meta: { requiresAuth: true }
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFound,
   },
   {
     path: '/update-profile',
@@ -75,22 +73,23 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/friends',
-    name : 'Friends',
+    path: "/profile",
+    name: "Profile",
+
+    component: Profile,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/friends",
+    name: "Friends",
     component: Friends,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
-    path : '/gamemode',
-    name: 'Gamemode',
-    component: GamemodeView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/multiplayer',
-    name : 'Multiplayer',
+    path: "/multiplayer",
+    name: "Multiplayer",
     component: MultiplayerView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/premium',
@@ -100,18 +99,11 @@ const routes = [
 
   // Back office routes
   {
-    path: '/back',
-    name : 'BackDashboard',
+    path: "/back",
+    name: "BackDashboard",
     component: BackDashboard,
-    meta: { requiresAuth: true, requiresAdmin: true }
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
-
-  {
-    path: '/:pathMatch(.*)*',
-    name : 'NotFound',
-    component: NotFound
-  },
-
 ];
 
 const router = createRouter({
@@ -121,7 +113,7 @@ const router = createRouter({
 
 router.beforeEach( async (to, from, next) => {
   const isAuthenticated = localStorage.getItem('token');
-  
+
   if (to.name === 'Login' || to.name === 'Register') {
     if (isAuthenticated) {
       next('/');
@@ -131,7 +123,7 @@ router.beforeEach( async (to, from, next) => {
   } else if (to.name === 'Logout') {
     localStorage.removeItem('token');
     location.reload();
-  } 
+  }
   else {
     if (to.matched.some(record => record.meta.requiresAuth)) {
       if (isAuthenticated) {
@@ -152,12 +144,12 @@ router.beforeEach( async (to, from, next) => {
       }
     }
     else if(to.name === 'GoogleCallback') {
-      const code = to.query.code; 
+      const code = to.query.code;
       try {
-        const data = await googleAuthCallback(code) 
+        const data = await googleAuthCallback(code)
         if (data.status === 200) {
           localStorage.setItem('token', data.data.token);
-          
+
           next('/');
         } else if (data.status === 201) {
           // The user has been created but has to set his password

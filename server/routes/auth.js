@@ -28,6 +28,7 @@ router.post('/reset-password', authController.resetPassword);
 router.patch('/password',authenticateToken, authController.changePassword);
 
 
+
 module.exports = router;
 
 

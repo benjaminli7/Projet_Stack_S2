@@ -27,4 +27,7 @@ router.get('/:id', userController.get);
 // Route pour la suppression d'un utilisateur
 router.delete('/:id', userController.delete);
 
+router.get('/:id/achievements', authenticateToken, userController.getUserAchievements);
+
+
 module.exports = router;

@@ -2,17 +2,18 @@ const { User, Friend } = require("../db");
 const { Op } = require("sequelize");
 
 const createFriend = async (req, res) => {
-  const {  friendUsername } = req.body;
-  const user = req.user.info
-
   try {
+    const { friendUsername } = req.body;
+    console.log("createFriend" , friendUsername);
+
+    const user = req.user.infos;
+    const username = user.username;
 
 
     if (username === friendUsername) {
       console.log("You can't add yourself as a friend");
       return res.status(400).json({ message: "You can't add yourself as a friend" });
     }
-    const user = await User.findOne({ where:{ username: username } })
     const friend = await User.findOne({ where: { username: friendUsername } })
 
     if (!user || !friend) {
@@ -52,11 +53,10 @@ const createFriend = async (req, res) => {
 };
   
 const getAllFriendsByUser = async (req, res) => {
-  try {
-    const { username } = req.query;
-    console.log("Username:", username);
-
-    const user = await User.findOne({ where: { username: username } });
+  try {    
+    console.log("getAllFriendsByUser" , req.user.infos);
+    console.log(req.user);
+    const user = req.user.infos
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -109,20 +109,16 @@ const getAllFriendsByUser = async (req, res) => {
   }
 };
 
-
 const getReceivedFriendRequests = async (req, res) => {
   try {
-    const { username } = req.query;
-    console.log("Username:", username);
+    const user = req.user.infos
 
-    const test = await User.findOne({ where: { username: username } });
-
-    if (!test) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
     const pendingRequests = await Friend.findAll({
       where: {
-        friendId: test.id,
+        friendId: user.id,
         status: "pending",
       },
       include: [
@@ -141,12 +137,11 @@ const getReceivedFriendRequests = async (req, res) => {
   }
 };
 
-
 const acceptFriendRequest = async (req, res) => {
 try {
-    const { username, friendUsername } = req.body;
+    const {  friendUsername } = req.body;
 
-    const user = await User.findOne({ where: { username: username } });
+    const user = req.user.infos
     const friend = await User.findOne({ where: { username: friendUsername } });
 
     // check if the friend request exists
@@ -174,9 +169,9 @@ try {
 
 const declineFriendRequest = async (req, res) => {
 try {
-    const { username, friendUsername } = req.body;
+    const { friendUsername } = req.body;
 
-    const user = await User.findOne({ where: { username: username  } });
+    const user = req.user.infos
     const friend = await User.findOne({ where: { username: friendUsername  } });
     
     const existingFriendRequest = await Friend.findOne({
@@ -206,9 +201,7 @@ const cancelFriendRequest = async (req, res) => {
 try {
     const { username, friendUsername } = req.body;
 
-    console.log("Username:", username);
-    console.log("FriendUsername:", friendUsername);
-    const user = await User.findOne({ where: { username: username  } });
+    const user = req.user.infos
     const friend = await User.findOne({ where: { username: friendUsername } });
 
     const deletedRows = await Friend.destroy({
@@ -228,10 +221,9 @@ try {
 
 const deleteFriend = async (req, res) => {
 try {
-    const { username, friendUsername } = req.body;
-
+    const { friendUsername } = req.body;
     
-    const user = await User.findOne({ where: { username: username  } });
+    const user = req.user.infos
     const friend = await User.findOne({ where: { username: friendUsername } });
 
     const deletedRows = await Friend.destroy({
@@ -261,6 +253,7 @@ try {
     res.status(500).json({ error: err.message });
 }
 };
+
 module.exports = {
     createFriend,
     getAllFriendsByUser,

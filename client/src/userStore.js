@@ -1,19 +1,23 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+
+
 export const useUserStore = defineStore("user", {
   state: () => ({
     user: null,
+    socket: null,
   }),
   getters: {
     getUser: (state) => {
-      if(localStorage.getItem("user")) {
-        return JSON.parse(localStorage.getItem("user"));
-      } else {
-        return state.user
-      }
-
+      return state.user
     },
+    getSocket: (state) => {
+      return state.socket;
+    }
+  },
+  persist: {
+    enabled: true
   },
   actions: {
     async login(email, password) {
@@ -27,7 +31,9 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("token", token);
 
         const user = response.data.user;
-        this.setUser(user);
+        this.user = user;
+        localStorage.setItem("user", JSON.stringify(user));
+
       } catch (error) {
         console.error("error", error.response.data.error);
         throw new Error(error.response.data.error);
@@ -37,24 +43,21 @@ export const useUserStore = defineStore("user", {
       this.user = user;
       localStorage.setItem("user", JSON.stringify(user));
     },
+    async setSocket(socket) {
+      this.socket = socket;
+    },
     async getUserFriends(username) {
       try {
         const token = localStorage.getItem('token');
 
-        console.log(typeof username + " " + username + " " + typeof token + " " + token)
         const response = await axios.get(
           `http://localhost:3000/users/friends`,
           {
-            params: {
-              username: username,
-            },
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         )
-        
-        //console.log(response.data);
         const friends = response.data;
         return friends;
 
@@ -66,19 +69,16 @@ export const useUserStore = defineStore("user", {
     async getReceivedFriendRequests(username) {
       try {
         const token = localStorage.getItem('token');
-        console.log(typeof username + " " + username + " " + typeof token + " " + token)
+        // console.log(typeof username + " " + username + " " + typeof token + " " + token)
         const response = await axios.get(
           `http://localhost:3000/users/friend-requests`,
           {
-            params: {
-              username: username,
-            },
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         )
-        console.log(response.data);
+        // console.log(response.data);
 
         const friends = response.data;
         return friends;
@@ -86,14 +86,13 @@ export const useUserStore = defineStore("user", {
         console.error(error);
         throw new Error('Failed to get friends');
       }
-    },  
+    },
     async addFriend(username,friendUsername) {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
           'http://localhost:3000/friends',
           {
-            username,
             friendUsername,
           },
           {
@@ -104,21 +103,18 @@ export const useUserStore = defineStore("user", {
           }
         ).catch((err) => {
           throw new Error(err.response.data.message);
-        })      
+        })
 
       } catch (error) {
         alert(error);
       }
     },
-  
     async acceptFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
-        // alert(username + " " + friendUsername);
         const response = await axios.put(
           `http://localhost:3000/friends/friend-requests/accept`,
           {
-            username,
             friendUsername,
           },
           {
@@ -164,7 +160,6 @@ export const useUserStore = defineStore("user", {
         const response = await axios.put(
           `http://localhost:3000/friends/friend-requests/cancel`,
           {
-            username,
             friendUsername,
           },
           {
@@ -191,7 +186,6 @@ export const useUserStore = defineStore("user", {
               'Content-Type': 'application/json',
             },
             data: {
-              username,
               friendUsername,
             },
           }
@@ -201,6 +195,32 @@ export const useUserStore = defineStore("user", {
         console.error(error);
         throw new Error("Failed to delete friend");
       }
-    }
+    },
+    async getAchievements(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://localhost:3000/users/${id}/achievements`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        return response.data;
+
+      }
+      catch (error) {
+        console.error(error);
+      }
+    },
+    disconnectSocket() {
+      if (this.socket) {
+        this.socket.disconnect();
+        this.socket = null;
+      }
+    },
   },
+
 });

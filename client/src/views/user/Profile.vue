@@ -17,7 +17,7 @@ console.log(user.lastname);
 //     }
 // }
 
-
+import DisplayAchievements from '../../components/DisplayAchievements.vue';
 </script>
 
 
@@ -49,7 +49,12 @@ console.log(user.lastname);
         <!-- <div v-else-if="activeTab === 'Achievements'" class="tab-content"> -->
         <h2>Achievements</h2>
         <!-- Ajoutez ici le contenu pour les achievements -->
-        <!-- </div> -->
+    </div>
+
+    <div class="mb-4">
+        <p>Mon profil</p>
+        <DisplayAchievements></DisplayAchievements>
+
     </div>
   </template>
 

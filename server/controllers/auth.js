@@ -40,12 +40,17 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Veuillez vérifier votre email' });
     }
     // Vérification du mot de passe
+<<<<<<< HEAD
     if (await bcrypt.compare(password, user.password)){
       const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
 
       console.log("User found: ", user.id);
 
       console.log("User found: ", user.id);
+=======
+    if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
+      const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
+>>>>>>> dev
 
       return res.status(200).json({
         token: token,
@@ -102,7 +107,7 @@ const register = async (req, res) => {
       verificationToken : verificationToken,
       isVerified : false
     });
-    
+
     // Configuration de Nodemailer
     let transporter = nodemailer.createTransport(
         new SendinBlueTransport({
@@ -278,25 +283,23 @@ const googleAuthCallback = async (req, res) => {
 
     if (existingUser === null) {
       // Créer un nouvel utilisateur
-      const newUser = new User({
+      let newUser = new User({
         firstname: given_name,
         lastname: family_name,
         username: given_name +" "+ family_name,
         email: email,
-        password: null,
+        password:  crypto.randomBytes(10).toString('hex'),
         roles: ["user"],
         status: 0,
         friends: [],
         isVerified: true,
         isGoogle: true,
       });
-      const randomPassword = crypto.randomBytes(20).toString('hex');
-      const hashedPassword = await bcrypt.hash(randomPassword, 10);
-      newUser.password = hashedPassword;
+      // create a random password 10 characters minimum
       await newUser.save();
 
-      
-      const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET);
+
+      const token = jwt.sign({ infos: newUser}, process.env.JWT_SECRET);
 
       return res.status(201).json({
         token: token,
@@ -311,9 +314,9 @@ const googleAuthCallback = async (req, res) => {
           friends: newUser.friends
         }
       });
-    } 
+    }
 
-    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ infos: existingUser}, process.env.JWT_SECRET);
 
     return res.status(200).json({
       token: token,
@@ -356,20 +359,20 @@ const resetPassword = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
- 
+
 }
 
 const setGooglePassword = async (req, res) => {
   try {
-      const { user , password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const { password } = req.body;
+      const user = req.user.infos;
 
       const existingUser = await User.findOne({where : {'email' : user.email}});
       if (existingUser === null) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      existingUser.password = hashedPassword;
+      existingUser.password = password;
       await existingUser.save();
 
       res.status(200).json({ message: 'Mot de passe enregistré avec succès' });
