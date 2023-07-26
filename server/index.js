@@ -44,6 +44,9 @@ const RESULTS = {
 io.on("connection", function (socket) {
 
   socket.on("playerJoined", (username) => {
+    if (availablePlayers.some((player) => player.username === username)) {
+      return;
+    }
     availablePlayers.push({
       id: socket.id,
       username: username,
@@ -71,6 +74,8 @@ io.on("connection", function (socket) {
         },
         player1_guesses: [],
         player2_guesses: [],
+        player1_score: 0,
+        player2_score: 0,
         positions: positions
       });
 
@@ -118,6 +123,7 @@ io.on("connection", function (socket) {
         score: score,
       });
     }
+    console.log(room);
 
 
     if (
@@ -133,13 +139,16 @@ io.on("connection", function (socket) {
         0
       );
 
+      room.player1_score = player1Score;
+      room.player2_score = player2Score;
+
       if (player1Score > player2Score) {
         io.to(room.player1.id).emit("gameFinished", {
           score: player1Score,
           opponentScore: player2Score,
           outcome: RESULTS.WIN,
           data: room,
-          currentPlayer: room.player1.username,
+          currentPlayer: "player1",
           winner: room.player1.username,
           loser: room.player2.username,
         });
@@ -148,7 +157,7 @@ io.on("connection", function (socket) {
           opponentScore: player1Score,
           outcome: RESULTS.LOSE,
           data: room,
-          currentPlayer: room.player2.username,
+          currentPlayer: "player2",
           winner: room.player1.username,
           loser: room.player2.username,
         });
@@ -158,34 +167,33 @@ io.on("connection", function (socket) {
           opponentScore: player2Score,
           outcome: RESULTS.LOSE,
           data: room,
-          currentPlayer: room.player1.username,
+          currentPlayer: "player1",
           winner: room.player2.username,
           loser: room.player1.username,
         });
-        io.to(room.player2).emit("gameFinished", {
+        io.to(room.player2.id).emit("gameFinished", {
           score: player2Score,
           opponentScore: player1Score,
           outcome: RESULTS.WIN,
           data: room,
-          currentPlayer: room.player2.username,
+          currentPlayer: "player2",
           winner: room.player2.username,
           loser: room.player1.username,
         });
       } else {
-        io.to(room.player1).emit("gameFinished", {
+        io.to(room.player1.id).emit("gameFinished", {
           score: player1Score,
           opponentScore: player2Score,
           outcome: RESULTS.DRAW,
           data: room,
-          currentPlayer: room.player1.username,
-          
+          currentPlayer: "player1",
         });
-        io.to(room.player2).emit("gameFinished", {
+        io.to(room.player2.id).emit("gameFinished", {
           score: player2Score,
           opponentScore: player1Score,
           outcome: RESULTS.DRAW,
           data: room,
-          currentPlayer: room.player2.username,
+          currentPlayer: "player2",
         });
       }
     }
