@@ -15,7 +15,7 @@ router.get("/friend-requests", authenticateToken , friendController.getReceivedF
 
 
 //Route pour la modification du profil
-router.patch('/:id', userController.patch);
+router.patch("/", authenticateToken, userController.patch);
 
 
 // Route pour la récupération de tout les utilisateurs

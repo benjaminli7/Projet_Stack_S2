@@ -58,8 +58,9 @@ module.exports = {
   },
   patch: async (req, res, next) => {
     try {
+      console.log('id', req.user.infos.id);
       const [user] = await userService.update(
-        { id: parseInt(req.params.id) },
+        { id: req.user.infos.id},
         req.body
       );
       if (!user) return res.sendStatus(404);
@@ -82,6 +83,7 @@ module.exports = {
   getUserAchievements: async (req, res, next) => {
     try {
       const user = await User.findByPk(parseInt(req.params.id));
+      console.log(user)
       const allAchievements = await Achievement.findAll();
       let userAchievements = await user.getAchievements();
       const userAchievementsIds = userAchievements.map((achievement) => achievement.id);
