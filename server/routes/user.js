@@ -17,9 +17,11 @@ router.get("/friend-requests", authenticateToken , friendController.getReceivedF
 //Route pour la modification du profil
 router.patch("/", authenticateToken, userController.patch);
 
+//Route pour la modification d'un role
+router.patch("/role/:id", authenticateToken, userController.patchRole);
 
 // Route pour la récupération de tout les utilisateurs
-router.get('/', userController.cget);
+router.get('/', authenticateToken, userController.cget);
 
 // Route pour la récupération d'un utilisateur
 //router.get('/:id', authenticateToken, userControler.getOneUser);

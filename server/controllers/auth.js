@@ -97,7 +97,7 @@ const register = async (req, res) => {
       username : username,
       email : email,
       password : password,
-      roles : ["user"],
+      roles : "user",
       status : 0,
       friends : [],
       verificationToken : verificationToken,

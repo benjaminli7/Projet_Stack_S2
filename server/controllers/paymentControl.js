@@ -1,5 +1,5 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { PurchasedItem } = require('../db');
+const { PurchasedItem, User } = require('../db');
 const { DateTime } = require('luxon');
 
 
@@ -74,3 +74,20 @@ exports.handlePurchaseSuccess = async (sessionId) => {
         throw error;
     }
 };
+
+exports.allPurchasedItems = async (req, res, next) => {
+    try {
+        const purchasedItems = await PurchasedItem.findAll({ 
+            include: [
+                {
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'username']
+                }
+            ]
+         });
+        return res.json(purchasedItems);
+    } catch (error) {
+        throw error;
+    }
+}

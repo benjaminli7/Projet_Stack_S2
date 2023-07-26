@@ -105,6 +105,18 @@ module.exports = {
     } catch (err) {
       next(err);
     }
-  }
+  },
   
+  patchRole: async (req, res, next) => {
+    try {
+      const [user] = await userService.update(
+        { id: req.params.id},
+        req.body
+      );
+      if (!user) return res.sendStatus(404);
+      res.json(user);
+    } catch (err) {
+      next(err);
+    }
+  }
 };
