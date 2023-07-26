@@ -39,7 +39,7 @@
         <img
           :src="achievement.image"
           alt="Achievement icon"
-          class="w-10 h-10"
+          class="w-14 h-14"
         />
         <div>
           <h3 class="text-xl font-semibold">{{ achievement.name }}</h3>
@@ -56,7 +56,7 @@
         <img
           :src="achievement.image"
           alt="Achievement icon"
-          class="w-8 h-8"
+          class="w-14 h-14"
         />
         <div>
           <h3 class="text-xl font-semibold">{{ achievement.name }}</h3>

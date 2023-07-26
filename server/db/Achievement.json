@@ -5,7 +5,7 @@
       "points": 100,
       "type": "elo",
       "targetValue": 2000,
-      "image": "default.svg"
+      "image": "https://icones.pro/wp-content/uploads/2021/05/icone-de-la-couronne-noir.png"
     },
     {
       "name": "Acharné des parties",
@@ -13,7 +13,7 @@
       "points": 50,
       "type": "gamesPlayed",
       "targetValue": 100,
-      "image": "default.svg"
+      "image": "https://icones.pro/wp-content/uploads/2021/05/icone-de-la-couronne-noir.png"
     },
     {
       "name": "Toujours présent",
@@ -21,7 +21,7 @@
       "points": 75,
       "type": "connections",
       "targetValue": 30,
-      "image": "default.svg"
+      "image": "https://media.letelegramme.fr/api/v1/images/view/637e9cbbe75299022b23510d/web_golden_xl/637e9cbbe75299022b23510d.1"
     },
     {
       "name": "Champion ultime",
@@ -29,16 +29,41 @@
       "points": 200,
       "type": "special",
       "targetValue": 5000,
-      "image": "default.svg"
+      "image": "https://production.listennotes.com/podcasts/chad-podcast-marley-davis-stout-ayA3XjoOCYv-206hNHTzp7o.1400x1400.jpg"
     },
     {
-        "name": "Retrouver les cramptés",
-        "description": "Reinitialiser son mot de passe",
-        "points": 300,
-        "type": "special",
-        "targetValue": 1,
-        "image": "default.svg"
+        "name": "Jeune bambi !",
+        "description": "Jouer 5 parties",
+        "points": 50,
+        "type": "gamesPlayed",
+        "targetValue": 5,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlOgMikybGO37hZdAxSn0brZdCqNoLZXC6XQ&usqp=CAU"
+    },
+    {
+     
+      "name": "Tu est tilté boubou",
+      "description": "Perdre 5 parties",
+      "points": 200,
+      "type": "gamesPlayed",
+      "targetValue": 5,
+      "image": "https://media.lelombrik.net/t/5df6505151f22bdf3234e4ed0577a6a6/p/03.jpg"
+    },
+    {
+     
+      "name": "Oh la fraude",
+      "description": "Perdre 10 parties",
+      "points": 200,
+      "type": "gamesPlayed",
+      "targetValue": 10,
+      "image": "https://uploads.lebonbon.fr/source/2023/july/2047142/alan_2_1200.jpg"
+    },
+    {
+     
+      "name": "Retrouver les cramptés",
+      "description": "Mot de passe oublie ",
+      "points": 200,
+      "type": "special",
+      "targetValue": 1,
+      "image": "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/1184c787a6e86555b3f5529dda428412~c5_720x720.jpeg?x-expires=1690354800&x-signature=pxIsNUP3TkBoGsp9bHiAVELk8dw%3D"
     }
-    
   ]
-  
