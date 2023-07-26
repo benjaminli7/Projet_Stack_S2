@@ -14,7 +14,10 @@ export const useUserStore = defineStore("user", {
     },
     getSocket: (state) => {
       return state.socket;
-    }
+    },
+    getStats: (state) => {
+      return state.stats;
+    },
   },
   persist: {
     enabled: true
@@ -213,6 +216,25 @@ export const useUserStore = defineStore("user", {
       }
       catch (error) {
         console.error(error);
+      }
+    },
+    async fetchStats() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+            `http://localhost:3000/game-stats`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+        );
+
+        this.stats = response.data;
+
+      } catch (error) {
+        console.error("Failed to fetch game stats:", error.response.data.error);
+        throw new Error(error.response.data.error);
       }
     },
     disconnectSocket() {
