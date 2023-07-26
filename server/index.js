@@ -19,8 +19,6 @@ var path = require('path');
 app.set('view engine', 'ejs');
 
 
-const getRandomPositions = require("./utils");
-
 app.use(cors({
   origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
 }));
