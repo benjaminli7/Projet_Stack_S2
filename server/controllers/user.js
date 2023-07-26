@@ -1,4 +1,6 @@
 const userService = require("../services/user");
+const { User , Achievement} = require("../db");
+
 
 module.exports = {
   cget: async (req, res, next) => {
@@ -8,7 +10,7 @@ module.exports = {
       _itemsPerPage = 10,
       _sort = {},
       ...criteria
-    } = req.query;
+    } = req.query; 
     try {
       const users = await userService.findAll(criteria, {
         offset: (_page - 1) * _itemsPerPage,
@@ -74,4 +76,30 @@ module.exports = {
       next(err);
     }
   },
+  getUserAchievements: async (req, res, next) => {
+    try {
+      const user = await User.findByPk(parseInt(req.params.id));
+      const allAchievements = await Achievement.findAll();
+      let userAchievements = await user.getAchievements();
+      const userAchievementsIds = userAchievements.map((achievement) => achievement.id);
+  
+  
+  
+      const achievements = allAchievements.map((achievement) => {
+        const { id } = achievement;
+        const unlocked = userAchievementsIds.includes(id);
+  
+        return {
+          ...achievement.dataValues,
+          unlocked,
+        };
+      });
+      console.log(achievements);
+  
+      res.json(achievements);
+    } catch (err) {
+      next(err);
+    }
+  }
+  
 };

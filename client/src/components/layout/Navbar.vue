@@ -2,23 +2,24 @@
 import { useDark, useToggle } from "@vueuse/core";
 import { Button, Navbar, NavbarCollapse, NavbarLink } from "flowbite-vue";
 import { computed } from "vue";
+import {useUserStore} from "../../userStore";
 
 const isAuthenticated = computed(() => {
   return localStorage.getItem("token") !== null;
 });
 // check if isAuthentificated then make a const with user data
-const user = computed(() => {
-  let user = localStorage.getItem("user");
-  if (user) {
-    return JSON.parse(user);
-  }
-});
+
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 
 
+  const user = computed(() => {
+    const userStore = useUserStore();
+    return userStore.getUser;
+  });
+  
 </script>
 
 <template>
@@ -33,11 +34,8 @@ const toggleDark = useToggle(isDark);
         <NavbarLink>Classement</NavbarLink>
         <NavbarLink link="/profile">Profil</NavbarLink>
         <NavbarLink link="/friends">Friends</NavbarLink>
-        <NavbarLink
-          v-if="isAuthenticated && user.roles.includes('admin')"
-          link="/back"
-          >Back Office</NavbarLink
-        >
+        <NavbarLink link="/premium">Premium</NavbarLink>
+        <NavbarLink v-if="isAuthenticated && user.roles.includes('admin')" link="/back">Back Office</NavbarLink>
       </NavbarCollapse>
     </template>
     <template #right-side>

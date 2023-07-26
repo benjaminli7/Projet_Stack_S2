@@ -56,6 +56,7 @@ onMounted(() => {
     winner.value = result.winner;
     loser.value = result.loser;
   });
+
 });
 
 watch(
@@ -117,3 +118,4 @@ const getResultMessage = () => {
   position: relative;
 }
 </style>
+

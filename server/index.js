@@ -2,21 +2,67 @@ const express = require("express");
 const app = express();
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
-var users = require("./routes/user");
-var friends = require("./routes/friend");
-var auth = require("./routes/auth");
+var users = require('./routes/user')
+var friends = require('./routes/friend')
+var auth = require('./routes/auth')
+var stripeRoutes = require('./routes/stripe');
+
+var session = require('express-session');
+const env = require('dotenv').config();
+const passport = require('./services/passport');
 const { getRandomPositions, calculateScore } = require("./utils");
 
 app.use(cors());
+// app.use(session({
+//   secret: process.env.SESSION_SECRET,
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: { secure: true }
+// }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+
+// app.use(function (req, res, next) {
+//   if (["POST", "PUT", "PATCH"].includes(req.method)) {
+//     if (!req.is("application/json")) {
+//       return res.sendStatus(400);
+//     }
+//   }
+// });
+// const db = require("./models");
+
+var path = require('path');
+
+
+// view engine setup
+
+app.set('view engine', 'ejs');
+
+app.use(cors({
+  origin: "*",
+}));
+
 app.use(express.json());
 
-app.use("/users", users);
-app.use("/friends", friends);
-app.use("/auth", auth);
+app.use('/users', users)
+app.use('/friends', friends)
+app.use('/auth', auth)
+app.use('/stripe', stripeRoutes);
 
+const getRandomPositions = require("./utils");
+
+app.use(function (req, res, next) {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    if (!req.is("application/json")) {
+      return res.sendStatus(400);
+    }
+  }
+  next();
+});
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
+
 
 app.use(errorHandler);
 
@@ -208,4 +254,46 @@ io.on("connection", function (socket) {
     }
 
   });
+
+  socket.on('authenticate', (userId) => {
+    console.log(`User ${userId} authenticated.`);
+    socket.join(userId); 
+    socketUserMap.set( userId, socket.id);
+    console.log(socketUserMap);
+  });
+
+  socket.on('disconnect', () => {
+    const userId = socketUserMap.get(socket.id);
+    if (userId) {
+      socketUserMap.delete(socket.id);
+      console.log(`User ${userId} disconnected.`);
+    }
+  });
+
+  socket.on('sendMessage', (message) => {
+    io.emit('message', message);
+  });
+
+  socket.on('sendFriendRequest', (message) => {
+    io.emit('friendRequest', message);
+  });
+  
 });
+
+
+const socketUserMap = new Map();
+
+io.on('connection', function (socket) {
+  io.emit('connection', `${socket.id} is connected`);
+});
+
+
+module.exports = {
+  io,
+  socketUserMap
+}
+require('./tests/changeStreams/test')
+
+
+
+
