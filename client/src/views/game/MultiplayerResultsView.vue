@@ -1,5 +1,7 @@
 <script setup>
 import { defineProps, onMounted } from "vue";
+import PlayerScoreTable from "../../components/game/PlayerScoreTable.vue"
+import { Button } from "flowbite-vue";
 let map;
 const props = defineProps({
   roomData: {
@@ -18,10 +20,24 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  username: {
+    type: String,
+    required: true,
+  },
+  winner: {
+    type: String,
+    required: true,
+  },
+  loser: {
+    type: String,
+    required: true,
+  },
 });
 
 onMounted(() => {
   initMap();
+
+  console.log(props.roomData);
 });
 
 const initMap = () => {
@@ -98,18 +114,18 @@ const drawDashedLines = () => {
         path,
         strokeOpacity: 0,
         strokeWeight: 2,
-      icons: [
-        {
-          icon: {
-            path: "M 0,-1 0,1",
-            strokeOpacity: 1,
-            strokeWeight: 2.5,
-            scale: 4,
+        icons: [
+          {
+            icon: {
+              path: "M 0,-1 0,1",
+              strokeOpacity: 1,
+              strokeWeight: 2.5,
+              scale: 4,
+            },
+            offset: "0",
+            repeat: "20px",
           },
-          offset: "0",
-          repeat: "20px",
-        },
-      ],
+        ],
       });
       line.setMap(map);
     });
@@ -128,16 +144,18 @@ const drawDashedLines = () => {
 
       const line = new google.maps.Polyline({
         path,
-        strokeOpacity: 0.7,
+        strokeOpacity: 0,
         strokeWeight: 2,
         icons: [
           {
             icon: {
               path: "M 0,-1 0,1",
               strokeOpacity: 1,
+              strokeWeight: 2.5,
               scale: 4,
             },
             offset: "0",
+            repeat: "20px",
           },
         ],
       });
@@ -148,14 +166,34 @@ const drawDashedLines = () => {
 </script>
 
 <template>
-    <div id="result-map"></div>
+  <div id="result-map"></div>
+  <div class="container mx-auto">
 
     <h2>{{ props.getResultMessage() }}</h2>
+    <router-link to="/">
+      <Button>Quitter</Button>
+    </router-link>
+
+    <PlayerScoreTable
+      :username="props.roomData.player1.username"
+      :score="props.roomData.player1_score"
+      :guesses="props.roomData.player1_guesses"
+    />
+
+    <PlayerScoreTable
+      :username="props.roomData.player2.username"
+      :score="props.roomData.player2_score"
+      :guesses="props.roomData.player2_guesses"
+    />
+  </div>
+
+
+
 </template>
 
 <style scoped>
 #result-map {
-  height: 100vh;
+  height: 70vh;
   /* width: 100vw; */
 }
 </style>

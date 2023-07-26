@@ -7,23 +7,27 @@
   const route = useRoute();
 
   const showNavbar = computed(() => {
-    const hiddenRoutes = ['Login', 'Register', 'GoogleSetpwd' ,undefined];
+  // hide navbar if route contains "multiplayer"
+
+    const hiddenRoutes = ['Login', 'Register', 'GoogleSetpwd',undefined, 'Multiplayer'];
     const isHiddenRoute = hiddenRoutes.includes(route.name);
     return !isHiddenRoute;
   });
   const showBackNavbar = computed(() => {
     const isBackRoute = route.path.includes('/back');
-    return isBackRoute 
+    return isBackRoute
   });
+
+
 
 
 </script>
 <template>
   <div>
-    <Navbar v-if="showNavbar && !showBackNavbar " class="w-screen"></Navbar>
+    <Navbar v-if="showNavbar && !showBackNavbar" class="w-screen"></Navbar>
     <BackNavbar v-if="showNavbar && showBackNavbar"></BackNavbar>
     <!-- <Friends v-if="showNavbar" class="w-screen"></Friends> -->
-    <div id="app" class="container mx-auto">
+    <div id="app" class="">
       <router-view></router-view>
     </div>
   </div>

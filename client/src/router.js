@@ -9,9 +9,7 @@ import ResetPassword from './views/auth/ResetPassword.vue';
 import Profile from './views/user/Profile.vue';
 
 import NotFound from './components/NotFound.vue';
-import GamemodeView from "./views/game/GamemodeView.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
-import TestView from "./views/game/TestView.vue";
 import Friends from "./views/user/friends/Friends.vue"
 import BackDashboard from "./views/back/BackDashboard.vue"
 import { googleAuthCallback } from "./services/google-auth";
@@ -79,21 +77,9 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/gamemode",
-    name: "Gamemode",
-    component: GamemodeView,
-    meta: { requiresAuth: true },
-  },
-  {
     path: "/multiplayer",
     name: "Multiplayer",
     component: MultiplayerView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/test",
-    name: "test",
-    component: TestView,
     meta: { requiresAuth: true },
   },
 
