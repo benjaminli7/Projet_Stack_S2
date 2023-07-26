@@ -2,11 +2,9 @@
 import { io } from "socket.io-client";
 import { computed, defineProps, onMounted, ref } from "vue";
 let map;
-let socket;
 
 onMounted(() => {
   initMap();
-  socket = io("http://localhost:3000");
 });
 
 const props = defineProps({
@@ -22,8 +20,13 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  socket: {
+    type: Object,
+    required: true,
+  },
 });
 
+let socket = props.socket;
 let positions = props.positions;
 let round = props.round;
 let roomName = props.roomName;

@@ -98,7 +98,7 @@ const register = async (req, res) => {
       verificationToken : verificationToken,
       isVerified : false
     });
-    
+
     // Configuration de Nodemailer
     let transporter = nodemailer.createTransport(
         new SendinBlueTransport({
@@ -259,6 +259,7 @@ const googleAuthCallback = async (req, res) => {
       // create a random password 10 characters minimum
       await newUser.save();
 
+
       const token = jwt.sign({ infos: newUser}, process.env.JWT_SECRET);
 
       return res.status(201).json({
@@ -274,7 +275,7 @@ const googleAuthCallback = async (req, res) => {
           friends: newUser.friends
         }
       });
-    } 
+    }
 
     const token = jwt.sign({ infos: existingUser}, process.env.JWT_SECRET);
 
@@ -320,7 +321,7 @@ const resetPassword = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
- 
+
 }
 
 const setGooglePassword = async (req, res) => {
