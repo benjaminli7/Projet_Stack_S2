@@ -6,7 +6,7 @@ import { TheCard } from 'flowbite-vue';
 let user = localStorage.getItem('user');
 user = JSON.parse(user);
 
-
+const token = localStorage.getItem('token');
 const state = reactive({
     firstname: user.firstname,
     lastname: user.lastname,
@@ -20,6 +20,12 @@ const updateProfile = async () => {
             username: state.username,
             firstname: state.firstname,
             lastname: state.lastname,
+        },
+        {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            },
         });
         let userStorage = {
             username: state.username,
@@ -43,7 +49,6 @@ const updatePassword = async () => {
             alert('Les mots de passe ne correspondent pas');
             return;
         }
-        const token = localStorage.getItem('token');
         await axios.patch('http://localhost:3000/auth/password', {
             oldPassword: state.oldPassword,
             password: state.password,
