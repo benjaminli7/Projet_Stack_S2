@@ -28,10 +28,7 @@ onMounted(() => {
     loading.value = false;
     positions.value = positionsData;
     console.log("game starting");
-
-  });
-
-
+  })
 });
 
 </script>
@@ -45,8 +42,8 @@ onMounted(() => {
 </template>
 
 <style scoped>
-#map-wrapper {
-  position: relative;
-}
+  #map-wrapper {
+    position: relative;
+  }
 
 </style>

@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { reactive } from 'vue';
 import router from '../../router';
+import { useUserStore } from '../../userStore';
 
 const state = reactive({
     password: '',
@@ -11,9 +12,10 @@ const state = reactive({
 const setpwd = async () => {
     try {
         const token = localStorage.getItem('token');
-        const usr = JSON.parse(localStorage.getItem('user'));
+        const userStore = useUserStore();
+        const user = userStore.getUser;
         await axios.post('http://localhost:3000/auth/setGooglepwd', {
-            user: usr,
+            user: user,
             password: state.password,
         },
         {
