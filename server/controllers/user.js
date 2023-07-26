@@ -8,7 +8,7 @@ module.exports = {
       _itemsPerPage = 10,
       _sort = {},
       ...criteria
-    } = req.query;
+    } = req.query; 
     try {
       const users = await userService.findAll(criteria, {
         offset: (_page - 1) * _itemsPerPage,

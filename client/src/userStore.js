@@ -29,8 +29,8 @@ export const useUserStore = defineStore("user", {
         const user = response.data.user;
         this.setUser(user);
       } catch (error) {
-        console.error(error);
-        throw new Error("Failed to login");
+        console.error("error", error.response.data.error);
+        throw new Error(error.response.data.error);
       }
     },
     async setUser(user) {

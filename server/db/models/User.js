@@ -109,6 +109,10 @@ module.exports = function (connection) {
       through: 'user_achievements',
       as: 'achievements',
     });
+    User.hasMany(models.PurchasedItem, {
+      foreignKey: 'userId',
+      as: 'purchasedItems',
+    });
   };
   
   return User;
