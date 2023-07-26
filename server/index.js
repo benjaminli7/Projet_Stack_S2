@@ -18,11 +18,27 @@ var path = require('path');
 
 app.set('view engine', 'ejs');
 
+app.use(cors({
+  origin: "*",
+}));
+
+app.use(express.json());
+
+app.use('/users', users)
+app.use('/friends', friends)
+app.use('/auth', auth)
+app.use('/stripe', stripeRoutes);
+
 const getRandomPositions = require("./utils");
 
-app.use(cors());
-
-
+app.use(function (req, res, next) {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    if (!req.is("application/json")) {
+      return res.sendStatus(400);
+    }
+  }
+  next();
+});
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
