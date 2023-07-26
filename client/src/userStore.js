@@ -215,6 +215,17 @@ export const useUserStore = defineStore("user", {
         console.error(error);
       }
     },
+    async fetchUserStats() {
+      try {
+        const response = await axios.get('http://localhost:3000/stats');
+        this.stats = response.data;
+        return this.stats;
+      } catch (error) {
+        console.error("There was a problem with the fetch operation:", error);
+        throw error;
+      }
+    },
+
     disconnectSocket() {
       if (this.socket) {
         this.socket.disconnect();

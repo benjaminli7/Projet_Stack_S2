@@ -9,6 +9,7 @@ var users = require('./routes/user')
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
 var stripeRoutes = require('./routes/stripe');
+var stats = require('./routes/stats');
 const { getRandomPositions, calculateScore } = require("./utils");
 
 // view engine setup
@@ -22,6 +23,7 @@ app.use('/users', users)
 app.use('/friends', friends)
 app.use('/auth', auth)
 app.use('/stripe', stripeRoutes);
+app.use('/', stats);
 
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
