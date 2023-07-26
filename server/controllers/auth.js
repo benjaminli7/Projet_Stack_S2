@@ -40,17 +40,13 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Veuillez vérifier votre email' });
     }
     // Vérification du mot de passe
-<<<<<<< HEAD
     if (await bcrypt.compare(password, user.password)){
       const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
 
       console.log("User found: ", user.id);
 
       console.log("User found: ", user.id);
-=======
-    if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
-      const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
->>>>>>> dev
+
 
       return res.status(200).json({
         token: token,
