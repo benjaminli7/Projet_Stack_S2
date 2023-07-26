@@ -115,8 +115,7 @@ router.beforeEach( async (to, from, next) => {
     }
   } else if (to.name === 'Logout') {
     localStorage.removeItem('token');
-    next("/");
-
+    next('/login')
   }
   else {
     if (to.matched.some(record => record.meta.requiresAuth)) {
