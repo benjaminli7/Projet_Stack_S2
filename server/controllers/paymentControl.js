@@ -1,7 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { PurchasedItem } = require('../db');
 const { DateTime } = require('luxon');
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = process.env.BASE_URL;
 
 
 exports.checkIfItemPurchased = async (userId) => {
