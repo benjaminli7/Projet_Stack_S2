@@ -19,7 +19,7 @@ const user = computed( () => {
   } else {
     const user = localStorage.getItem("user");
     console.log(JSON.parse(user));
-    return JSON.parse(user); 
+    return JSON.parse(user);
   }
 });
 </script>
@@ -37,7 +37,7 @@ const user = computed( () => {
         <NavbarLink link="/profile">Profil</NavbarLink>
         <NavbarLink link="/friends">Friends</NavbarLink>
         <NavbarLink link="/premium">Premium</NavbarLink>
-        <NavbarLink v-if="isAuthenticated && user.roles.includes('admin')" link="/back">Back Office</NavbarLink>
+        <!-- <NavbarLink v-if="isAuthenticated && user.roles.includes('admin')" link="/back">Back Office</NavbarLink> -->
       </NavbarCollapse>
     </template>
     <template #right-side>

@@ -10,7 +10,7 @@
   const showNavbar = computed(() => {
   // hide navbar if route contains "multiplayer"
 
-    const hiddenRoutes = ['Login', 'Register', 'GoogleSetpwd',undefined, 'Multiplayer'];
+    const hiddenRoutes = ['Multiplayer'];
     const isHiddenRoute = hiddenRoutes.includes(route.name);
     return !isHiddenRoute;
   });
@@ -26,7 +26,7 @@
     <AchievementPopup> </AchievementPopup>
     <BackNavbar v-if="showNavbar && showBackNavbar"></BackNavbar>
     <!-- <Friends v-if="showNavbar" class="w-screen"></Friends> -->
-    <div id="app" class="">
+    <div class="">
       <router-view></router-view>
     </div>
   </div>

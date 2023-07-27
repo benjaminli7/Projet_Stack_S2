@@ -143,7 +143,8 @@ router.beforeEach(async (to, from, next) => {
     }
   } else if (to.name === "Logout") {
     localStorage.removeItem("token");
-    next("/");
+    localStorage.removeItem("user");
+    next("/login");
   } else {
     if (to.matched.some((record) => record.meta.requiresAdmin)) {
       if (isAuthenticated) {
