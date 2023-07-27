@@ -116,9 +116,19 @@ const getByAuthenticatedUser = async (req, res) => {
   }
 };
 
+const countGame = async (req, res) =>{
+  try {
+    const count = await GameStats.countDocuments();
+    return  res.status(200).json(count);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error" });
+  } 
+}
 module.exports = {
   create,
   getByUsername,
   getAll,
   getByAuthenticatedUser,
+  countGame
 };

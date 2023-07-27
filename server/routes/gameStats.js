@@ -5,6 +5,6 @@ const gameStatsController = require("../controllers/gameStats");
 
 router.post("/", authenticateToken, gameStatsController.create);
 router.get("/", authenticateToken, gameStatsController.getByAuthenticatedUser);
-
+router.get("/count", authenticateToken, gameStatsController.countGame);
 
 module.exports = router;
