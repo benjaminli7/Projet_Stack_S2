@@ -66,6 +66,11 @@ module.exports = function (connection) {
         allowNull: false,
         defaultValue: false,
       },
+      elo: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1000,
+      },
     },
     {
       sequelize: connection,
