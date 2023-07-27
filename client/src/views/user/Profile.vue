@@ -1,6 +1,6 @@
 <template>
   <tabs variant="pills" v-model="activeTab" class="p-5">
-    <tab name="information" title="Information">
+    <tab name="information" title="Informations">
       <div class="flex items-center justify-center min-h-screen">
         <div class="flex flex-col items-center justify-center w-3/4 p-6 bg-white rounded-lg shadow-md">
           <h2 class="mb-3 text-3xl font-bold text-center">Information</h2>
@@ -18,7 +18,7 @@
         <DisplayAchievements></DisplayAchievements>
       </div>
     </tab>
-    <tab name="stat" title="Stat">
+    <tab name="stat" title="Statistiques">
       <div v-if="userStore.getStats" class="flex flex-wrap md:space-x-6">
         <div class="w-full mb-6 md:w-1/2 md:mb-0">
           <div class="flex flex-col justify-center h-full p-6 bg-blue-100 rounded-lg shadow-md">
