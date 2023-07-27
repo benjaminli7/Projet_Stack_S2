@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
+const { User } = require('../db');
 
 // Fonction middleware pour vérifier et authentifier un jeton JWT
 const authenticateToken = (req, res, next) => {
@@ -21,8 +22,8 @@ const authenticateToken = (req, res, next) => {
     // Vérification de la validité du jeton
     jwt.verify(token, JWT_SECRET, async (err, decoded) => {
         let user = await User.findOne({ where: { id: decoded.infos.id } });
-        if (err || user.status == 1) {
-            return res.status(401).json({ error: 'Jeton invalide, vous êtes peut être ban' });
+        if (err || user.status == 1 || !user || user.roles == 'user') {
+            return res.status(401).json({ error: 'Non autorisé' });
         }
         req.user = decoded;
         next();

@@ -6,6 +6,7 @@ const router = express.Router();
 const userController = require("../controllers/user");
 const friendController = require("../controllers/friend");
 const authenticateToken = require('../middlewares/auth.middleware');
+const adminToken = require('../middlewares/admin.middleware');
 
 
 // Route pour la récupération de tout les amis d'un utilisateur
@@ -18,28 +19,29 @@ router.get("/friend-requests", authenticateToken , friendController.getReceivedF
 router.patch("/", authenticateToken, userController.patch);
 
 //Route pour la modification d'un role
-router.patch("/role/:id", authenticateToken, userController.patchRole);
+router.patch("/role/:id", adminToken, userController.patchRole);
 
 // Route pour la récupération de tout les utilisateurs
-router.get('/', authenticateToken, userController.cget);
+router.get('/', adminToken, userController.cget);
 
 // Route pour la récupération d'un utilisateur
 //router.get('/:id', authenticateToken, userControler.getOneUser);
 // Route pour la suppression d'un utilisateur
-router.delete('/:id', userController.delete);
+router.delete('/:id', adminToken, userController.delete);
 
 router.get('/:id/achievements', authenticateToken, userController.getUserAchievements);
 
 router.post('/report', authenticateToken, userController.reportUser);
 
-router.get('/report/list', authenticateToken, userController.reportList);
-router.post('/ban', authenticateToken, userController.banUser);
-router.post('/unban', authenticateToken, userController.unbanUser);
-router.patch('/report/archiver', authenticateToken, userController.archiverReport);
+router.get('/report/list', adminToken, userController.reportList);
+router.post('/ban', adminToken, userController.banUser);
+router.post('/unban', adminToken, userController.unbanUser);
+router.patch('/report/archiver', adminToken, userController.archiverReport);
 router.get('/admin', authenticateToken, userController.isUserAdmin);
 router.get('/isPremium', authenticateToken, userController.isUserPremium);
 
 // router.get('/:id', userController.get);
+
 
 
 
