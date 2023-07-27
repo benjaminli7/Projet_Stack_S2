@@ -25,7 +25,7 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          isIn: [["elo", "gamesPlayed", "connections", "special"]],
+          isIn: [["elo", "gamesPlayed","gamesWon","gamesLose", "connections", "special"]],
         },
       },
       targetValue: {
