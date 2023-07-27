@@ -19,6 +19,7 @@ import BackUser from "./views/back/BackUser.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Premium from "./views/user/Premium.vue";
 import Friends from "./views/user/friends/Friends.vue";
+import Ranking from "./views/ranking/Ranking.vue";
 
 const routes = [
   {
@@ -98,6 +99,11 @@ const routes = [
     path: "/premium",
     name: "Premium",
     component: Premium,
+  },
+  {
+    path: "/rankings",
+    name: "Rankings",
+    component: Ranking,
   },
 
   // Back office routes
