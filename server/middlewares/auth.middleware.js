@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
+const { User } = require('../db');
+
 
 // Fonction middleware pour vérifier et authentifier un jeton JWT
 const authenticateToken = (req, res, next) => {
