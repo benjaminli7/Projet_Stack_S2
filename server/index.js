@@ -17,9 +17,13 @@ var payments = require('./routes/payment');
 var stripeRoutes = require("./routes/stripe");
 var gameStats = require("./routes/gameStats");
 const dbMongo = require("./db/mongoModels");
+const { User } = require("./db");
+
+
 const GameStats = dbMongo.gameStats;
 
 const { getRandomPositions, calculateScore } = require("./utils");
+const { playintegrity } = require("googleapis/build/src/apis/playintegrity");
 // Démarrage du serveur
 const httpsServer = https.createServer(
   {
@@ -269,6 +273,52 @@ io.on("connection", function (socket) {
         },
         positions: room.positions,
       };
+
+      if (player1_outcome === RESULTS.WIN) {
+        console.log(room.player1.username + " won the game");
+        const player1 = User.findOne({
+          where: { username: room.player1.username },
+        }).then((player) => {
+            player.elo += 15;
+            player.save();
+          }
+        );
+
+
+      } else if (player1_outcome === RESULTS.LOSE) {
+        console.log(room.player1.username + " lost the game");
+
+        const player1 = User.findOne({
+            where: { username: room.player1.username },
+          }).then((player) => {
+            player.elo -= 15;
+            player.save();
+          }
+        );
+      }
+
+      if (player2_outcome === RESULTS.WIN) {
+        console.log(room.player1.username + " won the game");
+
+        const player2 = User.findOne({
+          where: { username: room.player2.username },
+        }).then((player) => {
+            player.elo += 15;
+            player.save();
+          }
+        );
+
+      } else if (player2_outcome === RESULTS.LOSE) {
+        console.log(room.player1.username + " lost the game");
+
+       player2 = User.findOne({
+          where: { username: room.player2.username },
+       }).then((player) => {
+            player.elo -= 15;
+            player.save();
+          }
+        );
+      }
 
       GameStats.create(data);
       console.log(data);
