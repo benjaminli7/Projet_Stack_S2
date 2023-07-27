@@ -10,9 +10,7 @@ const { oauth2Client, url } = require('../services/Google/google-auth');
 const { google } = require('googleapis');
 const path = require('path');
 const ejs = require('ejs');
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+const BASE_URL = process.env.BASE_URL;
 
 // Fonction de connexion
 const login = async (req, res) => {

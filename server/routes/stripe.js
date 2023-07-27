@@ -3,7 +3,7 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const paymentController = require('../controllers/paymentControl');
 const authenticateToken = require('../middlewares/auth.middleware');
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = process.env.BASE_URL;
 
 router.get('/check-auth', authenticateToken, (req, res) => {
     res.status(200).json({ isAuthenticated: true });
