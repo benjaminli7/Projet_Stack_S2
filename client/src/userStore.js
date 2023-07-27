@@ -35,7 +35,7 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("token", token);
 
         const user = response.data.user;
-        
+
         this.setUser(user);
 
       } catch (error) {
@@ -239,8 +239,8 @@ export const useUserStore = defineStore("user", {
         console.error(error);
         throw new Error("Failed to report user");
       }
-    },  
-    async getReportList() {    
+    },
+    async getReportList() {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
@@ -292,7 +292,7 @@ export const useUserStore = defineStore("user", {
         return response.data;
       } catch (error) {
 
-        console.error(error); 
+        console.error(error);
         throw new Error("Failed to unban user");
       }
     },
@@ -314,6 +314,8 @@ export const useUserStore = defineStore("user", {
       } catch (error) {
         console.error(error);
         throw new Error("Erreur dans l'archivage du report");
+      }
+    },
 
     async fetchStats() {
       try {
