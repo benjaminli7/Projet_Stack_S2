@@ -9,10 +9,6 @@ mongoose.connect(dbUri, {
     dbName: 'statsTest',
 });
 const statsSchema = new mongoose.Schema({
-    userId: {
-        type: String,
-        required: true,
-    },
     username: {
         type: String,
         required: true,
@@ -32,25 +28,19 @@ const statsSchema = new mongoose.Schema({
         required: true,
         default: 0,
     },
-    totalDraws: {
-        type: Number,
-        required: true,
-        default: 0,
-    },
     totalPoints: {
         type: Number,
         required: true,
         default: 0,
     },
-    totalElo: {
+    elo: {
         type: Number,
         required: true,
-        default: 0,
+        default: 500,
         min: 0,
     },
-
 });
-const Stats = mongoose.model('Stats', statsSchema);
+const Stats = mongoose.model('UserStats', statsSchema);
 
 async function addGamePlayed() {
     try{
@@ -89,6 +79,17 @@ async function addGamePlayed() {
     }
    
 }
+async function getOneData() {
+    try{
+        Stats.findOne({ userId: '2' }, function (err, stats) {
+            if (err) return handleError(err);
+            console.log(stats);
+            });
+    } catch(err) {
+        console.error(err);
+    }
+}
+        
 
 // execute the async function every 1 second
 addGamePlayed()

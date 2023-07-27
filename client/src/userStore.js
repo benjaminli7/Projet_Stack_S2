@@ -35,8 +35,8 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("token", token);
 
         const user = response.data.user;
-        this.user = user;
-        localStorage.setItem("user", JSON.stringify(user));
+        
+        this.setUser(user);
 
       } catch (error) {
         console.error("error", error.response.data.error);
@@ -219,11 +219,107 @@ export const useUserStore = defineStore("user", {
         console.error(error);
       }
     },
+    async reportUser ( reportedUsername, reason) {
+      try {
+        const token = localStorage.getItem("token");
+        console.log(reportedUsername + " " + reason);
+        const response = await axios.post(
+          `${BASE_URL}/users/report`,
+          {
+            reportedUsername,
+            reason,
+          },{
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              }
+            }
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to report user");
+      }
+    },  
+    async getReportList() {    
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${BASE_URL}/users/report/list`,
+          {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            }
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to get report list");
+      }
+    },
+    async banUser(reportedUsername) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${BASE_URL}/users/ban`,
+          {
+            reportedUsername,
+          },{
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              }
+            }
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to ban user");
+      }
+    },
+    async unbanUser(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${BASE_URL}/users/unban`,
+          {
+            id,
+          },{
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              }
+            }
+        );
+        return response.data;
+      } catch (error) {
+
+        console.error(error); 
+        throw new Error("Failed to unban user");
+      }
+    },
+    async archiverReport(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.patch(
+          `${BASE_URL}/users/report/archiver`,
+          {
+            id,
+          },{
+
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              }
+            }
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Erreur dans l'archivage du report");
+
     async fetchStats() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-            `http://localhost:3000/game-stats`,
+            `${BASE_URL}/game-stats`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

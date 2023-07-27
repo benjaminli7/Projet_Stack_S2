@@ -43,9 +43,9 @@ module.exports = function (connection) {
         },
       },
       roles: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: ["user"],
+        defaultValue: "user",
       },
       status: {
         type: DataTypes.INTEGER,
