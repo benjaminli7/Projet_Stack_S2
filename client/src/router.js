@@ -145,7 +145,8 @@ router.beforeEach(async (to, from, next) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     next("/login");
-  } else {
+  } 
+  else {
     if (to.matched.some((record) => record.meta.requiresAdmin)) {
       if (isAuthenticated) {
         const user = JSON.parse(localStorage.getItem("user"));
