@@ -36,6 +36,7 @@
       });
       router.push('/login');
     } catch (error) {
+      console.log(error.response);
       alert(error.response.data.error || 'Erreur lors de l\'inscription');
     }
   }

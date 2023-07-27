@@ -1,5 +1,5 @@
 const userService = require("../services/user");
-const { User , Achievement, Moderation} = require("../db");
+const { User , Achievement, Moderation, PurchasedItem} = require("../db");
 const { Op } = require("sequelize");
 
 const bcrypt = require("bcryptjs");
@@ -269,5 +269,18 @@ module.exports = {
     } catch (err) {
       console.log(err);
     }
+  },
+  isUserPremium: async (req, res, next) => {
+    try{
+      const user = req.user.infos;
+      const isPremium = await PurchasedItem.findOne({where: {userId: parseInt(user.id)}});
+      if(!isPremium) {
+        return res.status(403).json({message: "Vous n'avez pas les droits pour effectuer cette action"});
+      }
+      return res.status(200).json({message: "Vous êtes premium"});
+    } catch (err) {
+      console.log(err);
+    }
   }
+
 };

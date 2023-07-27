@@ -355,8 +355,6 @@ io.on("connection", function (socket) {
   });
 });
 
-
-
 io.on("connection", function (socket) {
   io.emit("connection", `${socket.id} is connected`);
 });
