@@ -5,6 +5,9 @@ import Login from "./views/auth/Login.vue";
 import Register from "./views/auth/Register.vue";
 import ResetPassword from "./views/auth/ResetPassword.vue";
 import VerifyEmail from "./views/auth/VerifyEmail.vue";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 
 import Profile from "./views/user/Profile.vue";
 import UpdateProfile from "./views/user/UpdateProfile.vue";
@@ -19,6 +22,7 @@ import BackUser from "./views/back/BackUser.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Premium from "./views/user/Premium.vue";
 import Friends from "./views/user/friends/Friends.vue";
+
 
 const routes = [
   {
@@ -150,10 +154,10 @@ router.beforeEach(async (to, from, next) => {
     if (to.matched.some((record) => record.meta.requiresAdmin)) {
       if (isAuthenticated) {
         const user = JSON.parse(localStorage.getItem("user"));
-        if (user && user.roles.includes("admin")) {
+        if (user && await isUserAdmin()) {
           next();
         } else {
-          next("/404");
+          next("/profile");
         }
       } else {
         next("/login");
@@ -189,5 +193,27 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 });
+
+const isUserAdmin = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `${BASE_URL}/users/admin`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if(response.status === 200){
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+     
+  };
 
 export default router;

@@ -25,7 +25,6 @@ router.get('/', authenticateToken, userController.cget);
 
 // Route pour la récupération d'un utilisateur
 //router.get('/:id', authenticateToken, userControler.getOneUser);
-router.get('/:id', userController.get);
 // Route pour la suppression d'un utilisateur
 router.delete('/:id', userController.delete);
 
@@ -37,6 +36,10 @@ router.get('/report/list', authenticateToken, userController.reportList);
 router.post('/ban', authenticateToken, userController.banUser);
 router.post('/unban', authenticateToken, userController.unbanUser);
 router.patch('/report/archiver', authenticateToken, userController.archiverReport);
+router.get('/admin', authenticateToken, userController.isUserAdmin);
+
+router.get('/:id', userController.get);
+
 
 
 module.exports = router;
