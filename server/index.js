@@ -334,7 +334,7 @@ io.on("connection", function (socket) {
   socket.on("authenticate", (userId) => {
     socket.join(userId);
     socketUserMap.set(userId, socket.id);
-    console.log(socketUserMap);
+    // console.log(socketUserMap);
   });
 
   socket.on("disconnect", () => {

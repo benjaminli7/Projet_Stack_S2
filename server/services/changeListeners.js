@@ -106,7 +106,7 @@ const changeStreams = async (document) => {
     document.player_2.defeats = rawStats2.filter(stat => stat.currentPlayer.outcome.toLowerCase() === 'lose').length;
     document.player_2.lastGame = rawStats2[0];
 
-    console.log(document.player_1);
+    // console.log(document.player_1);
     await checkAchievements(document.player_1);
     await checkAchievements(document.player_2);
 
@@ -160,7 +160,7 @@ const checkAchievements = async (document) => {
     }
 }
 async function newAchievement(achievement, userId) {
-    console.log("L'utilisateur " + userId + " a obtenu le succès " + achievement.name + " !");
+    // console.log("L'utilisateur " + userId + " a obtenu le succès " + achievement.name + " !");
 
     const user = await User.findByPk(userId);
 
