@@ -8,6 +8,8 @@ const achievementData = ref({});
 // Use inject to access the achievement data from the event bus
 // const achievementData = inject('achievementData', {});
 
+console.log(achievementData)
+
 // Listen for the achievementReceived event and update the showPopup ref accordingly
 const onAchievementReceived = (event) => {
   // Extract the achievement data from the event

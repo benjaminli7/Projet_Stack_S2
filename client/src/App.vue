@@ -26,7 +26,7 @@
     <AchievementPopup> </AchievementPopup>
     <BackNavbar v-if="showNavbar && showBackNavbar"></BackNavbar>
     <!-- <Friends v-if="showNavbar" class="w-screen"></Friends> -->
-    <div class="">
+    <div>
       <router-view></router-view>
     </div>
   </div>
