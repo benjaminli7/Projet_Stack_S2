@@ -36,6 +36,7 @@ module.exports = {
   },
   get: async (req, res, next) => {
     try {
+      console.log("get")
       const user = await userService.findById(parseInt(req.params.id));
       if (!user) return res.sendStatus(404);
       res.json(user);
@@ -158,7 +159,6 @@ module.exports = {
     try {
       const user = req.user.infos;
 
-      console.log(user);
       if(!user.roles.includes("admin")) {
         return res.status(403).json({message: "You are not allowed to access this resource"});
       }
@@ -255,6 +255,19 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  },
+  isUserAdmin: async (req, res, next) => {
+    try {
+      
+      const user = req.user.infos;
+      const isAdmin = await User.findOne({where: {id: user.id, roles: "admin"}});
+      if(!isAdmin) {
+        return res.status(403).json({message: "Vous n'avez pas les droits pour effectuer cette action"});
+      }
+      
+      return res.status(200).json({message: "Vous êtes admin"});
+    } catch (err) {
+      console.log(err);
+    }
   }
-
 };

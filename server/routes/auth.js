@@ -27,7 +27,7 @@ router.post('/reset-password', authController.resetPassword);
 //Route pour update le password à partir de l'ancien
 router.patch('/password',authenticateToken, authController.changePassword);
 
-
+router.get('/isConnected', authenticateToken, authController.isConnected)
 
 module.exports = router;
 
