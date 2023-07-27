@@ -27,9 +27,9 @@
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h4 class="text-lg font-bold mb-4">Dernière partie:</h4>
-          <p>Username: {{ userStore.getStats.lastGame.currentPlayer.username }}</p>
+          <p>Nom d'utilisateur: {{ userStore.getStats.lastGame.currentPlayer.username }}</p>
           <p>Score: {{ userStore.getStats.lastGame.currentPlayer.score }}</p>
-          <p>Outcome: {{ userStore.getStats.lastGame.currentPlayer.outcome }}</p>
+          <p>Résultat: {{ userStore.getStats.lastGame.currentPlayer.outcome }}</p>
           <p>Date: {{ userStore.getStats.lastGame.date }}</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
