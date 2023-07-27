@@ -10,6 +10,8 @@ const { oauth2Client, url } = require('../services/Google/google-auth');
 const { google } = require('googleapis');
 const path = require('path');
 const ejs = require('ejs');
+const { newAchievement} = require('../services/achievements');
+
 const BASE_FRONT_URL = process.env.BASE_FRONT_URL;
 
 // Fonction de connexion
@@ -38,6 +40,10 @@ const login = async (req, res) => {
     if(!user.isVerified){
       return res.status(401).json({ error: 'Veuillez vérifier votre email' });
     }
+    if(user.status == 1){
+      return res.status(401).json({ error: 'Vous avez été banni impossible de vous connecter' });
+    }
+
     // Vérification du mot de passe
     if (await bcrypt.compare(password, user.password)){
       const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
@@ -96,7 +102,7 @@ const register = async (req, res) => {
       username : username,
       email : email,
       password : password,
-      roles : ["user"],
+      roles : "user",
       status : 0,
       friends : [],
       verificationToken : verificationToken,
@@ -341,6 +347,8 @@ const resetPassword = async (req, res) => {
     try{
       await User.update({password : password}, {where: {'id' : tokenFound.UserId} });
       return res.status(200).json({ message: 'Mot de passe changé avec succès' });
+      newAchievement
+      
     }
     catch (err) {
       console.error(err);

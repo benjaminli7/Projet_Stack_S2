@@ -4,6 +4,7 @@ const authenticateToken = require("../middlewares/auth.middleware");
 const gameStatsController = require("../controllers/gameStats");
 
 router.post("/", authenticateToken, gameStatsController.create);
+router.get("/", authenticateToken, gameStatsController.getByAuthenticatedUser);
 
 
 module.exports = router;

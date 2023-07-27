@@ -13,6 +13,7 @@ app.use(
 var users = require("./routes/user");
 var friends = require("./routes/friend");
 var auth = require("./routes/auth");
+var payments = require('./routes/payment');
 var stripeRoutes = require("./routes/stripe");
 var gameStats = require("./routes/gameStats");
 const dbMongo = require("./db/mongoModels");
@@ -55,11 +56,13 @@ app.use(function (req, res, next) {
 
 app.use(express.json());
 
+
 app.use("/users", users);
 app.use("/friends", friends);
 app.use("/auth", auth);
 app.use("/stripe", stripeRoutes);
 app.use("/game-stats", gameStats);
+app.use('/payments', payments);
 
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
@@ -172,8 +175,8 @@ io.on("connection", function (socket) {
     console.log(room);
 
     if (
-      room.player1_guesses.length === 2 &&
-      room.player2_guesses.length === 2
+      room.player1_guesses.length === 1 &&
+      room.player2_guesses.length === 1
     ) {
       const player1Score = room.player1_guesses.reduce(
         (total, guess) => total + guess.score,

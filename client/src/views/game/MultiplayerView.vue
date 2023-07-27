@@ -79,6 +79,13 @@ const getResultMessage = () => {
     return `It's a tie! You both scored ${totalScore.value} points.`;
   }
 };
+const isOpponent = (username) => {
+  if(user.username === username) {
+    return false;
+  } else {
+    return true;
+  }
+};
 </script>
 
 <template>
@@ -102,6 +109,7 @@ const getResultMessage = () => {
       :roomData="roomData"
       :currentPlayer="currentPlayer"
       :getResultMessage="getResultMessage"
+      :isOpennent="isOpponent"
     />
   </div>
   <div id="map-wrapper" v-else>

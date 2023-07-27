@@ -13,9 +13,12 @@ import NotFound from './components/NotFound.vue';
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Friends from "./views/user/friends/Friends.vue"
 import BackDashboard from "./views/back/BackDashboard.vue"
+import BackUser from "./views/back/BackUser.vue"
+import BackPayment from "./views/back/BackPayment.vue"
 import { googleAuthCallback } from "./services/google-auth";
 import GoogleSetpwd from "./views/auth/GoogleSetpwd.vue";
 import Premium from './views/user/Premium.vue';
+import BackReports from './views/back/BackReports.vue';
 
 const routes = [
   {
@@ -104,6 +107,25 @@ const routes = [
     component: BackDashboard,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
+  {
+    path: "/back/users",
+    name: "BackUser",
+    component: BackUser,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/back/payments",
+    name: "BackPayment",
+    component: BackPayment,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  }, 
+  {
+    path: "/back/reports",
+    name: "BackReports",
+    component: BackReports,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+
 ];
 
 const router = createRouter({

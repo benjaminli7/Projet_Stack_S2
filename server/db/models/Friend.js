@@ -7,14 +7,6 @@ module.exports = function (connection) {
 
   Friend.init(
     {
-      // userId: {
-      //   type: DataTypes.INTEGER,
-      //   allowNull: false,
-      // },
-      // friendUsername: {
-      //   type: DataTypes.INTEGER,
-      //   allowNull: false,
-      // },
       status: {
         type: DataTypes.ENUM("pending", "accepted", "canceled"),
         allowNull: false,
