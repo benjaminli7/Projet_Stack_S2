@@ -382,6 +382,9 @@ const setGooglePassword = async (req, res) => {
   }
 }
 
+const isConnected = async (req, res) => {
+  return res.status(200).json({ message: 'Utilisateur connecté' });
+}
 module.exports = {
   login,
   register,
@@ -391,5 +394,6 @@ module.exports = {
   changePassword,
   googleAuth,
   googleAuthCallback,
-  setGooglePassword
+  setGooglePassword,
+  isConnected
 }
