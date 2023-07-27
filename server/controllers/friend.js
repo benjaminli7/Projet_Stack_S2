@@ -85,6 +85,7 @@ const getAllFriendsByUser = async (req, res) => {
             id: friend.friend.id,
             username: friend.friend.username,
             email: friend.friend.email,
+            elo: friend.friend.elo
           },
         };
       } else {
@@ -95,6 +96,7 @@ const getAllFriendsByUser = async (req, res) => {
             id: friend.user.id,
             username: friend.user.username,
             email: friend.user.email,
+            elo: friend.user.elo,
           },
         };
       }

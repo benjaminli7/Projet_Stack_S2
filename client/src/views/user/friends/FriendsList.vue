@@ -83,6 +83,7 @@ const handleRemoveFriend = (friendUsername) => {
           </div>
           <div class="text-center">
             <h1 class="text-lg font-bold">{{ friend.user.username }}</h1>
+            <span class="text-sm font-normal ml-2">{{ friend.user.elo }}LP</span>
           </div>
         </div>
       </div>
