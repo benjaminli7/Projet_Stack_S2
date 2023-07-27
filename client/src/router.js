@@ -1,24 +1,24 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from './views/HomeView.vue';
-import Login from './views/auth/Login.vue';
-import Register from './views/auth/Register.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import HomeView from "./views/HomeView.vue";
+import ForgetPassword from "./views/auth/ForgetPassword.vue";
+import Login from "./views/auth/Login.vue";
+import Register from "./views/auth/Register.vue";
+import ResetPassword from "./views/auth/ResetPassword.vue";
 import VerifyEmail from "./views/auth/VerifyEmail.vue";
-import ForgetPassword from './views/auth/ForgetPassword.vue';
-import ResetPassword from './views/auth/ResetPassword.vue';
 
-import Profile from './views/user/Profile.vue';
-import UpdateProfile from './views/user/UpdateProfile.vue';
+import Profile from "./views/user/Profile.vue";
+import UpdateProfile from "./views/user/UpdateProfile.vue";
 
-import NotFound from './components/NotFound.vue';
-import MultiplayerView from "./views/game/MultiplayerView.vue";
-import Friends from "./views/user/friends/Friends.vue"
-import BackDashboard from "./views/back/BackDashboard.vue"
-import BackUser from "./views/back/BackUser.vue"
-import BackPayment from "./views/back/BackPayment.vue"
+import NotFound from "./components/NotFound.vue";
 import { googleAuthCallback } from "./services/google-auth";
 import GoogleSetpwd from "./views/auth/GoogleSetpwd.vue";
-import Premium from './views/user/Premium.vue';
-import BackReports from './views/back/BackReports.vue';
+import BackDashboard from "./views/back/BackDashboard.vue";
+import BackPayment from "./views/back/BackPayment.vue";
+import BackReports from "./views/back/BackReports.vue";
+import BackUser from "./views/back/BackUser.vue";
+import MultiplayerView from "./views/game/MultiplayerView.vue";
+import Premium from "./views/user/Premium.vue";
+import Friends from "./views/user/friends/Friends.vue";
 
 const routes = [
   {
@@ -70,10 +70,10 @@ const routes = [
     component: NotFound,
   },
   {
-    path: '/update-profile',
-    name : 'UpdateProfile',
+    path: "/update-profile",
+    name: "UpdateProfile",
     component: UpdateProfile,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: "/profile",
@@ -95,9 +95,9 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/premium',
-    name: 'Premium',
-    component: Premium
+    path: "/premium",
+    name: "Premium",
+    component: Premium,
   },
 
   // Back office routes
@@ -118,83 +118,74 @@ const routes = [
     name: "BackPayment",
     component: BackPayment,
     meta: { requiresAuth: true, requiresAdmin: true },
-  }, 
+  },
   {
     path: "/back/reports",
     name: "BackReports",
     component: BackReports,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
-
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 });
 
-router.beforeEach( async (to, from, next) => {
-  const isAuthenticated = localStorage.getItem('token');
+router.beforeEach(async (to, from, next) => {
+  const isAuthenticated = localStorage.getItem("token");
 
-  if (to.name === 'Login' || to.name === 'Register') {
+  if (to.name === "Login" || to.name === "Register") {
     if (isAuthenticated) {
-      next('/');
+      next("/");
     } else {
       next();
     }
-  } else if (to.name === 'Logout') {
-    localStorage.removeItem('token');
+  } else if (to.name === "Logout") {
+    localStorage.removeItem("token");
     next("/");
-
-  }
-  else {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
+  } else {
+    if (to.matched.some((record) => record.meta.requiresAdmin)) {
+      if (isAuthenticated) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user && user.roles.includes("admin")) {
+          next();
+        } else {
+          next("/404");
+        }
+      } else {
+        next("/login");
+      }
+    } else if (to.matched.some((record) => record.meta.requiresAuth)) {
       if (isAuthenticated) {
         next();
       } else {
-        next('/login');
+        next("/login");
       }
-    } else if (to.matched.some(record => record.meta.requiresAdmin)) {
-      if (isAuthenticated) {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user && user.roles.includes('admin')) {
-          next();
-        } else {
-          next('/');
-        }
-      } else {
-        next('/login');
-      }
-    }
-    else if(to.name === 'GoogleCallback') {
+    } else if (to.name === "GoogleCallback") {
       const code = to.query.code;
       try {
-        const data = await googleAuthCallback(code)
+        const data = await googleAuthCallback(code);
         if (data.status === 200) {
-          localStorage.setItem('token', data.data.token);
+          localStorage.setItem("token", data.data.token);
 
-          next('/');
+          next("/");
         } else if (data.status === 201) {
           // The user has been created but has to set his password
-          localStorage.setItem('token', data.data.token);
-          return next('/setGooglePassword');
+          localStorage.setItem("token", data.data.token);
+          return next("/setGooglePassword");
         } else {
-          alert('Une erreur est survenue')
-          return next('/');
+          alert("Une erreur est survenue");
+          return next("/");
         }
       } catch (error) {
         console.error(error);
-        next('/'); // Redirect to an error page or fallback route
+        next("/"); // Redirect to an error page or fallback route
       }
-
-    }
-    else {
+    } else {
       next();
     }
   }
 });
-
-
-
 
 export default router;
