@@ -37,8 +37,9 @@ router.post('/ban', authenticateToken, userController.banUser);
 router.post('/unban', authenticateToken, userController.unbanUser);
 router.patch('/report/archiver', authenticateToken, userController.archiverReport);
 router.get('/admin', authenticateToken, userController.isUserAdmin);
+router.get('/isPremium', authenticateToken, userController.isUserPremium);
 
-router.get('/:id', userController.get);
+// router.get('/:id', userController.get);
 
 
 

@@ -132,10 +132,30 @@ const countGame = async (req, res) =>{
     return res.status(500).json({ message: "Error" });
   } 
 }
+
+const last5Games = async (req, res) =>{
+  try {
+    const user = req.user.infos
+    const last5 = await GameStats.find({
+      $or: [
+        { "player_1.username": user.username },
+        { "player_2.username": user.username }
+      ]
+    }).sort({date: -1}).limit(5);
+
+    // console.log(last5);
+    return  res.status(200).json(last5);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error" });
+  }
+}
+
 module.exports = {
   create,
   getByUsername,
   getAll,
   getByAuthenticatedUser,
-  countGame
+  countGame,
+  last5Games
 };
