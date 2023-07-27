@@ -19,11 +19,13 @@ const GameStats = dbMongo.gameStats;
 
 const { getRandomPositions, calculateScore } = require("./utils");
 // Démarrage du serveur
-const httpsServer = https.createServer({
-  key: fs.readFileSync("./key.pem"),
-  cert: fs.readFileSync("./cert.pem"),
-}, app)
-
+const httpsServer = https.createServer(
+  {
+    key: fs.readFileSync("./key.pem"),
+    cert: fs.readFileSync("./cert.pem"),
+  },
+  app
+);
 
 const server = httpsServer.listen(process.env.PORT, () => {
   console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
@@ -34,13 +36,13 @@ const io = require("socket.io")(server, {
   },
 });
 
-// view engine setup
-
 app.set("view engine", "ejs");
 
-app.use(cors({
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  })
+);
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
     if (!req.is("application/json")) {
@@ -49,8 +51,6 @@ app.use(function (req, res, next) {
   }
   next();
 });
-
-
 
 app.use(express.json());
 
