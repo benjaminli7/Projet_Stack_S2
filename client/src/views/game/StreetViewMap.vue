@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const props = defineProps({
   positions: {
@@ -12,31 +12,39 @@ const props = defineProps({
   },
 });
 
-let positions = props.positions
-let round = props.round
+let positions = props.positions;
+const streetViewPanorama = ref(null);
 
-console.log(props.positions)
-console.log(props.round)
-
-console.log(positions[round].lat)
-console.log(positions[round].lng)
-
+watch(
+  () => props.round,
+  (newRound) => {
+    if (streetViewPanorama.value) {
+      streetViewPanorama.value.setPosition({
+        lat: positions[newRound].lat,
+        lng: positions[newRound].lng,
+      });
+    }
+  }
+);
 
 onMounted(() => {
-  new google.maps.StreetViewPanorama(document.getElementById("streetview-map"), {
-    position: { lat: positions[round].lat, lng: positions[round].lng },
-    pov: {
-      heading: 0,
-      pitch: 0,
-    },
-    addressControl: false,
-    streetViewControl: false,
-    showRoadLabels: false,
-
-
-  });
+  streetViewPanorama.value = new google.maps.StreetViewPanorama(
+    document.getElementById("streetview-map"),
+    {
+      position: {
+        lat: positions[props.round].lat,
+        lng: positions[props.round].lng,
+      },
+      pov: {
+        heading: 0,
+        pitch: 0,
+      },
+      addressControl: false,
+      streetViewControl: false,
+      showRoadLabels: false,
+    }
+  );
 });
-
 </script>
 <template>
   <div id="streetview-map"></div>

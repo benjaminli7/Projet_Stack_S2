@@ -5,6 +5,7 @@ import {useUserStore} from '../userStore';
 export const getGoogleAuthUrl = async () => {
   try {
     const response = await axios.get('http://localhost:3000/auth/google/url');
+
     return response.data.authUrl;
   } catch (error) {
     // Handle the error

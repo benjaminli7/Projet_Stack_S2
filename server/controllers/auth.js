@@ -1,4 +1,3 @@
-require('dotenv').config()
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -9,6 +8,8 @@ const SendinBlueTransport = require('nodemailer-sendinblue-transport');
 const exp = require('constants');
 const { oauth2Client, url } = require('../services/Google/google-auth');
 const { google } = require('googleapis');
+const path = require('path');
+const ejs = require('ejs');
 
 
 
@@ -16,7 +17,6 @@ const { google } = require('googleapis');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Veuillez saisir tous les champs' });
@@ -32,16 +32,26 @@ const login = async (req, res) => {
 
     // Recherche de l'utilisateur dans la base de données
     const user = await User.findOne({ where: { email: email } });
-
-
+    console.log('user', user)
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+    if(!user.isVerified){
+      return res.status(401).json({ error: 'Veuillez vérifier votre email' });
+    }
     // Vérification du mot de passe
-    if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    if (await bcrypt.compare(password, user.password)){
+      const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
 
-      return res.status(200).json({ 
+      console.log("User found: ", user.id);
+
+      console.log("User found: ", user.id);
+
+
+      return res.status(200).json({
         token: token,
         user: {
-          id: user._id,
+          id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
           username: user.username,
@@ -51,7 +61,7 @@ const login = async (req, res) => {
           friends: user.friends
         }
       });
-    }   
+    }
     return res.status(401).json({ error: 'Identifiants invalides' });
   } catch (err) {
     console.error(err);
@@ -72,6 +82,12 @@ const register = async (req, res) => {
       return res.status(400).json({ error: 'Ce nom d\'utilisateur est déjà pris' });
     }
 
+    const existingEmail = await User.findOne({where: {'email' : email} });
+
+    if (existingEmail) {
+      return res.status(400).json({ error: 'Cet email est déjà utilisé' });
+    }
+
     // Création d'un token de vérification
     const verificationToken = crypto.randomBytes(20).toString('hex');
 
@@ -87,7 +103,7 @@ const register = async (req, res) => {
       verificationToken : verificationToken,
       isVerified : false
     });
-    
+
     // Configuration de Nodemailer
     let transporter = nodemailer.createTransport(
         new SendinBlueTransport({
@@ -95,18 +111,23 @@ const register = async (req, res) => {
         })
     );
 
-    // Configuration du message
+  //let mailOptions = emailVerification(`http://127.0.0.1:5173/verify-email?token=${verificationToken}`, email)
+
     let mailOptions = {
       from: 'semainechallenge@gmail.com',
       to: email,
       subject: 'Vérification de l\'email',
-      text: `Merci de vous être inscrit. Veuillez cliquer sur le lien suivant pour vérifier votre email: http://127.0.0.1:5173/verify-email?token=${verificationToken}`
+      text: await ejs
+      .renderFile("./views/verifyEmail.ejs", {
+        url : `http://127.0.0.1:5173/verify-email?token=${verificationToken}`,
+        firstname : firstname,
+      })
     };
-
-    // Envoi de l'email
+    // Envoi de l'email 
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
         console.log(error);
+        return res.status(500).json({ error: 'Problème lors de l\'envoie de mail' });
       } else {
         console.log('Email sent: ' + info);
       }
@@ -145,6 +166,36 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+const changePassword =  async (req, res) => {
+  try {
+    console.log('req',req)
+    let { oldPassword, password } = req.body;
+    let id = req.user.infos.id;
+    console.log('oldPassword', oldPassword)
+    console.log('password', password)
+    const userFound = await User.findByPk(id);
+    console.log('userFound', userFound)
+    if (!userFound) {
+      return res.status(404).json({ error: 'user invalide' });
+    }
+    try{
+      if(!await bcrypt.compare(oldPassword, userFound.password)){
+        return res.status(401).json({ error: 'Identifiants invalides' });
+      }
+      password = await bcrypt.hash(password, 10);
+      await User.update({password : password}, {where: {'id' : id} });
+      return res.status(200).json({ message: 'Mot de passe changé avec succès' });
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+ 
+}
 
 const forgotPassword = async (req, res) => {
   try {
@@ -175,7 +226,11 @@ const forgotPassword = async (req, res) => {
       from: 'semainechallenge@gmail.com',
       to: user.email,
       subject: 'Changement de mot de passe',
-      text: `Vous souhaitez changer votre mot de passe ? Allez sur  http://127.0.0.1:5173/reset-password?token=${verificationToken}`
+      text: await ejs
+      .renderFile("./views/updatePassword.ejs", {
+        url : `http://127.0.0.1:5173/reset-password?token=${verificationToken}`,
+        firstname : user.firstname,
+      })
     };
 
     // Envoi de l'email
@@ -224,25 +279,23 @@ const googleAuthCallback = async (req, res) => {
 
     if (existingUser === null) {
       // Créer un nouvel utilisateur
-      const newUser = new User({
+      let newUser = new User({
         firstname: given_name,
         lastname: family_name,
         username: given_name +" "+ family_name,
         email: email,
-        password: null,
+        password:  crypto.randomBytes(10).toString('hex'),
         roles: ["user"],
         status: 0,
         friends: [],
         isVerified: true,
         isGoogle: true,
       });
-      const randomPassword = crypto.randomBytes(20).toString('hex');
-      const hashedPassword = await bcrypt.hash(randomPassword, 10);
-      newUser.password = hashedPassword;
+      // create a random password 10 characters minimum
       await newUser.save();
 
-      
-      const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET);
+
+      const token = jwt.sign({ infos: newUser}, process.env.JWT_SECRET);
 
       return res.status(201).json({
         token: token,
@@ -257,9 +310,9 @@ const googleAuthCallback = async (req, res) => {
           friends: newUser.friends
         }
       });
-    } 
+    }
 
-    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ infos: existingUser}, process.env.JWT_SECRET);
 
     return res.status(200).json({
       token: token,
@@ -291,7 +344,6 @@ const resetPassword = async (req, res) => {
       return res.status(404).json({ error: 'Token invalide' });
     }
     try{
-      password = await bcrypt.hash(password, 10);
       await User.update({password : password}, {where: {'id' : tokenFound.UserId} });
       return res.status(200).json({ message: 'Mot de passe changé avec succès' });
     }
@@ -303,20 +355,20 @@ const resetPassword = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
- 
+
 }
 
 const setGooglePassword = async (req, res) => {
   try {
-      const { user , password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const { password } = req.body;
+      const user = req.user.infos;
 
       const existingUser = await User.findOne({where : {'email' : user.email}});
       if (existingUser === null) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      existingUser.password = hashedPassword;
+      existingUser.password = password;
       await existingUser.save();
 
       res.status(200).json({ message: 'Mot de passe enregistré avec succès' });
@@ -333,6 +385,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  changePassword,
   googleAuth,
   googleAuthCallback,
   setGooglePassword

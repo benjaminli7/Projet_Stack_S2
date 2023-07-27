@@ -15,7 +15,8 @@ router.get("/friend-requests", authenticateToken , friendController.getReceivedF
 
 
 //Route pour la modification du profil
-router.patch('/:id', userController.patch);
+router.patch("/", authenticateToken, userController.patch);
+
 
 // Route pour la récupération de tout les utilisateurs
 router.get('/', userController.cget);
@@ -25,5 +26,8 @@ router.get('/', userController.cget);
 router.get('/:id', userController.get);
 // Route pour la suppression d'un utilisateur
 router.delete('/:id', userController.delete);
+
+router.get('/:id/achievements', authenticateToken, userController.getUserAchievements);
+
 
 module.exports = router;

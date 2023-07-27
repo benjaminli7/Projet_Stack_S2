@@ -1,0 +1,76 @@
+<script setup>
+  import { ref, onMounted } from 'vue';
+  import { useUserStore } from '../userStore';
+  import { getSocket } from '../services/socket';
+
+  const achievementData = ref({});
+  const unlockedAchievements = ref([]);
+  const lockedAchievements = ref([]);
+
+  onMounted(async () => {
+    const userStore = useUserStore();
+    const user = userStore.getUser;
+    try {
+      const response = await userStore.getAchievements(user.id);
+      console.log("Achievements", response);
+      achievementData.value = response;
+
+      unlockedAchievements.value = response.filter(
+        (achievement) => achievement.unlocked
+      );
+      lockedAchievements.value = response.filter(
+        (achievement) => !achievement.unlocked
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  });
+</script>
+
+<template>
+  <div class="p-4">
+    <h2 class="text-3xl font-bold text-center mb-3">Achievements</h2>
+    <div class="grid grid-cols-1 gap-4">
+      <div
+        v-for="achievement in unlockedAchievements"
+        :key="achievement.id"
+        class="p-4 border rounded-lg shadow-md flex gap-4 items-center"
+      >
+        <img
+          :src="achievement.image"
+          alt="Achievement icon"
+          class="w-14 h-14"
+        />
+        <div>
+          <h3 class="text-xl font-semibold">{{ achievement.name }}</h3>
+          <p class="text-gray-500">{{ achievement.description }}</p>
+          <!-- <p class="text-gray-500"> Débloqué le : {{ new Date(achievement.createdAt).toLocaleDateString() }}</p> -->
+        </div>
+      </div>
+
+      <div
+        v-for="achievement in lockedAchievements"
+        :key="achievement.id"
+        class="p-4 border rounded-lg shadow-md opacity-50 flex gap-4 items-center"
+      >
+        <img
+          :src="achievement.image"
+          alt="Achievement icon"
+          class="w-14 h-14"
+        />
+        <div>
+          <h3 class="text-xl font-semibold">{{ achievement.name }}</h3>
+          <p class="text-gray-500">{{ achievement.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<style>
+/* Add some margin between achievement cards */
+.grid-cols-1 > div {
+  margin-bottom: 1rem;
+}
+</style>
