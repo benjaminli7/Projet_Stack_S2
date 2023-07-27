@@ -10,7 +10,7 @@ const { oauth2Client, url } = require('../services/Google/google-auth');
 const { google } = require('googleapis');
 const path = require('path');
 const ejs = require('ejs');
-const BASE_URL = process.env.BASE_URL;
+const BASE_FRONT_URL = process.env.BASE_FRONT_URL;
 
 // Fonction de connexion
 const login = async (req, res) => {
@@ -115,7 +115,7 @@ const register = async (req, res) => {
       to: email,
       subject: "Vérification de l'email",
       text: await ejs.renderFile("./views/verifyEmail.ejs", {
-        url: `${BASE_URL}/verify-email?token=${verificationToken}`,
+        url: `${BASE_FRONT_URL}/verify-email?token=${verificationToken}`,
         firstname: firstname,
       }),
     };
@@ -223,7 +223,7 @@ const forgotPassword = async (req, res) => {
       to: user.email,
       subject: "Changement de mot de passe",
       text: await ejs.renderFile("./views/updatePassword.ejs", {
-        url: `${BASE_URL}/reset-password?token=${verificationToken}`,
+        url: `${BASE_FRONT_URL}/reset-password?token=${verificationToken}`,
         firstname: user.firstname,
       }),
     };
