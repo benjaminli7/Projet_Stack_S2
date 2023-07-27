@@ -17,20 +17,33 @@
       </div>
     </tab>
     <tab name="stat" title="Stat">
-      <div v-if="userStore.getStats && userStore.getStats.length">
-        <div v-for="(stat, index) in userStore.getStats" :key="index">
-          <h3>Player 1</h3>
-          <p>Username: {{ stat.player_1.username }}</p>
-          <p>Score: {{ stat.player_1.score }}</p>
-          <p>Outcome: {{ stat.player_1.outcome }}</p>
-          <h3>Player 2</h3>
-          <p>Username: {{ stat.player_2.username }}</p>
-          <p>Score: {{ stat.player_2.score }}</p>
-          <p>Outcome: {{ stat.player_2.outcome }}</p>
-          <p>Date: {{ stat.date }}</p>
+      <div v-if="userStore.getStats" class="space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-4">Vos Stats Globales</h3>
+          <p>Parties jouées: {{ userStore.getStats.totalGames }}</p>
+          <p>Victoires: {{ userStore.getStats.victories }}</p>
+          <p>Défaites: {{ userStore.getStats.defeats }}</p>
+          <p>Winrate: {{ userStore.getStats.winRate }}%</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h4 class="text-lg font-bold mb-4">Dernière partie:</h4>
+          <p>Username: {{ userStore.getStats.lastGame.currentPlayer.username }}</p>
+          <p>Score: {{ userStore.getStats.lastGame.currentPlayer.score }}</p>
+          <p>Outcome: {{ userStore.getStats.lastGame.currentPlayer.outcome }}</p>
+          <p>Date: {{ userStore.getStats.lastGame.date }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h4 class="text-lg font-bold mb-4">Guess le plus proche:</h4>
+          <p>Lat: {{ userStore.getStats.closestGuess.lat }}</p>
+          <p>Lng: {{ userStore.getStats.closestGuess.lng }}</p>
+          <p>Score: {{ userStore.getStats.closestGuess.score }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h4 class="text-lg font-bold mb-4">Score le plus élevé:</h4>
+          <p>Score: {{ userStore.getStats.highestScore }}</p>
         </div>
       </div>
-      <div v-else>
+      <div v-else class="text-center p-6 bg-gray-100 rounded-lg shadow-md">
         Loading stats...
       </div>
     </tab>
