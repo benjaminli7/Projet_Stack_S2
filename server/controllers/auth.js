@@ -286,7 +286,7 @@ const googleAuthCallback = async (req, res) => {
         username: given_name +" "+ family_name,
         email: email,
         password:  crypto.randomBytes(10).toString('hex'),
-        roles: ["user"],
+        roles: "user",
         status: 0,
         friends: [],
         isVerified: true,
