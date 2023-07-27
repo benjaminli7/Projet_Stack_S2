@@ -11,6 +11,7 @@ const { google } = require('googleapis');
 const path = require('path');
 const ejs = require('ejs');
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 // Fonction de connexion
@@ -111,19 +112,16 @@ const register = async (req, res) => {
         })
     );
 
-  //let mailOptions = emailVerification(`http://127.0.0.1:5173/verify-email?token=${verificationToken}`, email)
-
     let mailOptions = {
-      from: 'semainechallenge@gmail.com',
+      from: "semainechallenge@gmail.com",
       to: email,
-      subject: 'Vérification de l\'email',
-      text: await ejs
-      .renderFile("./views/verifyEmail.ejs", {
-        url : `http://127.0.0.1:5173/verify-email?token=${verificationToken}`,
-        firstname : firstname,
-      })
+      subject: "Vérification de l'email",
+      text: await ejs.renderFile("./views/verifyEmail.ejs", {
+        url: `${BASE_URL}/verify-email?token=${verificationToken}`,
+        firstname: firstname,
+      }),
     };
-    // Envoi de l'email 
+    // Envoi de l'email
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
         console.log(error);
@@ -194,7 +192,7 @@ const changePassword =  async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
- 
+
 }
 
 const forgotPassword = async (req, res) => {
@@ -223,14 +221,13 @@ const forgotPassword = async (req, res) => {
 
     // Configuration du message
     let mailOptions = {
-      from: 'semainechallenge@gmail.com',
+      from: "semainechallenge@gmail.com",
       to: user.email,
-      subject: 'Changement de mot de passe',
-      text: await ejs
-      .renderFile("./views/updatePassword.ejs", {
-        url : `http://127.0.0.1:5173/reset-password?token=${verificationToken}`,
-        firstname : user.firstname,
-      })
+      subject: "Changement de mot de passe",
+      text: await ejs.renderFile("./views/updatePassword.ejs", {
+        url: `${BASE_URL}/reset-password?token=${verificationToken}`,
+        firstname: user.firstname,
+      }),
     };
 
     // Envoi de l'email
