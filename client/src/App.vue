@@ -21,12 +21,12 @@
 
 </script>
 <template>
-  <div>
+  <div id="haha">
     <Navbar v-if="showNavbar && !showBackNavbar " class="w-screen"></Navbar>
     <AchievementPopup> </AchievementPopup>
     <BackNavbar v-if="showNavbar && showBackNavbar"></BackNavbar>
     <!-- <Friends v-if="showNavbar" class="w-screen"></Friends> -->
-    <div class="">
+    <div>
       <router-view></router-view>
     </div>
   </div>
