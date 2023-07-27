@@ -13,14 +13,15 @@ const authenticateToken = (req, res, next) => {
     // authHeader : contient la valeur de l'en-tête d'autorisation de la requête
     // token : contient le jeton d'authentification extrait de l'en-tête d'autorisation
     // Vérification si le jeton est présent    
+
     if (!token) {
         return res.status(401).json({ error: 'Non autorisé' });
     }
 
     // Vérification de la validité du jeton
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: 'Jeton invalide' });
+        if (err || decoded.infos.status == 1) {
+            return res.status(401).json({ error: 'Jeton invalide, vous êtes peut être ban' });
         }
         req.user = decoded;
         next();

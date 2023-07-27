@@ -4,8 +4,7 @@
   import router from '../../router';
   import { getGoogleAuthUrl } from '../../services/google-auth';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const state = reactive({
     username: '',
     firstname: '',
@@ -45,7 +44,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 <template>
-    <div>
+    <div class="container mx-auto mt-[50px]">
       <form @submit.prevent="register" class="max-w-xs mx-auto">
         <div class="mb-4">
           <input type="text" v-model="state.username" placeholder="Nom d'utilisateur" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />

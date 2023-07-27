@@ -25,7 +25,7 @@
 
 
 <template>
-    <div>
+    <div class="container mx-auto mt-[50px]">
       <form @submit.prevent="forgetPassword" class="max-w-xs mx-auto">
         <div class="mb-4">
           <input type="email" v-model="state.email" placeholder="Email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />

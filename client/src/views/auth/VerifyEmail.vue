@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container mx-auto mt-[50px]">
     <p>Vérification en cours...</p>
   </div>
 </template>

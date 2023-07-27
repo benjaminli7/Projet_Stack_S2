@@ -71,6 +71,9 @@ const getByAuthenticatedUser = async (req, res) => {
           player_1: 0,
           player_2: 0
         }
+      },
+      {
+        $sort: { date: -1 }
       }
     ]);
 
@@ -82,6 +85,7 @@ const getByAuthenticatedUser = async (req, res) => {
 
     let closestGuessDistance = Infinity;
     let closestGuess = null;
+    let closestGuessPosition = null;
     let highestScore = -Infinity;
 
     rawStats.forEach(stat => {
@@ -91,6 +95,7 @@ const getByAuthenticatedUser = async (req, res) => {
         if(distance < closestGuessDistance) {
           closestGuessDistance = distance;
           closestGuess = guess;
+          closestGuessPosition = position;
         }
       });
 
@@ -106,7 +111,9 @@ const getByAuthenticatedUser = async (req, res) => {
       winRate,
       lastGame,
       closestGuess,
-      highestScore
+      closestGuessPosition,
+      highestScore,
+      gameHistory: rawStats
     };
 
     res.status(200).json(aggregatedStats);
@@ -116,9 +123,19 @@ const getByAuthenticatedUser = async (req, res) => {
   }
 };
 
+const countGame = async (req, res) =>{
+  try {
+    const count = await GameStats.countDocuments();
+    return  res.status(200).json(count);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error" });
+  } 
+}
 module.exports = {
   create,
   getByUsername,
   getAll,
   getByAuthenticatedUser,
+  countGame
 };

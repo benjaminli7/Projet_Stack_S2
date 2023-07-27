@@ -32,7 +32,7 @@ const setpwd = async () => {
 }
 </script>
 <template>
-    <div>
+    <div class="container mx-auto mt-[50px]">
         <h1 class="text-3xl font-semibold text-center text-red-500">Création du mot de passe</h1>
         <p>
             Votre compte a été créé avec succès, veuillez créer un mot de passe pour vous connecter sans Google.

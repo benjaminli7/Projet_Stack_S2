@@ -19,7 +19,7 @@
       alert(error);
     }
   };
-  
+
   const redirectToGoogle = async () => {
     try {
       const url = await getGoogleAuthUrl();
@@ -36,7 +36,7 @@
 
 
 <template>
-    <div>
+    <div class="container mx-auto mt-[50px]">
       <form @submit.prevent="login" class="max-w-xs mx-auto">
         <div class="mb-4">
           <input type="text" v-model="email" placeholder="Email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />
@@ -55,7 +55,7 @@
         <div class="mt-4">
           <router-link to="/forget-password" class="text-sm text-red-500 hover:text-red-600">Mot de passe oublié</router-link>
         </div>
-        
+
         <div class="mt-4">
           <router-link to="/register" class="text-sm text-red-500 hover:text-red-600">Pas encore inscrit ?</router-link>
         </div>
@@ -63,4 +63,4 @@
 
     </div>
   </template>
-  
+

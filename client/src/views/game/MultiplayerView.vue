@@ -7,6 +7,9 @@ import GoogleMap from "./GoogleMap.vue";
 import MultiplayerResultsView from "./MultiplayerResultsView.vue";
 import StreetViewMap from "./StreetViewMap.vue";
 import Loading from "../../components/Loading.vue";
+import axios from "axios";
+import router from "../../router";
+
 
 let socket;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -30,8 +33,28 @@ let loser = ref(null);
 socket = io(BASE_URL);
 
 onMounted(() => {
+  const token = localStorage.getItem("token");
+  axios.get(`${BASE_URL}/auth/isConnected`, {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            },
+      })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error.response.status) 
+          if(error.response.status == 401 || error.response.status == 403 ){
+            localStorage.removeItem('token');
+            window.location.href = '/logout';
+          }
+
+        })
   socket.emit("playerJoined", user.username);
   socket.emit("findOpponent");
+
+  
 
   socket.on("gameStarting", (positionsData, roomNameData) => {
     loading.value = false;
