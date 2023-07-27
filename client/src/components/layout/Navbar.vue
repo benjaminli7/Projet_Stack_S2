@@ -12,16 +12,16 @@ const isAuthenticated = computed(() => {
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
-
-
-
-  const user = computed(() => {
-    const userStore = useUserStore();
+const user = computed( () => {
+  const userStore = useUserStore();
+  if(userStore.getUser) {
     return userStore.getUser;
-  });
-
-  console.log(user)
-
+  } else {
+    const user = localStorage.getItem("user");
+    console.log(JSON.parse(user));
+    return JSON.parse(user); 
+  }
+});
 </script>
 
 <template>

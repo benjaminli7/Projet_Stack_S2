@@ -28,21 +28,30 @@ const login = async (req, res) => {
     if (!errors.isEmpty()) {
       // Extraction des messages d'erreur
       const errorMessages = errors.array().map((error) => error.msg);
-      return res.status(400).json({ error: errorMessages });
+      return res.status(400).json({ errors: errorMessages });
     }
 
     // Recherche de l'utilisateur dans la base de données
     const user = await User.findOne({ where: { email: email } });
-
+    console.log('user', user)
     if (!user) {
-      return res.status(400).json({ error: 'Identifiants invalides' });
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
     if(!user.isVerified){
-      return res.status(400).json({ error: 'Le compte n\'a pas été validé' });
+      return res.status(401).json({ error: 'Veuillez vérifier votre email' });
     }
+    if(user.status == 1){
+      return res.status(401).json({ error: 'Vous avez été banni impossible de vous connecter' });
+    }
+
     // Vérification du mot de passe
-    if ( user && await bcrypt.compare(password, user.password) && user.isVerified){
+    if (await bcrypt.compare(password, user.password)){
       const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
+
+      console.log("User found: ", user.id);
+
+      console.log("User found: ", user.id);
+
 
       return res.status(200).json({
         token: token,
@@ -93,7 +102,7 @@ const register = async (req, res) => {
       username : username,
       email : email,
       password : password,
-      roles : ["user"],
+      roles : "user",
       status : 0,
       friends : [],
       verificationToken : verificationToken,
@@ -162,6 +171,36 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+const changePassword =  async (req, res) => {
+  try {
+    console.log('req',req)
+    let { oldPassword, password } = req.body;
+    let id = req.user.infos.id;
+    console.log('oldPassword', oldPassword)
+    console.log('password', password)
+    const userFound = await User.findByPk(id);
+    console.log('userFound', userFound)
+    if (!userFound) {
+      return res.status(404).json({ error: 'user invalide' });
+    }
+    try{
+      if(!await bcrypt.compare(oldPassword, userFound.password)){
+        return res.status(401).json({ error: 'Identifiants invalides' });
+      }
+      password = await bcrypt.hash(password, 10);
+      await User.update({password : password}, {where: {'id' : id} });
+      return res.status(200).json({ message: 'Mot de passe changé avec succès' });
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+ 
+}
 
 const forgotPassword = async (req, res) => {
   try {
@@ -310,7 +349,6 @@ const resetPassword = async (req, res) => {
       return res.status(404).json({ error: 'Token invalide' });
     }
     try{
-      password = await bcrypt.hash(password, 10);
       await User.update({password : password}, {where: {'id' : tokenFound.UserId} });
       return res.status(200).json({ message: 'Mot de passe changé avec succès' });
       newAchievement
@@ -354,6 +392,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  changePassword,
   googleAuth,
   googleAuthCallback,
   setGooglePassword

@@ -30,7 +30,6 @@ module.exports = {
         returning: true,
         individualHooks: true,
       });
-      console.log(nb, users);
       return users;
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {

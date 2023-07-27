@@ -12,6 +12,7 @@ router.post('/setGooglepwd', authenticateToken, authController.setGooglePassword
 
 router.post('/login', authController.login);
 
+
 // // Route pour l'inscription
 router.post('/register', authController.register);
 
@@ -23,6 +24,8 @@ router.post('/forgot-password', authController.forgotPassword);
 
 // // Route pour la réinitialisation du mot de passe
 router.post('/reset-password', authController.resetPassword);
+//Route pour update le password à partir de l'ancien
+router.patch('/password',authenticateToken, authController.changePassword);
 
 
 

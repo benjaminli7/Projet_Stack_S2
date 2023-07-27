@@ -7,14 +7,18 @@ import ForgetPassword from './views/auth/ForgetPassword.vue';
 import ResetPassword from './views/auth/ResetPassword.vue';
 
 import Profile from './views/user/Profile.vue';
+import UpdateProfile from './views/user/UpdateProfile.vue';
 
 import NotFound from './components/NotFound.vue';
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Friends from "./views/user/friends/Friends.vue"
 import BackDashboard from "./views/back/BackDashboard.vue"
+import BackUser from "./views/back/BackUser.vue"
+import BackPayment from "./views/back/BackPayment.vue"
 import { googleAuthCallback } from "./services/google-auth";
 import GoogleSetpwd from "./views/auth/GoogleSetpwd.vue";
 import Premium from './views/user/Premium.vue';
+import BackReports from './views/back/BackReports.vue';
 
 const routes = [
   {
@@ -66,6 +70,12 @@ const routes = [
     component: NotFound,
   },
   {
+    path: '/update-profile',
+    name : 'UpdateProfile',
+    component: UpdateProfile,
+    meta: { requiresAuth: true }
+  },
+  {
     path: "/profile",
     name: "Profile",
 
@@ -97,6 +107,25 @@ const routes = [
     component: BackDashboard,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
+  {
+    path: "/back/users",
+    name: "BackUser",
+    component: BackUser,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/back/payments",
+    name: "BackPayment",
+    component: BackPayment,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  }, 
+  {
+    path: "/back/reports",
+    name: "BackReports",
+    component: BackReports,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+
 ];
 
 const router = createRouter({
@@ -115,7 +144,8 @@ router.beforeEach( async (to, from, next) => {
     }
   } else if (to.name === 'Logout') {
     localStorage.removeItem('token');
-    location.reload();
+    next("/");
+
   }
   else {
     if (to.matched.some(record => record.meta.requiresAuth)) {

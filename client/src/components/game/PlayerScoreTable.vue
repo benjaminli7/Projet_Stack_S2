@@ -25,8 +25,9 @@ const props = defineProps({
   },
 });
 
-const checkIsUser= () => {
-  
+const checkIsUser = () => {
+  console.log(user.username);
+  console.log(props.username);
   if (user.username == props.username) {
     return true;
   } else {
@@ -73,7 +74,7 @@ const sendReport = async () => {
     <div>
       <h3>{{ props.username }}</h3>
 
-      <button v-if="checkIsUser()" @click="showModal" type="button" class="mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      <button v-if="!checkIsUser()" @click="showModal" type="button" class="mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
         Report
       </button>   
       <!-- Modal -->

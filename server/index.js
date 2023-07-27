@@ -5,15 +5,43 @@ const cors = require("cors");
 app.use(cors({
   origin: "*",
 }));
+
 var users = require('./routes/user')
+var payments = require('./routes/payment');
 var friends = require('./routes/friend')
 var auth = require('./routes/auth')
 var stripeRoutes = require('./routes/stripe');
+
 const { getRandomPositions, calculateScore } = require("./utils");
+// Démarrage du serveur
+const server = app.listen(process.env.PORT, () => {
+  console.log(
+    `Le serveur écoute sur le port ${process.env.PORT}.`
+  );
+});
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 // view engine setup
 
 app.set('view engine', 'ejs');
+
+
+app.use(cors({
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+}));
+app.use(function (req, res, next) {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    if (!req.is("application/json")) {
+      return res.sendStatus(400);
+    }
+  }
+  next();
+});
+
 
 
 app.use(express.json());
@@ -22,6 +50,7 @@ app.use('/users', users)
 app.use('/friends', friends)
 app.use('/auth', auth)
 app.use('/stripe', stripeRoutes);
+app.use('/payments', payments);
 
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
@@ -38,18 +67,7 @@ app.get("/", (req, res) => {
 
 app.use(errorHandler);
 
-// Démarrage du serveur
-const server = app.listen(process.env.PORT, () => {
-  console.log(
-    `Le serveur écoute sur le port ${process.env.PORT}.`
-  );
-});
 
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*",
-  },
-});
 
 let availablePlayers = [];
 const rooms = new Map();
