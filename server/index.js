@@ -16,6 +16,7 @@ var auth = require("./routes/auth");
 var payments = require('./routes/payment');
 var stripeRoutes = require("./routes/stripe");
 var gameStats = require("./routes/gameStats");
+var rankingRoutes = require('./routes/ranking');
 const dbMongo = require("./db/mongoModels");
 const { User } = require("./db");
 
@@ -67,6 +68,7 @@ app.use("/auth", auth);
 app.use("/stripe", stripeRoutes);
 app.use("/game-stats", gameStats);
 app.use('/payments', payments);
+app.use('/ranking', rankingRoutes);
 
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
