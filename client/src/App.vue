@@ -21,7 +21,7 @@
 
 </script>
 <template>
-  <div>
+  <div id="haha">
     <Navbar v-if="showNavbar && !showBackNavbar " class="w-screen"></Navbar>
     <AchievementPopup> </AchievementPopup>
     <BackNavbar v-if="showNavbar && showBackNavbar"></BackNavbar>
