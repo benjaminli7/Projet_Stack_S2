@@ -70,11 +70,6 @@ const routes = [
     name: "Logout",
   },
   {
-    path: "/:pathMatch(.*)*",
-    name: "NotFound",
-    component: NotFound,
-  },
-  {
     path: "/update-profile",
     name: "UpdateProfile",
     component: UpdateProfile,
@@ -105,8 +100,8 @@ const routes = [
     component: Premium,
   },
   {
-    path: "/rankings",
-    name: "Rankings",
+    path: "/ranking",
+    name: "Ranking",
     component: Ranking,
   },
 
@@ -134,6 +129,11 @@ const routes = [
     name: "BackReports",
     component: BackReports,
     meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFound,
   },
 ];
 
