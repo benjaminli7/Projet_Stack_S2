@@ -1,4 +1,6 @@
 const express = require("express");
+const https = require("https");
+const fs = require("fs");
 const app = express();
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
@@ -17,7 +19,13 @@ const GameStats = dbMongo.gameStats;
 
 const { getRandomPositions, calculateScore } = require("./utils");
 // Démarrage du serveur
-const server = app.listen(process.env.PORT, () => {
+const httpsServer = https.createServer({
+  key: fs.readFileSync("./key.pem"),
+  cert: fs.readFileSync("./cert.pem"),
+}, app)
+
+
+const server = httpsServer.listen(process.env.PORT, () => {
   console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
 });
 const io = require("socket.io")(server, {
