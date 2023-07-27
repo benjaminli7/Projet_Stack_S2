@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 export const useUserStore = defineStore("user", {
@@ -22,7 +23,7 @@ export const useUserStore = defineStore("user", {
   actions: {
     async login(email, password) {
       try {
-        const response = await axios.post("http://localhost:3000/auth/login", {
+        const response = await axios.post(`${BASE_URL}/auth/login`, {
           email,
           password,
         });
@@ -51,7 +52,7 @@ export const useUserStore = defineStore("user", {
         const token = localStorage.getItem('token');
 
         const response = await axios.get(
-          `http://localhost:3000/users/friends`,
+          `${BASE_URL}/users/friends`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -71,7 +72,7 @@ export const useUserStore = defineStore("user", {
         const token = localStorage.getItem('token');
         // console.log(typeof username + " " + username + " " + typeof token + " " + token)
         const response = await axios.get(
-          `http://localhost:3000/users/friend-requests`,
+          `${BASE_URL}/users/friend-requests`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -91,7 +92,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-          'http://localhost:3000/friends',
+          `${BASE_URL}/friends`,
           {
             friendUsername,
           },
@@ -113,7 +114,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.put(
-          `http://localhost:3000/friends/friend-requests/accept`,
+          `${BASE_URL}/friends/friend-requests/accept`,
           {
             friendUsername,
           },
@@ -134,7 +135,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.put(
-          `http://localhost:3000/friends/friend-requests/decline`,
+          `${BASE_URL}/friends/friend-requests/decline`,
           {
             username,
             friendUsername,
@@ -158,7 +159,7 @@ export const useUserStore = defineStore("user", {
         const token = localStorage.getItem("token");
         console.log(username + " " + friendUsername);
         const response = await axios.put(
-          `http://localhost:3000/friends/friend-requests/cancel`,
+          `${BASE_URL}/friends/friend-requests/cancel`,
           {
             friendUsername,
           },
@@ -179,7 +180,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.delete(
-          `http://localhost:3000/friends`,
+          `${BASE_URL}/friends`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -200,7 +201,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:3000/users/${id}/achievements`,
+          `${BASE_URL}/users/${id}/achievements`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
