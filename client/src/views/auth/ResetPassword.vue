@@ -29,7 +29,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 <template>
-    <div>
+    <div class="container mx-auto mt-[50px]">
       <form @submit.prevent="resetPassword" class="max-w-xs mx-auto">
         <div class="mb-4">
           <input type="password" v-model="state.password" placeholder="Mot de passe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" required/>
