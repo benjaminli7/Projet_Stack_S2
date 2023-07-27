@@ -3,6 +3,7 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const paymentController = require('../controllers/paymentControl');
 const authenticateToken = require('../middlewares/auth.middleware');
+const BASE_FRONT_URL = process.env.BASE_FRONT_URL;
 
 router.get('/check-auth', authenticateToken, (req, res) => {
     res.status(200).json({ isAuthenticated: true });
@@ -32,9 +33,9 @@ router.get('/purchaseSUCCESS', async (req, res) => {
     try {
         const result = await paymentController.handlePurchaseSuccess(req.query.session_id);
         if(result.status === "success") {
-            res.redirect(`http://127.0.0.1:5173/premium?status=success`);
+            res.redirect(`${BASE_FRONT_URL}/premium?status=success`);
         } else {
-            res.redirect(`http://127.0.0.1:5173/premium?status=cancel`);
+            res.redirect(`${BASE_FRONT_URL}/premium?status=cancel`);
         }
     } catch (error) {
         res.status(400).send({ error: 'An error occurred when verifying the Stripe session or inserting data into the database', details: error.message });

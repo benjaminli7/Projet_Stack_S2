@@ -1,7 +1,10 @@
 <script setup>
-  import axios from 'axios';  
+  import axios from 'axios';
   import { reactive } from 'vue';
   import router from '../../router';
+
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 
   const state = reactive({
     email: '',
@@ -9,7 +12,7 @@
 
   const forgetPassword = async () => {
     try {
-      await axios.post('http://localhost:3000/auth/forgot-password', {
+      await axios.post(`${BASE_URL}/auth/forgot-password`, {
         email: state.email,
       });
       router.push('/login');

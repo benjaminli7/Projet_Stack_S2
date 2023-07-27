@@ -1,6 +1,8 @@
 import io from 'socket.io-client';
 import {eventBus}  from './eventBus';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 let socketInstance = null;
 
 export const getSocket = () => {
@@ -9,14 +11,12 @@ export const getSocket = () => {
 
 export const initSocket = async () => {
   const user = JSON.parse(localStorage.getItem("user"));
-  console.log(user);
-
   if (user != null && !socketInstance) {
-    const newSocket = io('http://localhost:3000');
+    const newSocket = io(BASE_URL);
     newSocket.emit('authenticate', user.id);
     socketInstance = newSocket;
 
-    newSocket.on('achievement', function (data) {       
+    newSocket.on('achievement', function (data) {
       eventBus.dispatchEvent(new CustomEvent('achievementReceived', { detail: data.achievement }));
     //   }
     });

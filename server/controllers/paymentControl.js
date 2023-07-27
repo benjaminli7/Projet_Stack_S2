@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { PurchasedItem, User } = require('../db');
 const { DateTime } = require('luxon');
+const BASE_URL = process.env.BASE_URL;
 
 
 exports.checkIfItemPurchased = async (userId) => {
@@ -24,26 +25,28 @@ exports.createPurchasedItem = async (data) => {
 exports.createPaymentSession = async (userId, itemId, itemName, amount) => {
     try {
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [{
-                price_data: {
-                    currency: 'usd',
-                    product_data: {
-                        name: itemName,
-                    },
-                    unit_amount: amount * 100,
+          payment_method_types: ["card"],
+          line_items: [
+            {
+              price_data: {
+                currency: "usd",
+                product_data: {
+                  name: itemName,
                 },
-                quantity: 1,
-            }],
-            metadata: {
-                userId: userId,
-                itemId: itemId,
-                itemName: itemName,
-                amount: amount.toString()
+                unit_amount: amount * 100,
+              },
+              quantity: 1,
             },
-            mode: 'payment',
-            success_url: `http://127.0.0.1:3000/stripe/purchaseSUCCESS?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: 'http://127.0.0.1:3000/stripe/purchaseSUCCESS?session_id={CHECKOUT_SESSION_ID}',
+          ],
+          metadata: {
+            userId: userId,
+            itemId: itemId,
+            itemName: itemName,
+            amount: amount.toString(),
+          },
+          mode: "payment",
+          success_url: `${BASE_URL}/stripe/purchaseSUCCESS?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${BASE_URL}/stripe/purchaseSUCCESS?session_id={CHECKOUT_SESSION_ID}`,
         });
         return session;
     } catch (error) {

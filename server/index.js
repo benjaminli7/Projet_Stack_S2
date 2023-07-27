@@ -1,23 +1,36 @@
+require("dotenv").config();
 const express = require("express");
+const https = require("https");
+const fs = require("fs");
 const app = express();
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
-app.use(cors({
-  origin: "*",
-}));
-
-var users = require('./routes/user')
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+var users = require("./routes/user");
+var friends = require("./routes/friend");
+var auth = require("./routes/auth");
 var payments = require('./routes/payment');
-var friends = require('./routes/friend')
-var auth = require('./routes/auth')
-var stripeRoutes = require('./routes/stripe');
+var stripeRoutes = require("./routes/stripe");
+var gameStats = require("./routes/gameStats");
+const dbMongo = require("./db/mongoModels");
+const GameStats = dbMongo.gameStats;
 
 const { getRandomPositions, calculateScore } = require("./utils");
 // Démarrage du serveur
-const server = app.listen(process.env.PORT, () => {
-  console.log(
-    `Le serveur écoute sur le port ${process.env.PORT}.`
-  );
+const httpsServer = https.createServer(
+  {
+    key: fs.readFileSync("./key.pem"),
+    cert: fs.readFileSync("./cert.pem"),
+  },
+  app
+);
+
+const server = httpsServer.listen(process.env.PORT, () => {
+  console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
 });
 const io = require("socket.io")(server, {
   cors: {
@@ -25,14 +38,13 @@ const io = require("socket.io")(server, {
   },
 });
 
-// view engine setup
+app.set("view engine", "ejs");
 
-app.set('view engine', 'ejs');
-
-
-app.use(cors({
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  })
+);
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
     if (!req.is("application/json")) {
@@ -42,14 +54,14 @@ app.use(function (req, res, next) {
   next();
 });
 
-
-
 app.use(express.json());
 
-app.use('/users', users)
-app.use('/friends', friends)
-app.use('/auth', auth)
-app.use('/stripe', stripeRoutes);
+
+app.use("/users", users);
+app.use("/friends", friends);
+app.use("/auth", auth);
+app.use("/stripe", stripeRoutes);
+app.use("/game-stats", gameStats);
 app.use('/payments', payments);
 
 app.use(function (req, res, next) {
@@ -61,13 +73,10 @@ app.use(function (req, res, next) {
   next();
 });
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.send("Hello world!");
 });
 
-
 app.use(errorHandler);
-
-
 
 let availablePlayers = [];
 const rooms = new Map();
@@ -75,10 +84,9 @@ const RESULTS = {
   WIN: "WIN",
   LOSE: "LOSE",
   DRAW: "DRAW",
-}
+};
 
 io.on("connection", function (socket) {
-
   socket.on("playerJoined", (username) => {
     if (availablePlayers.some((player) => player.username === username)) {
       return;
@@ -98,7 +106,6 @@ io.on("connection", function (socket) {
       // Create a game room
       const roomName = `${Date.now()}`;
 
-
       rooms.set(roomName, {
         player1: {
           id: player1.id,
@@ -112,7 +119,7 @@ io.on("connection", function (socket) {
         player2_guesses: [],
         player1_score: 0,
         player2_score: 0,
-        positions: positions
+        positions: positions,
       });
 
       socket.join(roomName);
@@ -123,7 +130,6 @@ io.on("connection", function (socket) {
           player.username === player2.username
         );
       });
-
 
       io.to(socketIds).emit("gameStarting", positions, roomName);
 
@@ -140,11 +146,18 @@ io.on("connection", function (socket) {
   });
 
   socket.on("playerGuess", (roomName, guess, round) => {
-
     const room = rooms.get(roomName);
-    const currentPlayer = room.player1.id === socket.id ? room.player1.username : room.player2.username;
+    const currentPlayer =
+      room.player1.id === socket.id
+        ? room.player1.username
+        : room.player2.username;
 
-    let score = calculateScore(room.positions[round].lat, room.positions[round].lng, guess.lat, guess.lng);
+    let score = calculateScore(
+      room.positions[round].lat,
+      room.positions[round].lng,
+      guess.lat,
+      guess.lng
+    );
 
     if (currentPlayer === room.player1.username) {
       room.player1_guesses.push({
@@ -160,7 +173,6 @@ io.on("connection", function (socket) {
       });
     }
     console.log(room);
-
 
     if (
       room.player1_guesses.length === 1 &&
@@ -178,7 +190,12 @@ io.on("connection", function (socket) {
       room.player1_score = player1Score;
       room.player2_score = player2Score;
 
+      let player1_outcome = "";
+      let player2_outcome = "";
+
       if (player1Score > player2Score) {
+        player1_outcome = RESULTS.WIN;
+        player2_outcome = RESULTS.LOSE;
         io.to(room.player1.id).emit("gameFinished", {
           score: player1Score,
           opponentScore: player2Score,
@@ -198,6 +215,8 @@ io.on("connection", function (socket) {
           loser: room.player2.username,
         });
       } else if (player1Score < player2Score) {
+        player1_outcome = RESULTS.LOSE;
+        player2_outcome = RESULTS.WIN;
         io.to(room.player1.id).emit("gameFinished", {
           score: player1Score,
           opponentScore: player2Score,
@@ -217,6 +236,8 @@ io.on("connection", function (socket) {
           loser: room.player1.username,
         });
       } else {
+        player1_outcome = RESULTS.DRAW;
+        player2_outcome = RESULTS.DRAW;
         io.to(room.player1.id).emit("gameFinished", {
           score: player1Score,
           opponentScore: player2Score,
@@ -232,27 +253,43 @@ io.on("connection", function (socket) {
           currentPlayer: "player2",
         });
       }
+
+      let data = {
+        player_1: {
+          username: room.player1.username,
+          guesses: room.player1_guesses,
+          score: player1Score,
+          outcome: player1_outcome,
+        },
+        player_2: {
+          username: room.player2.username,
+          guesses: room.player2_guesses,
+          score: player2Score,
+          outcome: player2_outcome,
+        },
+        positions: room.positions,
+      };
+
+      GameStats.create(data);
+      console.log(data);
     }
 
-    if (
-      room.player1_guesses.length !== room.player2_guesses.length
-    ) {
+    if (room.player1_guesses.length !== room.player2_guesses.length) {
       socket.emit("waitingGuess");
     } else {
       io.to(room.player1.id).emit("nextRound");
       io.to(room.player2.id).emit("nextRound");
     }
-
   });
 
-  socket.on('authenticate', (userId) => {
+  socket.on("authenticate", (userId) => {
     console.log(`User ${userId} authenticated.`);
     socket.join(userId);
-    socketUserMap.set( userId, socket.id);
+    socketUserMap.set(userId, socket.id);
     console.log(socketUserMap);
   });
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     const userId = socketUserMap.get(socket.id);
     if (userId) {
       socketUserMap.delete(socket.id);
@@ -260,30 +297,23 @@ io.on("connection", function (socket) {
     }
   });
 
-  socket.on('sendMessage', (message) => {
-    io.emit('message', message);
+  socket.on("sendMessage", (message) => {
+    io.emit("message", message);
   });
 
-  socket.on('sendFriendRequest', (message) => {
-    io.emit('friendRequest', message);
+  socket.on("sendFriendRequest", (message) => {
+    io.emit("friendRequest", message);
   });
-
 });
-
 
 const socketUserMap = new Map();
 
-io.on('connection', function (socket) {
-  io.emit('connection', `${socket.id} is connected`);
+io.on("connection", function (socket) {
+  io.emit("connection", `${socket.id} is connected`);
 });
-
 
 module.exports = {
   io,
-  socketUserMap
-}
-require('./tests/changeStreams/test')
-
-
-
-
+  socketUserMap,
+};
+require("./tests/changeStreams/test");

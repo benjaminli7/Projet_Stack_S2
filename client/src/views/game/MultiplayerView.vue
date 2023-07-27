@@ -9,6 +9,8 @@ import StreetViewMap from "./StreetViewMap.vue";
 import Loading from "../../components/Loading.vue";
 
 let socket;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const store = useUserStore();
 const user = store.getUser;
 const loading = ref(true);
@@ -25,7 +27,7 @@ let currentPlayer = ref(null);
 let winner = ref(null);
 let loser = ref(null);
 
-socket = io("http://localhost:3000");
+socket = io(BASE_URL);
 
 onMounted(() => {
   socket.emit("playerJoined", user.username);

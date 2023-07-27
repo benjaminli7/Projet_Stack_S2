@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 export const useUserStore = defineStore("user", {
@@ -14,7 +15,10 @@ export const useUserStore = defineStore("user", {
     },
     getSocket: (state) => {
       return state.socket;
-    }
+    },
+    getStats: (state) => {
+      return state.stats;
+    },
   },
   persist: {
     enabled: true
@@ -22,7 +26,7 @@ export const useUserStore = defineStore("user", {
   actions: {
     async login(email, password) {
       try {
-        const response = await axios.post("http://localhost:3000/auth/login", {
+        const response = await axios.post(`${BASE_URL}/auth/login`, {
           email,
           password,
         });
@@ -51,7 +55,7 @@ export const useUserStore = defineStore("user", {
         const token = localStorage.getItem('token');
 
         const response = await axios.get(
-          `http://localhost:3000/users/friends`,
+          `${BASE_URL}/users/friends`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -71,7 +75,7 @@ export const useUserStore = defineStore("user", {
         const token = localStorage.getItem('token');
         // console.log(typeof username + " " + username + " " + typeof token + " " + token)
         const response = await axios.get(
-          `http://localhost:3000/users/friend-requests`,
+          `${BASE_URL}/users/friend-requests`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -91,7 +95,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-          'http://localhost:3000/friends',
+          `${BASE_URL}/friends`,
           {
             friendUsername,
           },
@@ -113,7 +117,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.put(
-          `http://localhost:3000/friends/friend-requests/accept`,
+          `${BASE_URL}/friends/friend-requests/accept`,
           {
             friendUsername,
           },
@@ -134,7 +138,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.put(
-          `http://localhost:3000/friends/friend-requests/decline`,
+          `${BASE_URL}/friends/friend-requests/decline`,
           {
             username,
             friendUsername,
@@ -158,7 +162,7 @@ export const useUserStore = defineStore("user", {
         const token = localStorage.getItem("token");
         console.log(username + " " + friendUsername);
         const response = await axios.put(
-          `http://localhost:3000/friends/friend-requests/cancel`,
+          `${BASE_URL}/friends/friend-requests/cancel`,
           {
             friendUsername,
           },
@@ -179,7 +183,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.delete(
-          `http://localhost:3000/friends`,
+          `${BASE_URL}/friends`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -200,7 +204,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:3000/users/${id}/achievements`,
+          `${BASE_URL}/users/${id}/achievements`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -220,7 +224,7 @@ export const useUserStore = defineStore("user", {
         const token = localStorage.getItem("token");
         console.log(reportedUsername + " " + reason);
         const response = await axios.post(
-          `http://localhost:3000/users/report`,
+          `${BASE_URL}/users/report`,
           {
             reportedUsername,
             reason,
@@ -240,7 +244,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:3000/users/report/list`,
+          `${BASE_URL}/users/report/list`,
           {
             headers: {
               "Authorization": `Bearer ${token}`,
@@ -257,7 +261,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-          `http://localhost:3000/users/ban`,
+          `${BASE_URL}/users/ban`,
           {
             reportedUsername,
           },{
@@ -276,7 +280,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-          `http://localhost:3000/users/unban`,
+          `${BASE_URL}/users/unban`,
           {
             id,
           },{
@@ -296,7 +300,7 @@ export const useUserStore = defineStore("user", {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.patch(
-          `http://localhost:3000/users/report/archiver`,
+          `${BASE_URL}/users/report/archiver`,
           {
             id,
           },{
@@ -310,6 +314,24 @@ export const useUserStore = defineStore("user", {
       } catch (error) {
         console.error(error);
         throw new Error("Erreur dans l'archivage du report");
+
+    async fetchStats() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+            `${BASE_URL}/game-stats`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+        );
+
+        this.stats = response.data;
+
+      } catch (error) {
+        console.error("Failed to fetch game stats:", error.response.data.error);
+        throw new Error(error.response.data.error);
       }
     },
     disconnectSocket() {
