@@ -29,86 +29,110 @@ let roomData = ref(null);
 let currentPlayer = ref(null);
 let winner = ref(null);
 let loser = ref(null);
+let todayGames = ref([]);
+let isPremium = ref(false);
 
 socket = io(BASE_URL);
 
-onMounted(() => {
-  const token = localStorage.getItem("token");
-  axios.get(`${BASE_URL}/auth/isConnected`, {
-            headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            },
+onMounted(async() => {
+    const response = await store.getLast5Games()
+    if(response.length >= 5) {
+      const last5dates = response.map((game) => {
+        return game.date;
       })
-        .then((response) => {
-          console.log(response)
+      //heure Europe centrale
+
+      const today = new Date()
+      const todayString = today.toISOString().split('T')[0];
+        todayGames.value = last5dates.filter((date) => {
+        return date.split('T')[0] === todayString;
+      })
+      if(todayGames.value.length >= 5) {
+        isPremium.value = await store.isPremium();
+      }
+    }
+    console.log(todayGames.value.length)
+  if( isPremium.value || todayGames.value.length < 5 ){
+    const token = localStorage.getItem("token");
+        axios.get(`${BASE_URL}/auth/isConnected`, {
+              headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              },
         })
-        .catch((error) => {
-          console.log(error.response.status) 
-          if(error.response.status == 401 || error.response.status == 403 ){
-            localStorage.removeItem('token');
-            window.location.href = '/logout';
-          }
+          .then((response) => {
+            console.log(response)
+          })
+          .catch((error) => {
+            console.log(error.response.status) 
+            if(error.response.status == 401 || error.response.status == 403 ){
+              localStorage.removeItem('token');
+              window.location.href = '/logout';
+            }
 
-        })
-  socket.emit("playerJoined", user.username);
-  socket.emit("findOpponent");
+          })
+    socket.emit("playerJoined", user.username);
+    socket.emit("findOpponent");
 
-  
+    
 
-  socket.on("gameStarting", (positionsData, roomNameData) => {
-    loading.value = false;
-    roomName.value = roomNameData;
-    positions.value = positionsData;
-  });
+    socket.on("gameStarting", (positionsData, roomNameData) => {
+      loading.value = false;
+      roomName.value = roomNameData;
+      positions.value = positionsData;
+    });
 
-  socket.on("waitingGuess", () => {
-    waitingGuess.value = true;
-  });
+    socket.on("waitingGuess", () => {
+      waitingGuess.value = true;
+    });
 
-  socket.on("nextRound", () => {
-    waitingGuess.value = false;
-    round.value += 1;
-  });
+    socket.on("nextRound", () => {
+      waitingGuess.value = false;
+      round.value += 1;
+    });
 
-  socket.on("gameFinished", (result) => {
-    isGameFinished.value = true;
-    outcome.value = result.outcome;
-    totalScore.value = result.score;
-    opponentScore.value = result.opponentScore;
-    roomData.value = result.data;
-    currentPlayer.value = result.currentPlayer;
-    winner.value = result.winner;
-    loser.value = result.loser;
-  });
-
+    socket.on("gameFinished", (result) => {
+      isGameFinished.value = true;
+      outcome.value = result.outcome;
+      totalScore.value = result.score;
+      opponentScore.value = result.opponentScore;
+      roomData.value = result.data;
+      currentPlayer.value = result.currentPlayer;
+      winner.value = result.winner;
+      loser.value = result.loser;
+    });
+  } else {
+    // console.log('Vous avez atteint votre limite de 5 parties par jour, veuillez souscrire à un abonnement premium pour continuer à jouer')
+    router.push('/premium')
+    alert('Vous avez atteint votre limite de 5 parties par jour, veuillez souscrire à un abonnement premium pour continuer à jouer')
+  }
 });
 
-watch(
-  () => isGameFinished.value,
-  (newValue) => {
-    if (newValue) {
-      isGameFinished.value = true;
+  watch(
+    () => isGameFinished.value,
+    (newValue) => {
+      if (newValue) {
+        isGameFinished.value = true;
+      }
     }
-  }
-);
+  );
 
-const getResultMessage = () => {
-  if (totalScore.value > opponentScore.value) {
-    return `You won! Your score is ${totalScore.value} and ${loser.value} score is ${opponentScore.value}`;
-  } else if (totalScore.value < opponentScore.value) {
-    return `You lost! Your score is ${totalScore.value} and ${winner.value} score is ${opponentScore.value}`;
-  } else {
-    return `It's a tie! You both scored ${totalScore.value} points.`;
-  }
-};
-const isOpponent = (username) => {
-  if(user.username === username) {
-    return false;
-  } else {
-    return true;
-  }
-};
+  const getResultMessage = () => {
+    if (totalScore.value > opponentScore.value) {
+      return `You won! Your score is ${totalScore.value} and ${loser.value} score is ${opponentScore.value}`;
+    } else if (totalScore.value < opponentScore.value) {
+      return `You lost! Your score is ${totalScore.value} and ${winner.value} score is ${opponentScore.value}`;
+    } else {
+      return `It's a tie! You both scored ${totalScore.value} points.`;
+    }
+  };
+  const isOpponent = (username) => {
+    if(user.username === username) {
+      return false;
+    } else {
+      return true;
+    }
+  };
 </script>
 
 <template>
