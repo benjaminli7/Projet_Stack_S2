@@ -1,9 +1,10 @@
 <script setup>
-  import axios from 'axios';  
+  import axios from 'axios';
   import { reactive } from 'vue';
   import router from '../../router';
   import { getGoogleAuthUrl } from '../../services/google-auth';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const state = reactive({
     username: '',
@@ -27,7 +28,7 @@
 
   const register = async () => {
     try {
-      await axios.post('http://localhost:3000/auth/register', {
+      await axios.post(`${BASE_URL}/auth/register`, {
         username: state.username,
         firstname: state.firstname,
         lastname: state.lastname,
@@ -76,4 +77,3 @@
     </div>
 </template>
 
-  

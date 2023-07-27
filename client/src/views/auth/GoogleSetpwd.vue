@@ -4,6 +4,7 @@ import axios from 'axios';
 import { reactive } from 'vue';
 import router from '../../router';
 import { useUserStore } from '../../userStore';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const state = reactive({
     password: '',
@@ -14,7 +15,7 @@ const setpwd = async () => {
         const token = localStorage.getItem('token');
         const userStore = useUserStore();
         const user = userStore.getUser;
-        await axios.post('http://localhost:3000/auth/setGooglepwd', {
+        await axios.post(`${BASE_URL}/auth/setGooglepwd`, {
             user: user,
             password: state.password,
         },
