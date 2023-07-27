@@ -22,6 +22,7 @@ import BackUser from "./views/back/BackUser.vue";
 import MultiplayerView from "./views/game/MultiplayerView.vue";
 import Premium from "./views/user/Premium.vue";
 import Friends from "./views/user/friends/Friends.vue";
+import Ranking from "./views/ranking/Ranking.vue";
 
 
 const routes = [
@@ -69,11 +70,6 @@ const routes = [
     name: "Logout",
   },
   {
-    path: "/:pathMatch(.*)*",
-    name: "NotFound",
-    component: NotFound,
-  },
-  {
     path: "/update-profile",
     name: "UpdateProfile",
     component: UpdateProfile,
@@ -103,6 +99,11 @@ const routes = [
     name: "Premium",
     component: Premium,
   },
+  {
+    path: "/ranking",
+    name: "Ranking",
+    component: Ranking,
+  },
 
   // Back office routes
   {
@@ -128,6 +129,11 @@ const routes = [
     name: "BackReports",
     component: BackReports,
     meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFound,
   },
 ];
 
