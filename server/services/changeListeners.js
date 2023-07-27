@@ -12,16 +12,17 @@ const statsChangeStream = gameStats.watch();
 
 
 statsChangeStream.on('change', (change) => {
-    
+
   if(change.operationType === 'insert') {
-     changeStreams(change.fullDocument);   
+     changeStreams(change.fullDocument);
   }
 });
 
 
 const changeStreams = async (document) => {
 
-  
+    try {
+
     const players = await User.findAll({
         where: {
             username: {
@@ -67,7 +68,7 @@ const changeStreams = async (document) => {
         }
         }
     ]);
-  
+
     document.player_1.totalGames = rawStats1.length;
     document.player_1.victories = rawStats1.filter(stat => stat.currentPlayer.outcome.toLowerCase() === 'win').length;
     document.player_1.defeats = rawStats1.filter(stat => stat.currentPlayer.outcome.toLowerCase() === 'lose').length;
@@ -99,8 +100,8 @@ const changeStreams = async (document) => {
             player_2: 0
         }
         }
-    ]);      
-    
+    ]);
+
     document.player_2.totalGames = rawStats2.length;
     document.player_2.victories = rawStats2.filter(stat => stat.currentPlayer.outcome.toLowerCase() === 'win').length;
     document.player_2.defeats = rawStats2.filter(stat => stat.currentPlayer.outcome.toLowerCase() === 'lose').length;
@@ -111,13 +112,15 @@ const changeStreams = async (document) => {
     await checkAchievements(document.player_2);
 
     return;
-
+    } catch (error) {
+        console.error("Error checking achievements:", error);
+    }
 }
 // changeStreams();
 
 const checkAchievements = async (document) => {
     try {
-       
+
         const achievements = await Achievement.findAll({
             where: {
                 type: {
@@ -160,22 +163,27 @@ const checkAchievements = async (document) => {
     }
 }
 async function newAchievement(achievement, userId) {
-    console.log("L'utilisateur " + userId + " a obtenu le succès " + achievement.name + " !");
+    try {
 
-    const user = await User.findByPk(userId);
+        console.log("L'utilisateur " + userId + " a obtenu le succès " + achievement.name + " !");
 
-    const userAchievements = await user.getAchievements();
-    const userAchievementsIds = userAchievements.map((achievement) => achievement.id);
-    if (userAchievementsIds.includes(achievement.id)) {
-        return;
+        const user = await User.findByPk(userId);
+
+        const userAchievements = await user.getAchievements();
+        const userAchievementsIds = userAchievements.map((achievement) => achievement.id);
+        if (userAchievementsIds.includes(achievement.id)) {
+            return;
+        }
+
+        await user.addAchievement(achievement);
+        const userSocket = socketUserMap.get(parseInt(userId));
+
+        if (userSocket) {
+            io.to(userSocket).emit('achievement', { achievement: achievement, userId: userId });
+        }
+    } catch (error) {
+        console.error("Error adding achievement:", error);
     }
-
-    await user.addAchievement(achievement);
-    const userSocket = socketUserMap.get(parseInt(userId));
-
-    if (userSocket) {
-        io.to(userSocket).emit('achievement', { achievement: achievement, userId: userId });
-    }   
 }
 module.exports = {
     changeStreams
