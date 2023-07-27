@@ -6,6 +6,7 @@
 
 <script>
 import axios from 'axios';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default {
   name: 'VerifyEmail',
@@ -24,7 +25,7 @@ export default {
     console.log("Token récupéré à partir de la requête : ", token);
 
     // URL de la requête
-    const url = 'http://localhost:3000/auth/verify-email/' + token;
+    const url = `${BASE_URL}/auth/verify-email/` + token;
     // Requête API
     axios.get(url)
         .then(response => {

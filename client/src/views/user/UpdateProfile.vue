@@ -1,8 +1,10 @@
 <script setup>
-import axios from 'axios';  
+import axios from 'axios';
 import router from '../../router';
 import { reactive } from 'vue';
 import { TheCard } from 'flowbite-vue';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 let user = localStorage.getItem('user');
 user = JSON.parse(user);
 
@@ -16,7 +18,7 @@ const state = reactive({
 });
 const updateProfile = async () => {
     try {
-        await axios.patch('http://localhost:3000/users', {
+        await axios.patch(`${BASE_URL}/users`, {
             username: state.username,
             firstname: state.firstname,
             lastname: state.lastname,
@@ -49,7 +51,7 @@ const updatePassword = async () => {
             alert('Les mots de passe ne correspondent pas');
             return;
         }
-        await axios.patch('http://localhost:3000/auth/password', {
+        await axios.patch(`${BASE_URL}/auth/password`, {
             oldPassword: state.oldPassword,
             password: state.password,
         },
@@ -77,7 +79,7 @@ const updatePassword = async () => {
                 </div>
                 <div class="mb-4">
                     <input type="text" v-model="state.lastname" placeholder="Nom de famille" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />
-                </div>        
+                </div>
                 <div>
                     <button type="submit" class="w-full px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600">Modifier</button>
                 </div>
