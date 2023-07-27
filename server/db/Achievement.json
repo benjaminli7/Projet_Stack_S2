@@ -1,10 +1,10 @@
 [
     {
       "name": "Maître du classement",
-      "description": "Atteindre un Elo de 2000",
+      "description": "Atteindre un Elo de 2500",
       "points": 100,
       "type": "elo",
-      "targetValue": 2000,
+      "targetValue": 2500,
       "image": "https://icones.pro/wp-content/uploads/2021/05/icone-de-la-couronne-noir.png"
     },
     {
@@ -16,35 +16,34 @@
       "image": "https://icones.pro/wp-content/uploads/2021/05/icone-de-la-couronne-noir.png"
     },
     {
-      "name": "Toujours présent",
-      "description": "Se connecter pendant 30 jours consécutifs",
-      "points": 75,
-      "type": "connections",
-      "targetValue": 30,
-      "image": "https://media.letelegramme.fr/api/v1/images/view/637e9cbbe75299022b23510d/web_golden_xl/637e9cbbe75299022b23510d.1"
-    },
-    {
       "name": "Champion ultime",
       "description": "Obtenir le score maximum dans une partie",
       "points": 200,
       "type": "special",
-      "targetValue": 5000,
+      "targetValue": 25000,
       "image": "https://production.listennotes.com/podcasts/chad-podcast-marley-davis-stout-ayA3XjoOCYv-206hNHTzp7o.1400x1400.jpg"
     },
     {
         "name": "Jeune bambi !",
-        "description": "Jouer 5 parties",
+        "description": "Jouer 1 partie",
         "points": 50,
         "type": "gamesPlayed",
-        "targetValue": 5,
+        "targetValue": 1,
         "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlOgMikybGO37hZdAxSn0brZdCqNoLZXC6XQ&usqp=CAU"
     },
     {
-     
+      "name": "Siuuuuuuuu !",
+      "description": "Gagner 2 parties",
+      "points": 50,
+      "type": "gamesWon",
+      "targetValue": 2,
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlOgMikybGO37hZdAxSn0brZdCqNoLZXC6XQ&usqp=CAU"
+    },
+    {   
       "name": "Tu est tilté boubou",
       "description": "Perdre 5 parties",
       "points": 200,
-      "type": "gamesPlayed",
+      "type": "gamesLose",
       "targetValue": 5,
       "image": "https://media.lelombrik.net/t/5df6505151f22bdf3234e4ed0577a6a6/p/03.jpg"
     },
@@ -53,17 +52,8 @@
       "name": "Oh la fraude",
       "description": "Perdre 10 parties",
       "points": 200,
-      "type": "gamesPlayed",
+      "type": "gamesLose",
       "targetValue": 10,
       "image": "https://uploads.lebonbon.fr/source/2023/july/2047142/alan_2_1200.jpg"
-    },
-    {
-     
-      "name": "Retrouver les cramptés",
-      "description": "Mot de passe oublie ",
-      "points": 200,
-      "type": "special",
-      "targetValue": 1,
-      "image": "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/1184c787a6e86555b3f5529dda428412~c5_720x720.jpeg?x-expires=1690354800&x-signature=pxIsNUP3TkBoGsp9bHiAVELk8dw%3D"
     }
   ]

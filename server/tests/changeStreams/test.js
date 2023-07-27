@@ -81,7 +81,7 @@ async function checkAchievements(stats) {
       const achievements = await Achievement.findAll({
         where: {
           type: {
-            [Sequelize.Op.in]: ["elo", "gamesPlayed", "connections", "special"],
+            [Sequelize.Op.in]: ["elo", "gamesPlayed","gamesWon","gamesLose", "connections", "special"],
           },
         },
       });
