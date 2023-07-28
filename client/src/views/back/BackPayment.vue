@@ -14,11 +14,9 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             payments.value = response.data;
         })
         .catch((error) => {
-            console.log(error);
         })
 })
 

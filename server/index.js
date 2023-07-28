@@ -178,7 +178,7 @@ io.on("connection", function (socket) {
         score: score,
       });
     }
-    console.log(room);
+    // console.log(room);
 
     if (
       room.player1_guesses.length === 1 &&
@@ -277,7 +277,7 @@ io.on("connection", function (socket) {
       };
 
       if (player1_outcome === RESULTS.WIN) {
-        console.log("LILI"+room.player1.username + " won the game");
+        // console.log("LILI"+room.player1.username + " won the game");
         const player1 = User.findOne({
           where: { username: room.player1.username },
         }).then((player) => {
@@ -288,7 +288,7 @@ io.on("connection", function (socket) {
 
 
       } else if (player1_outcome === RESULTS.LOSE) {
-        console.log("LALA"+room.player1.username + " lost the game");
+        // console.log("LALA"+room.player1.username + " lost the game");
 
         const player1 = User.findOne({
             where: { username: room.player1.username },
@@ -300,7 +300,7 @@ io.on("connection", function (socket) {
       }
 
       if (player2_outcome === RESULTS.WIN) {
-        console.log("LOLO"+room.player2.username + " won the game");
+        // console.log("LOLO"+room.player2.username + " won the game");
 
         const player2 = User.findOne({
           where: { username: room.player2.username },
@@ -311,7 +311,7 @@ io.on("connection", function (socket) {
         );
 
       } else if (player2_outcome === RESULTS.LOSE) {
-        console.log("LULU"+room.player2.username + " lost the game");
+        // console.log("LULU"+room.player2.username + " lost the game");
 
        player2 = User.findOne({
           where: { username: room.player2.username },

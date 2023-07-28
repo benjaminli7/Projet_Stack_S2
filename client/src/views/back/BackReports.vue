@@ -23,13 +23,11 @@
   })
 
   const bannirUser = async (username, reportId) => {
-    console.log(username);
     await userStore.banUser(username).then((value) => {
         userStore.archiverReport(reportId).then((value) => {
             const index = list.value.findIndex((item) => item.id === reportId);
             list.value[index].status = 'treated';
         }).catch((error) => {
-            console.log(error);
             alert('Erreur lors de l\'archivage');
         })
 
@@ -47,7 +45,6 @@
         list.value[index].status = 'treated';
 
     }).catch((error) => {
-        console.log(error);
         alert('Erreur lors de l\'archivage');
     })
   };

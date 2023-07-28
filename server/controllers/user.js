@@ -7,7 +7,6 @@ const bcrypt = require("bcryptjs");
 
 module.exports = {
   cget: async (req, res, next) => {
-    console.log("cget");
     const {
       _page = 1,
       _itemsPerPage = 10,
@@ -27,7 +26,6 @@ module.exports = {
   },
   post: async (req, res, next) => {
     try {
-      console.log("post");
       const user = await userService.create(req.body);
       res.status(201).json(user);
     } catch (err) {
@@ -36,7 +34,6 @@ module.exports = {
   },
   get: async (req, res, next) => {
     try {
-      console.log("get")
       const user = await userService.findById(parseInt(req.params.id));
       if (!user) return res.sendStatus(404);
       res.json(user);
@@ -60,7 +57,6 @@ module.exports = {
   },
   patch: async (req, res, next) => {
     try {
-      console.log('id', req.user.infos.id);
       const [user] = await userService.update(
         { id: req.user.infos.id},
         req.body
@@ -85,7 +81,6 @@ module.exports = {
   getUserAchievements: async (req, res, next) => {
     try {
       const user = await User.findByPk(parseInt(req.params.id));
-      console.log(user)
       const allAchievements = await Achievement.findAll();
       let userAchievements = await user.getAchievements();
       const userAchievementsIds = userAchievements.map((achievement) => achievement.id);
@@ -101,7 +96,6 @@ module.exports = {
           unlocked,
         };
       });
-      console.log(achievements);
   
       res.json(achievements);
     } catch (err) {
@@ -267,7 +261,6 @@ module.exports = {
       
       return res.status(200).json({message: "Vous êtes admin"});
     } catch (err) {
-      console.log(err);
     }
   },
   isUserPremium: async (req, res, next) => {
@@ -279,7 +272,6 @@ module.exports = {
       }
       return res.status(200).json({message: "Vous êtes premium"});
     } catch (err) {
-      console.log(err);
     }
   }
 

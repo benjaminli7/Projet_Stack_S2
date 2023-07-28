@@ -4,20 +4,17 @@ const { Op } = require("sequelize");
 const createFriend = async (req, res) => {
   try {
     const { friendUsername } = req.body;
-    console.log("createFriend" , friendUsername);
 
     const user = req.user.infos;
     const username = user.username;
 
 
     if (username === friendUsername) {
-      console.log("You can't add yourself as a friend");
       return res.status(400).json({ message: "You can't add yourself as a friend" });
     }
     const friend = await User.findOne({ where: { username: friendUsername } })
 
     if (!user || !friend) {
-      console.log("User or friend not found");
       return res.status(404).json({ message: "User or friend not found" });
     }
 
@@ -39,7 +36,6 @@ const createFriend = async (req, res) => {
     });
 
     if (existingFriend) {
-      console.log("There is already a pending or accepted friend request between the users");
       return res.status(400).json({ message: "There is already a pending or accepted friend request between the users" });
     }
 
@@ -54,8 +50,6 @@ const createFriend = async (req, res) => {
   
 const getAllFriendsByUser = async (req, res) => {
   try {    
-    console.log("getAllFriendsByUser" , req.user.infos);
-    console.log(req.user);
     const user = req.user.infos
 
     if (!user) {

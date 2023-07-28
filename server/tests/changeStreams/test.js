@@ -62,13 +62,11 @@ const Stats = mongoose.model('Stats', statsSchema);
 
 // Créer le change stream
 const statsChangeStream = Stats.watch([], { fullDocument: 'updateLookup' });
-console.log('waiting for changes...');
 
 
 statsChangeStream.on('change', (change) => {
 
   if(change.operationType === 'update') {
-    console.log('changement');
     checkAchievements(change.fullDocument);
   }
 });
@@ -111,8 +109,6 @@ async function checkAchievements(stats) {
 async function newAchievement(achievement, userId) {
 
     const user = await User.findByPk(userId);
-    console.log(user);
-
     const userAchievements = await user.getAchievements();
     const userAchievementsIds = userAchievements.map((achievement) => achievement.id);
     if (userAchievementsIds.includes(achievement.id)) {

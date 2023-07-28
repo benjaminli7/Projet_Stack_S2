@@ -40,7 +40,6 @@ const updateProfile = async () => {
         localStorage.setItem('user', JSON.stringify(userStorage));
         router.push('/profile');
     } catch (error) {
-        console.log('error', error)
         alert('Erreur lors de la modification');
     }
 }

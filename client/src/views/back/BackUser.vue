@@ -16,11 +16,9 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             users.value = response.data;
         })
         .catch((error) => {
-            console.log(error);
         })
 })
 
@@ -35,7 +33,6 @@ onMounted(() => {
             });	
             router.push('/back/users');
         } catch (error) {
-            console.log('error', error)
             alert('Erreur lors de la modification');
         }
     }
@@ -55,7 +52,6 @@ onMounted(() => {
             });	
             router.push('/back/users');
             } catch (error) {
-                console.log('error', error)
                 alert('Erreur lors de la modification');
             }
     }
@@ -70,11 +66,9 @@ onMounted(() => {
                     return user;
                 })
             }).catch((error) => {
-                console.log(error);
                 alert('Erreur lors de la modification');
             })
         } catch (error) {
-            console.log('error', error)
             alert('Erreur lors de la modification');
         }
     }

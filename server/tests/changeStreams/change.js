@@ -72,8 +72,6 @@ async function addGamePlayed() {
             { upsert: true, new: true }
 
         );
-        console.log("Ajout d'une partie jouée pour l'utilisateur ")
-        
     } catch(err) {
         console.error(err);
     }
@@ -83,7 +81,7 @@ async function getOneData() {
     try{
         Stats.findOne({ userId: '2' }, function (err, stats) {
             if (err) return handleError(err);
-            console.log(stats);
+
             });
     } catch(err) {
         console.error(err);

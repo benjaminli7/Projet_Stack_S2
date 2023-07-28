@@ -33,7 +33,6 @@ const login = async (req, res) => {
 
     // Recherche de l'utilisateur dans la base de données
     const user = await User.findOne({ where: { email: email } });
-    console.log('user', user)
     if (!user) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
@@ -48,9 +47,6 @@ const login = async (req, res) => {
     if (await bcrypt.compare(password, user.password)){
       const token = jwt.sign({ infos: user}, process.env.JWT_SECRET);
 
-      console.log("User found: ", user.id);
-
-      console.log("User found: ", user.id);
 
 
       return res.status(200).json({
@@ -129,10 +125,7 @@ const register = async (req, res) => {
     // Envoi de l'email
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
-        console.log(error);
         return res.status(500).json({ error: 'Problème lors de l\'envoie de mail' });
-      } else {
-        console.log('Email sent: ' + info);
       }
     });
 
@@ -154,7 +147,6 @@ const verifyEmail = async (req, res) => {
       return res.status(404).json({ error: 'Token invalide ou utilisateur non trouvé' });
     }
 
-    console.log("User found: ", user);
     try{
       await User.update({isVerified : true, verificationToken : null}, {where: {'id' : user.id} });
       res.status(200).json({ message: 'L\'e-mail a été vérifié avec succès' });
@@ -171,13 +163,11 @@ const verifyEmail = async (req, res) => {
 
 const changePassword =  async (req, res) => {
   try {
-    console.log('req',req)
+
     let { oldPassword, password } = req.body;
     let id = req.user.infos.id;
-    console.log('oldPassword', oldPassword)
-    console.log('password', password)
     const userFound = await User.findByPk(id);
-    console.log('userFound', userFound)
+
     if (!userFound) {
       return res.status(404).json({ error: 'user invalide' });
     }
@@ -238,9 +228,9 @@ const forgotPassword = async (req, res) => {
     // Envoi de l'email
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
-        console.log(error);
+        return res.status(500).json({ error: 'Problème lors de l\'envoie de mail' });
       } else {
-        console.log('Email sent: ' + info+ ' ' + verificationToken);
+        console.log('Email sent: ' + info);
       }
     });
     return res.status(200).json({ message: 'Un email vous a été envoyé' });

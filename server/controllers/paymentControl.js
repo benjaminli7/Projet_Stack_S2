@@ -58,8 +58,6 @@ exports.handlePurchaseSuccess = async (sessionId) => {
     try {
         const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-        console.log(session.metadata);
-
         if (session && session.payment_status === 'paid') {
             const utcNow = DateTime.utc().toJSDate();
             const data = {

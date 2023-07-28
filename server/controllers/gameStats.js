@@ -13,7 +13,7 @@ const create = async (data) => {
 
     await gameStats.save();
   } catch (err) {
-    console.log(err);
+
   }
 };
 
@@ -128,7 +128,6 @@ const countGame = async (req, res) =>{
     const count = await GameStats.countDocuments();
     return  res.status(200).json(count);
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ message: "Error" });
   } 
 }
@@ -146,7 +145,6 @@ const last5Games = async (req, res) =>{
     // console.log(last5);
     return  res.status(200).json(last5);
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ message: "Error" });
   }
 }

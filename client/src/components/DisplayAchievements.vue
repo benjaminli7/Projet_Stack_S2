@@ -12,7 +12,6 @@
     const user = userStore.getUser;
     try {
       const response = await userStore.getAchievements(user.id);
-      console.log("Achievements", response);
       achievementData.value = response;
 
       unlockedAchievements.value = response.filter(
@@ -22,7 +21,6 @@
         (achievement) => !achievement.unlocked
       );
     } catch (error) {
-      console.log(error);
     }
   });
 </script>

@@ -51,7 +51,6 @@ onMounted(async() => {
         isPremium.value = await store.isPremium();
       }
     }
-    console.log(todayGames.value.length)
   if( isPremium.value || todayGames.value.length < 5 ){
     const token = localStorage.getItem("token");
         axios.get(`${BASE_URL}/auth/isConnected`, {
@@ -61,10 +60,8 @@ onMounted(async() => {
               },
         })
           .then((response) => {
-            console.log(response)
           })
           .catch((error) => {
-            console.log(error.response.status) 
             if(error.response.status == 401 || error.response.status == 403 ){
               localStorage.removeItem('token');
               window.location.href = '/logout';

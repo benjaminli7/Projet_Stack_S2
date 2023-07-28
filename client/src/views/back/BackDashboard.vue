@@ -1,5 +1,4 @@
 <script setup>
-console.log('test');
 import { onMounted, ref } from 'vue';
 import { TheCard } from 'flowbite-vue';
 import axios from 'axios';
@@ -19,14 +18,13 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             nbUsers.value = response.data.length;
             nbBan.value = response.data.filter(user => user.status == 1).length;
             nbAdmin.value = response.data.filter(user => user.roles == 'admin').length;
             nbVerified.value = response.data.filter(user => user.isVerified == true).length;
         })
         .catch((error) => {
-            console.log(error);
+
         })
     axios.get(`${BASE_URL}/payments`, {
             headers: {
@@ -35,7 +33,6 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             let nbPayments = response.data.length;
             let sommes = 0
             for (let i = 0; i < nbPayments; i++) {
@@ -44,7 +41,7 @@ onMounted(() => {
             totalAmount.value = sommes;
         })
         .catch((error) => {
-            console.log(error);
+
         })
 
     axios.get(`${BASE_URL}/game-stats/count`, {
@@ -54,12 +51,10 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log('data', response.data);
             nbGames.value = response.data;
 
         })
         .catch((error) => {
-            console.log(error);
         })
 
     

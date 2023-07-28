@@ -29,7 +29,6 @@ export const googleAuthCallback = async (code) => {
           userStore.setUser(res.data.user);
           return res;
         } else {
-          console.log(res);
           return res;
         }
       });

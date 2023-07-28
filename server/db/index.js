@@ -11,7 +11,6 @@ fs.readdirSync(path.join(__dirname, "models")).forEach((file) => {
     const model = require(path.join(__dirname, "models", file))(connection);
     db[model.name] = model;
   } catch (error) {
-    console.log(error);
   }
 });
 
@@ -45,13 +44,12 @@ async function syncDatabaseAndLoadFixtures() {
     const fixtures = await loadFixtures();
 
     await db.connection.sync({ force: true });
-    console.log("Database synchronized");
+
 
     for (const [modelName, fixtureData] of Object.entries(fixtures)) {
       const model = db[modelName];
       if (model) {
         await model.bulkCreate(fixtureData);
-        console.log(`Data for "${modelName}" loaded and inserted successfully!`);
       } else {
         console.error(`Model "${modelName}" not found. Skipping fixture data insertion.`);
       }

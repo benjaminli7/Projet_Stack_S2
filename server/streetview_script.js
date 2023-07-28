@@ -27,7 +27,6 @@ async function generateStreetViewPositions() {
 
     const isAvailable = await checkStreetViewAvailability(lat, lng);
     if (isAvailable) {
-        console.log("found")
       validPositions.push({ lat, lng });
     }
   }

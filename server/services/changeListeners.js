@@ -165,7 +165,6 @@ const checkAchievements = async (document) => {
 async function newAchievement(achievement, userId) {
 
     try {
-        console.log("L'utilisateur " + userId + " a obtenu le succès " + achievement.name + " !");
 
         const user = await User.findByPk(userId);
 
