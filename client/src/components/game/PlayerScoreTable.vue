@@ -26,8 +26,6 @@ const props = defineProps({
 });
 
 const checkIsUser = () => {
-  console.log(user.username);
-  console.log(props.username);
   if (user.username == props.username) {
     return true;
   } else {
@@ -72,30 +70,33 @@ const sendReport = async () => {
 <template>
   <div>
     <div>
-      <h3>{{ props.username }}</h3>
+      <div class="flex items-center justify-center gap-4 mb-6">
 
-      <button v-if="!checkIsUser()" @click="showModal" type="button" class="mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-        Report
-      </button>   
+        <h3 class="font-semibold">{{ props.username }}'s score</h3>
+
+        <button v-if="!checkIsUser()" @click="showModal" type="button" class=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Signaler
+        </button>
+      </div>
       <!-- Modal -->
 
 
       <form @submit.prevent="sendReport">
         <Modal :size="size" v-if="isShowModal" @close="closeModal">
           <template #header>
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
-              Report {{ props.username }} ?
+            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+              Signaler {{ props.username }} ?
             </h3>
           </template>
           <template #body>
               <div class="mb-4">
-                <textarea v-model="reportTextArea" placeholder="Report Message ..." class="w-full h-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none resize-none"></textarea>
+                <textarea v-model="reportTextArea" placeholder="Message de signalement..." class="w-full h-64 px-3 py-2 border border-gray-300 rounded-md resize-none focus:outline-none"></textarea>
               </div>
           </template>
           <template #footer>
             <div class="flex justify-between">
               <button type="submit" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
-                Send Report
+                Envoyer
               </button>
             </div>
           </template>
@@ -103,7 +104,7 @@ const sendReport = async () => {
       </form>
 
 
-      
+
     </div>
 
     <div class="relative overflow-x-auto">
@@ -117,19 +118,19 @@ const sendReport = async () => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(entry, index) in props.guesses" :key="index">
+          <tr v-for="(entry, index) in props.guesses" :key="index" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
               scope="row"
-              class="px-6 py-4 font-medium text-gray-700 whitespace-nowrap"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
               {{ index + 1 }}
             </th>
             <td class="px-6 py-4">{{ entry.score }}</td>
           </tr>
-          <tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
               scope="row"
-              class="px-6 py-4 font-medium text-gray-700 whitespace-nowrap"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
               Total
             </th>
@@ -140,8 +141,8 @@ const sendReport = async () => {
     </div>
 
     <!-- Confirm Report Sended-->
-    <div v-if="isReportSent" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black text-white px-4 py-2 rounded-lg shadow-lg">
-     Demande de report envoyée ! 
+    <div v-if="isReportSent" class="fixed px-4 py-2 text-white transform -translate-x-1/2 -translate-y-1/2 bg-black rounded-lg shadow-lg top-1/2 left-1/2">
+     Demande de signalement envoyée !
     </div>
   </div>
 

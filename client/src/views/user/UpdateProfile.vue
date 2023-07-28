@@ -71,7 +71,7 @@ const updatePassword = async () => {
 </script>
 
 <template>
-    <div class="flex justify-around">
+    <div class="flex justify-center gap-3 mt-[100px] flex-col items-center sm:flex-row  sm:items-stretch">
         <the-card>
             <form @submit.prevent="updateProfile" class="max-w-xs mx-auto">
                 <div class="mb-4">

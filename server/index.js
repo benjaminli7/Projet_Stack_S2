@@ -11,13 +11,12 @@ app.use(
 var users = require("./routes/user");
 var friends = require("./routes/friend");
 var auth = require("./routes/auth");
-var payments = require('./routes/payment');
+var payments = require("./routes/payment");
 var stripeRoutes = require("./routes/stripe");
 var gameStats = require("./routes/gameStats");
-var rankingRoutes = require('./routes/ranking');
+var rankingRoutes = require("./routes/ranking");
 const dbMongo = require("./db/mongoModels");
 const { User } = require("./db");
-
 
 const GameStats = dbMongo.gameStats;
 
@@ -25,11 +24,8 @@ const { getRandomPositions, calculateScore } = require("./utils");
 const { playintegrity } = require("googleapis/build/src/apis/playintegrity");
 // Démarrage du serveur
 const server = app.listen(process.env.PORT, () => {
-  console.log(
-    `Le serveur écoute sur le port ${process.env.PORT}.`
-  );
+  console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
 });
-
 
 const io = require("socket.io")(server, {
   cors: {
@@ -55,14 +51,13 @@ app.use(function (req, res, next) {
 
 app.use(express.json());
 
-
 app.use("/users", users);
 app.use("/friends", friends);
 app.use("/auth", auth);
 app.use("/stripe", stripeRoutes);
 app.use("/game-stats", gameStats);
-app.use('/payments', payments);
-app.use('/ranking', rankingRoutes);
+app.use("/payments", payments);
+app.use("/ranking", rankingRoutes);
 
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
@@ -271,49 +266,42 @@ io.on("connection", function (socket) {
       };
 
       if (player1_outcome === RESULTS.WIN) {
-        console.log("LILI"+room.player1.username + " won the game");
+        console.log("LILI" + room.player1.username + " won the game");
         const player1 = User.findOne({
           where: { username: room.player1.username },
         }).then((player) => {
-            player.elo += 15;
-            player.save();
-          }
-        );
-
-
+          player.elo += 15;
+          player.save();
+        });
       } else if (player1_outcome === RESULTS.LOSE) {
-        console.log("LALA"+room.player1.username + " lost the game");
+        console.log("LALA" + room.player1.username + " lost the game");
 
         const player1 = User.findOne({
-            where: { username: room.player1.username },
-          }).then((player) => {
-            player.elo -= 15;
-            player.save();
-          }
-        );
+          where: { username: room.player1.username },
+        }).then((player) => {
+          player.elo -= 15;
+          player.save();
+        });
       }
 
       if (player2_outcome === RESULTS.WIN) {
-        console.log("LOLO"+room.player2.username + " won the game");
+        console.log("LOLO" + room.player2.username + " won the game");
 
         const player2 = User.findOne({
           where: { username: room.player2.username },
         }).then((player) => {
-            player.elo += 15;
-            player.save();
-          }
-        );
-
+          player.elo += 15;
+          player.save();
+        });
       } else if (player2_outcome === RESULTS.LOSE) {
-        console.log("LULU"+room.player2.username + " lost the game");
+        console.log("LULU" + room.player2.username + " lost the game");
 
-       player2 = User.findOne({
+        player2 = User.findOne({
           where: { username: room.player2.username },
-       }).then((player) => {
-            player.elo -= 15;
-            player.save();
-          }
-        );
+        }).then((player) => {
+          player.elo -= 15;
+          player.save();
+        });
       }
 
       GameStats.create(data);

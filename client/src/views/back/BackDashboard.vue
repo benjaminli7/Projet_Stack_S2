@@ -1,5 +1,4 @@
 <script setup>
-console.log('test');
 import { onMounted, ref } from 'vue';
 import { TheCard } from 'flowbite-vue';
 import axios from 'axios';
@@ -19,7 +18,6 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             nbUsers.value = response.data.length;
             nbBan.value = response.data.filter(user => user.status == 1).length;
             nbAdmin.value = response.data.filter(user => user.roles == 'admin').length;
@@ -35,7 +33,6 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             let nbPayments = response.data.length;
             let sommes = 0
             for (let i = 0; i < nbPayments; i++) {
@@ -54,7 +51,6 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log('data', response.data);
             nbGames.value = response.data;
 
         })
@@ -62,48 +58,48 @@ onMounted(() => {
             console.log(error);
         })
 
-    
+
 })
 </script>
 
 <template>
-    <div class="p-8 sm:ml-64 flex flex-wrap justify-around justify-items-center">
-        <the-card class="flex-1 basis-1/2 m-6">
+    <div class="flex flex-wrap justify-around p-8 sm:ml-64 justify-items-center">
+        <the-card class="flex-1 m-6 basis-1/2">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ nbUsers }} utilisateurs</h5>
             <p class="font-normal text-gray-700 dark:text-gray-400">
                 Sont inscrits sur le site
             </p>
         </the-card>
 
-        <the-card class="flex-1 basis-1/2 m-6">
+        <the-card class="flex-1 m-6 basis-1/2">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ nbBan }} utilisateurs</h5>
             <p class="font-normal text-gray-700 dark:text-gray-400">
                 Sont bannis
             </p>
         </the-card>
 
-        <the-card class="flex-1 basis-1/2 m-6">
+        <the-card class="flex-1 m-6 basis-1/2">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ nbAdmin }} utilisateurs</h5>
             <p class="font-normal text-gray-700 dark:text-gray-400">
                 Sont admins
             </p>
         </the-card>
 
-        <the-card class="flex-1 basis-1/2 m-6" >
+        <the-card class="flex-1 m-6 basis-1/2" >
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ nbVerified }} utilisateurs</h5>
             <p class="font-normal text-gray-700 dark:text-gray-400">
                 Ont verifié leur compte
             </p>
         </the-card>
 
-        <the-card class="flex-1 basis-1/2 m-6">
+        <the-card class="flex-1 m-6 basis-1/2">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ totalAmount }} €</h5>
             <p class="font-normal text-gray-700 dark:text-gray-400">
                 Ont été dépensés sur le site
             </p>
         </the-card>
 
-        <the-card class="flex-1 basis-1/2 m-6">
+        <the-card class="flex-1 m-6 basis-1/2">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ nbGames }} parties</h5>
             <p class="font-normal text-gray-700 dark:text-gray-400">
                 Ont été jouées

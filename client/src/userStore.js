@@ -73,7 +73,6 @@ export const useUserStore = defineStore("user", {
     async getReceivedFriendRequests(username) {
       try {
         const token = localStorage.getItem('token');
-        // console.log(typeof username + " " + username + " " + typeof token + " " + token)
         const response = await axios.get(
           `${BASE_URL}/users/friend-requests`,
           {
@@ -82,7 +81,6 @@ export const useUserStore = defineStore("user", {
             },
           }
         )
-        // console.log(response.data);
 
         const friends = response.data;
         return friends;
@@ -160,7 +158,6 @@ export const useUserStore = defineStore("user", {
     async cancelFriendRequest(username, friendUsername) {
       try {
         const token = localStorage.getItem("token");
-        console.log(username + " " + friendUsername);
         const response = await axios.put(
           `${BASE_URL}/friends/friend-requests/cancel`,
           {
@@ -222,7 +219,6 @@ export const useUserStore = defineStore("user", {
     async reportUser ( reportedUsername, reason) {
       try {
         const token = localStorage.getItem("token");
-        console.log(reportedUsername + " " + reason);
         const response = await axios.post(
           `${BASE_URL}/users/report`,
           {

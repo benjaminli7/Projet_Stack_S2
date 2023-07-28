@@ -169,24 +169,30 @@ const drawDashedLines = () => {
 
 <template>
   <div id="result-map"></div>
-  <div class="container mx-auto">
+  <div class="container flex flex-col gap-6 p-4 mx-auto my-5 bg-gray-300 rounded-lg">
 
-    <h2>{{ props.getResultMessage() }}</h2>
-    <router-link to="/">
-      <Button>Quitter</Button>
-    </router-link>
+    <h2 class="font-bold text-center">{{ props.getResultMessage() }}</h2>
 
-    <PlayerScoreTable
-      :username="props.roomData.player1.username"
-      :score="props.roomData.player1_score"
-      :guesses="props.roomData.player1_guesses"
-    />
+    <div class="flex flex-col gap-6">
 
-    <PlayerScoreTable
-      :username="props.roomData.player2.username"
-      :score="props.roomData.player2_score"
-      :guesses="props.roomData.player2_guesses"
-    />
+      <PlayerScoreTable
+        :username="props.roomData.player1.username"
+        :score="props.roomData.player1_score"
+        :guesses="props.roomData.player1_guesses"
+      />
+
+      <PlayerScoreTable
+        :username="props.roomData.player2.username"
+        :score="props.roomData.player2_score"
+        :guesses="props.roomData.player2_guesses"
+      />
+    </div>
+    <div class="flex justify-center">
+
+      <router-link to="/">
+        <Button>Quitter</Button>
+      </router-link>
+    </div>
   </div>
 
 

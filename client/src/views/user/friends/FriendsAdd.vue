@@ -6,7 +6,7 @@ import { useUserStore } from '../../../userStore';
 const store = useUserStore();
 const { addFriend } = store;
 
-const username = ref(store.getUser.username); 
+const username = ref(store.getUser.username);
 const friendUsername = ref('');
 
 const emit = defineEmits(['add-friend'])
@@ -30,16 +30,16 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div class="bg-gray-100 p-8">
-    <h2 class="text-2xl font-bold mb-4">Add Friend</h2>
+  <div class="p-8 bg-gray-100">
+    <h2 class="mb-4 text-2xl font-bold">Ajouter un ami</h2>
     <form @submit.prevent="submitForm" class="space-y-4">
       <label for="username" class="block text-sm font-medium text-gray-700">User ID:</label>
-      <input type="text" id="username" v-model="username" disabled class="bg-gray-200 px-4 py-2 rounded-lg w-full">
+      <input type="text" id="username" v-model="username" disabled class="w-full px-4 py-2 bg-gray-200 rounded-lg">
 
       <label for="friendUsername" class="block text-sm font-medium text-gray-700">Friend ID:</label>
-      <input type="text" id="friendUsername" v-model="friendUsername" required class="bg-white px-4 py-2 rounded-lg w-full">
+      <input type="text" id="friendUsername" v-model="friendUsername" required class="w-full px-4 py-2 bg-white rounded-lg">
 
-      <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">Add Friend</button>
+      <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Ajouter</button>
     </form>
   </div>
 </template>

@@ -16,7 +16,6 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             users.value = response.data;
         })
         .catch((error) => {
@@ -26,13 +25,13 @@ onMounted(() => {
 
     async function deleteUser(id){
         try {
-            await axios.delete(`${BASE_URL}/users/${id}`, 
+            await axios.delete(`${BASE_URL}/users/${id}`,
             {
                 headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
                 },
-            });	
+            });
             router.push('/back/users');
         } catch (error) {
             console.log('error', error)
@@ -52,7 +51,7 @@ onMounted(() => {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
                 },
-            });	
+            });
             router.push('/back/users');
             } catch (error) {
                 console.log('error', error)

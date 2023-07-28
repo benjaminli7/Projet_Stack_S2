@@ -8,7 +8,6 @@ const achievementData = ref({});
 // Use inject to access the achievement data from the event bus
 // const achievementData = inject('achievementData', {});
 
-console.log(achievementData)
 
 // Listen for the achievementReceived event and update the showPopup ref accordingly
 const onAchievementReceived = (event) => {
@@ -36,9 +35,9 @@ onUnmounted(() => {
 </script>
 <template>
   <transition name="popup-fade">
-    <div v-if="showPopup" class="achievement-popup rounded-tl-lg">
+    <div v-if="showPopup" class="rounded-tl-lg achievement-popup">
       <div class="popup-content">
-        <div class="flex justify-center items-center">
+        <div class="flex items-center justify-center">
           <img :src="achievementData?.image" alt="Achievement icon" class="w-8 h-8"/>
         </div>
         <p> {{ achievementData?.name }}</p>

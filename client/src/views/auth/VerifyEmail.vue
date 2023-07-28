@@ -22,14 +22,12 @@ export default {
       return;
     }
 
-    console.log("Token récupéré à partir de la requête : ", token);
 
     // URL de la requête
     const url = `${BASE_URL}/auth/verify-email/` + token;
     // Requête API
     axios.get(url)
         .then(response => {
-          console.log("Réponse de l'API : ", response.data);
           this.$router.push('/login');
         })
         .catch(error => {
