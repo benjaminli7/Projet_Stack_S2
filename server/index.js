@@ -175,8 +175,8 @@ io.on("connection", function (socket) {
     console.log(room);
 
     if (
-      room.player1_guesses.length === 1 &&
-      room.player2_guesses.length === 1
+      room.player1_guesses.length === 5 &&
+      room.player2_guesses.length === 5
     ) {
       const player1Score = room.player1_guesses.reduce(
         (total, guess) => total + guess.score,
