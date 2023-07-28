@@ -1,7 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const https = require("https");
-const fs = require("fs");
 const app = express();
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
@@ -16,6 +14,7 @@ var auth = require("./routes/auth");
 var payments = require('./routes/payment');
 var stripeRoutes = require("./routes/stripe");
 var gameStats = require("./routes/gameStats");
+var rankingRoutes = require('./routes/ranking');
 const dbMongo = require("./db/mongoModels");
 const { User } = require("./db");
 
@@ -25,17 +24,13 @@ const GameStats = dbMongo.gameStats;
 const { getRandomPositions, calculateScore } = require("./utils");
 const { playintegrity } = require("googleapis/build/src/apis/playintegrity");
 // Démarrage du serveur
-const httpsServer = https.createServer(
-  {
-    key: fs.readFileSync("./key.pem"),
-    cert: fs.readFileSync("./cert.pem"),
-  },
-  app
-);
-
-const server = httpsServer.listen(process.env.PORT, () => {
-  console.log(`Le serveur écoute sur le port ${process.env.PORT}.`);
+const server = app.listen(process.env.PORT, () => {
+  console.log(
+    `Le serveur écoute sur le port ${process.env.PORT}.`
+  );
 });
+
+
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -67,6 +62,7 @@ app.use("/auth", auth);
 app.use("/stripe", stripeRoutes);
 app.use("/game-stats", gameStats);
 app.use('/payments', payments);
+app.use('/ranking', rankingRoutes);
 
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
@@ -179,8 +175,8 @@ io.on("connection", function (socket) {
     console.log(room);
 
     if (
-      room.player1_guesses.length === 1 &&
-      room.player2_guesses.length === 1
+      room.player1_guesses.length === 5 &&
+      room.player2_guesses.length === 5
     ) {
       const player1Score = room.player1_guesses.reduce(
         (total, guess) => total + guess.score,
@@ -334,7 +330,7 @@ io.on("connection", function (socket) {
   socket.on("authenticate", (userId) => {
     socket.join(userId);
     socketUserMap.set(userId, socket.id);
-    console.log(socketUserMap);
+    // console.log(socketUserMap);
   });
 
   socket.on("disconnect", () => {
@@ -352,8 +348,6 @@ io.on("connection", function (socket) {
     io.emit("friendRequest", message);
   });
 });
-
-
 
 io.on("connection", function (socket) {
   io.emit("connection", `${socket.id} is connected`);

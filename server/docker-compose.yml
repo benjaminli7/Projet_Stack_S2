@@ -27,10 +27,10 @@ services:
   server:
     image: node
     ports:
-      - 443:443
+      - 3000:3000
     environment:
       DB_URL: ${DB_URL}
-      PORT: 443
+      PORT: 3000
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}

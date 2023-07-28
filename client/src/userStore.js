@@ -342,6 +342,41 @@ export const useUserStore = defineStore("user", {
         this.socket = null;
       }
     },
+    async getLast5Games() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+            `${BASE_URL}/game-stats/last5`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+        );
+
+        return response.data;
+
+      } catch (error) {
+        console.error("Failed to fetch game stats:", error.response.data.error);
+        throw new Error(error.response.data.error);
+      }
+    },
+    async isPremium() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+            `${BASE_URL}/users/isPremium`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+        );
+       return true
+      } catch (error) {
+        return false;
+      }
+    }
   },
 
 });

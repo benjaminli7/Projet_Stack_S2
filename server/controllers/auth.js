@@ -96,10 +96,11 @@ const register = async (req, res) => {
     // Création d'un token de vérification
     const verificationToken = crypto.randomBytes(20).toString('hex');
 
+
     await User.create({
       firstname : firstname,
       lastname : lastname,
-      username : username,
+      username : username.toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(),
       email : email,
       password : password,
       roles : "user",
@@ -277,15 +278,20 @@ const googleAuthCallback = async (req, res) => {
     // console.log(data);
     // Vérifier si l'utilisateur existe déjà dans la base de données
     const existingUser = await User.findOne({where : {'email' : email}});
+    const buildPseudo = (firstname, lastname) => {
+      let pseudo = (firstname + lastname).toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+      return pseudo;
+    }
+    
 
     if (existingUser === null) {
       // Créer un nouvel utilisateur
       let newUser = new User({
         firstname: given_name,
         lastname: family_name,
-        username: given_name +" "+ family_name,
+        username: buildPseudo(given_name, family_name),
         email: email,
-        password:  crypto.randomBytes(10).toString('hex'),
+        password:  crypto.randomBytes(12).toString('hex'),
         roles: "user",
         status: 0,
         friends: [],

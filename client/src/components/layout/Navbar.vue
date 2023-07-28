@@ -33,7 +33,7 @@ const user = computed( () => {
       <NavbarCollapse :isShowMenu="isShowMenu">
         <NavbarLink link="/">Accueil</NavbarLink>
         <NavbarLink link="/multiplayer">Jouer</NavbarLink>
-        <NavbarLink>Classement</NavbarLink>
+        <NavbarLink link="/ranking">Classement</NavbarLink>
         <NavbarLink link="/profile">Profil</NavbarLink>
         <NavbarLink link="/friends">Friends</NavbarLink>
         <NavbarLink link="/premium">Premium</NavbarLink>
