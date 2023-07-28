@@ -42,6 +42,7 @@ onMounted(() => {
       addressControl: false,
       streetViewControl: false,
       showRoadLabels: false,
+      zoomControl: false,
     }
   );
 });

@@ -43,6 +43,7 @@ const initMap = () => {
     options: {
       gestureHandling: "greedy",
     },
+    clickableIcons: false,
   });
 
   google.maps.event.addListener(map, "click", (event) => {
@@ -72,7 +73,9 @@ const handleGuess = () => {
 </script>
 
 <template>
-  <div id="google-map"></div>
+  <div id="google-map">
+
+  </div>
   <button id="guess-btn" @click="handleGuess" :disabled="isButtonDisabled">
     Guess
   </button>
@@ -83,8 +86,8 @@ const handleGuess = () => {
   height: 50%;
   width: 25%;
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 50px;
+  left: 25px;
   z-index: 1;
   transition: 0.25s;
   cursor: crosshair;
@@ -97,13 +100,22 @@ const handleGuess = () => {
 }
 
 #guess-btn {
-  background-color: grey;
+  background-color: #03C04A;
+  font-weight: bold;
   padding: 10px;
   border-radius: 50px;
   color: white;
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 25px;
   z-index: 2;
+  width: 25%;
+  transition: 0.25s
+}
+
+#google-map:hover + #guess-btn {
+  width: 40%;
+  transition: 0.25s;
+
 }
 </style>

@@ -40,7 +40,7 @@ onMounted(() => {
       <div class="flex items-center justify-center mb-5 h-[calc(100% - 75px)]">
         <router-link to="/back" class="flex items-center">
           <img
-            src="https://flowbite.com/docs/images/logo.svg"
+            src="../../assets/logo_challengeguessr.png"
             class="w-[75px] h-[75px]"
             alt="Logo"
           />
@@ -87,7 +87,7 @@ onMounted(() => {
               <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
 
-            <span class="ml-3">Users</span>
+            <span class="ml-3">Utilisateurs</span>
           </router-link>
         </li>
         <li>
@@ -102,7 +102,7 @@ onMounted(() => {
               viewBox="0 0 512 512"
               version="1.1"
             >
-              <title>reports</title>
+              <title>Signalements</title>
               <g
                 id="Page-1"
                 stroke="none"
@@ -122,7 +122,7 @@ onMounted(() => {
               </g>
             </svg>
 
-            <span class="ml-3">Reports</span>
+            <span class="ml-3">Signalements</span>
           </router-link>
         </li>
         <li>
@@ -132,7 +132,7 @@ onMounted(() => {
                 <line x1="1" y1="10" x2="23" y2="10"></line>
             </svg>
 
-            <span class="ml-3">Payments</span>
+            <span class="ml-3">Paiements</span>
           </router-link>
         </li>
 

@@ -1,6 +1,6 @@
 <script setup>
 import { useDark, useToggle } from "@vueuse/core";
-import { Button, Navbar, NavbarCollapse, NavbarLink } from "flowbite-vue";
+import { Button, Navbar, NavbarCollapse, NavbarLink, NavbarLogo } from "flowbite-vue";
 import { computed } from "vue";
 import { useUserStore } from "../../userStore";
 
@@ -27,7 +27,9 @@ const user = computed( () => {
 <template>
   <Navbar class="dark:bg-gray-500">
     <template #logo>
-      <a href="/" class="dark:text-white">ChallengeGuessr</a>
+        <NavbarLogo link="/" alt="ChallengeGuessr logo" image-url="https://i.imgur.com/NqBIjNH.png">
+          ChallengeGuessr
+        </NavbarLogo>
     </template>
     <template #default="{ isShowMenu }">
       <NavbarCollapse :isShowMenu="isShowMenu">
@@ -35,7 +37,7 @@ const user = computed( () => {
         <NavbarLink link="/multiplayer">Jouer</NavbarLink>
         <NavbarLink link="/ranking">Classement</NavbarLink>
         <NavbarLink link="/profile">Profil</NavbarLink>
-        <NavbarLink link="/friends">Friends</NavbarLink>
+        <NavbarLink link="/friends">Amis</NavbarLink>
         <NavbarLink link="/premium">Premium</NavbarLink>
         <!-- <NavbarLink v-if="isAuthenticated && user.roles.includes('admin')" link="/back">Back Office</NavbarLink> -->
       </NavbarCollapse>
