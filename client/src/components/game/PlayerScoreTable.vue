@@ -26,8 +26,6 @@ const props = defineProps({
 });
 
 const checkIsUser = () => {
-  console.log(user.username);
-  console.log(props.username);
   if (user.username == props.username) {
     return true;
   } else {

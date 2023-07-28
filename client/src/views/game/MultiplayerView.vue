@@ -51,7 +51,6 @@ onMounted(async() => {
         isPremium.value = await store.isPremium();
       }
     }
-    console.log(todayGames.value.length)
   if( isPremium.value || todayGames.value.length < 5 ){
     const token = localStorage.getItem("token");
         axios.get(`${BASE_URL}/auth/isConnected`, {
@@ -64,7 +63,6 @@ onMounted(async() => {
             console.log(response)
           })
           .catch((error) => {
-            console.log(error.response.status) 
             if(error.response.status == 401 || error.response.status == 403 ){
               localStorage.removeItem('token');
               window.location.href = '/logout';
@@ -74,7 +72,7 @@ onMounted(async() => {
     socket.emit("playerJoined", user.username);
     socket.emit("findOpponent");
 
-    
+
 
     socket.on("gameStarting", (positionsData, roomNameData) => {
       loading.value = false;
@@ -102,7 +100,6 @@ onMounted(async() => {
       loser.value = result.loser;
     });
   } else {
-    // console.log('Vous avez atteint votre limite de 5 parties par jour, veuillez souscrire à un abonnement premium pour continuer à jouer')
     router.push('/premium')
     alert('Vous avez atteint votre limite de 5 parties par jour, veuillez souscrire à un abonnement premium pour continuer à jouer')
   }

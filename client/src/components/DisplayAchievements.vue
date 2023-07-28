@@ -12,7 +12,6 @@
     const user = userStore.getUser;
     try {
       const response = await userStore.getAchievements(user.id);
-      console.log("Achievements", response);
       achievementData.value = response;
 
       unlockedAchievements.value = response.filter(
@@ -29,12 +28,12 @@
 
 <template>
   <div class="p-4">
-    <h2 class="text-3xl font-bold text-center mb-3">Achievements</h2>
+    <h2 class="mb-3 text-3xl font-bold text-center">Achievements</h2>
     <div class="grid grid-cols-1 gap-4">
       <div
         v-for="achievement in unlockedAchievements"
         :key="achievement.id"
-        class="p-4 border rounded-lg shadow-md flex gap-4 items-center"
+        class="flex items-center gap-4 p-4 border rounded-lg shadow-md"
       >
         <img
           :src="achievement.image"
@@ -51,7 +50,7 @@
       <div
         v-for="achievement in lockedAchievements"
         :key="achievement.id"
-        class="p-4 border rounded-lg shadow-md opacity-50 flex gap-4 items-center"
+        class="flex items-center gap-4 p-4 border rounded-lg shadow-md opacity-50"
       >
         <img
           :src="achievement.image"

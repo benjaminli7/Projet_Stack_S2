@@ -18,7 +18,6 @@ const user = computed( () => {
     return userStore.getUser;
   } else {
     const user = localStorage.getItem("user");
-    console.log(JSON.parse(user));
     return JSON.parse(user);
   }
 });

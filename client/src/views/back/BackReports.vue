@@ -3,11 +3,11 @@
   import { useUserStore } from '../../userStore'
   import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell } from 'flowbite-vue'
   import { onMounted, ref } from "vue";
-  
+
   const userStore = useUserStore();
   const user = userStore.getUser;
   const list = ref([]);
-  
+
   onMounted(async () => {
     list.value = await userStore.getReportList();
     // sort by status (not treated first)
@@ -23,7 +23,6 @@
   })
 
   const bannirUser = async (username, reportId) => {
-    console.log(username);
     await userStore.banUser(username).then((value) => {
         userStore.archiverReport(reportId).then((value) => {
             const index = list.value.findIndex((item) => item.id === reportId);
@@ -37,12 +36,12 @@
     }).catch((error) => {
         alert('Erreur lors du bannissement');
     })
-    
+
   };
-  
+
   const archiverReport = async (reportId) => {
     await userStore.archiverReport(reportId).then((value) => {
-        
+
         const index = list.value.findIndex((item) => item.id === reportId);
         list.value[index].status = 'treated';
 
@@ -52,7 +51,7 @@
     })
   };
   </script>
-  
+
   <template>
     <div class="p-8 sm:ml-64">
         <h1 class="text-3xl font-semibold text-center">Le Tribunal</h1>
@@ -72,7 +71,7 @@
               <button
                 v-if="item.status != 'treated'"
                 @click="bannirUser(item.reportedPlayer.username, item.id)"
-                class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
               >
                 Bannir
               </button>
@@ -80,11 +79,11 @@
                 <span  v-else>Archivé</span>
             </TableCell>
             <TableCell>
-        
+
               <button
                 v-if="item.status != 'treated'"
                 @click="archiverReport(item.id)"
-                class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
               >
                 Archiver
               </button>
