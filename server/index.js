@@ -5,7 +5,11 @@ const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "https://challengeguessr.ovh/",
+    ],
   })
 );
 var users = require("./routes/user");
@@ -52,15 +56,6 @@ const io = require("socket.io")(server, {
 
 app.set("view engine", "ejs");
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "https://challengeguessr.ovh/",
-    ],
-  })
-);
 app.use(function (req, res, next) {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
     if (!req.is("application/json")) {
