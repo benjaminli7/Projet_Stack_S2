@@ -316,6 +316,24 @@ export const useUserStore = defineStore("user", {
         throw new Error("Erreur dans l'archivage du report");
       }
     },
+    async fetchUserElo(username) {
+      try {
+          const token = localStorage.getItem('token');
+          const response = await axios.post(
+              `${BASE_URL}/ranking/userElo`,
+              { username: username },
+              {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+              }
+          );
+          return response.data.elo;
+      } catch (error) {
+          console.error("Failed to fetch user elo:", error.response.data.error);
+          throw new Error(error.response.data.error);
+      }
+    },
 
     async fetchStats() {
       try {

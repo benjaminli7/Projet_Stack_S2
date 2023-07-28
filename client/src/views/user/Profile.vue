@@ -28,6 +28,7 @@
               <p class="text-lg text-center">Victoires: {{ userStore.getStats.victories }}</p>
               <p class="text-lg text-center">Défaites: {{ userStore.getStats.defeats }}</p>
               <p class="text-lg text-center">Winrate: {{ userStore.getStats.winRate }}%</p>
+              <p class="text-lg text-center">ELO : {{ userElo }}</p>
             </div>
             <div v-else>
               <p class="text-lg text-center">Données des stats globales non disponibles.</p>
@@ -112,6 +113,7 @@ import DisplayAchievements from '../../components/DisplayAchievements.vue';
 
 let userStore = useUserStore();
 let user = userStore.getUser;
+let userElo = ref(null);
 const activeTab = ref('information');
 
 const formatDate = (dateString) => {
@@ -128,5 +130,6 @@ const gameHistory = computed(() => {
 
 onMounted(async () => {
   await userStore.fetchStats();
+  userElo.value = await userStore.fetchUserElo(user.username);
 });
 </script>
