@@ -9,10 +9,8 @@ jest.mock('../../db', () => {
     const sequelizeMock = require('sequelize-mock');
     const DBConnectionMock = new sequelizeMock();
     const UserMock = DBConnectionMock.define('User', {
-        // Vos champs ici, si nécessaire
     });
 
-    // Si vous avez besoin de mocker d'autres méthodes, utilisez jest.fn()
     UserMock.findAll = jest.fn().mockResolvedValue([
         UserMock.build({ username: 'user1', elo: 1500 }),
         UserMock.build({ username: 'user2', elo: 1400 }),
@@ -64,5 +62,4 @@ describe('Ranking Controller', () => {
         expect(response.body.map(user => user.username)).toEqual(expect.arrayContaining(['user1', 'user2']));
         expect(response.body.map(user => user.username)).not.toContain('user3');
     });
-    // ... Ajoutez d'autres tests au besoin ...
 });
