@@ -54,8 +54,7 @@ const createFriend = async (req, res) => {
   
 const getAllFriendsByUser = async (req, res) => {
   try {    
-    console.log("getAllFriendsByUser" , req.user.infos);
-    console.log(req.user);
+
     const user = req.user.infos
 
     if (!user) {
@@ -225,6 +224,8 @@ const deleteFriend = async (req, res) => {
 try {
     const { friendUsername } = req.body;
     
+    console.log(req.user)
+    console.log(req.body)
     const user = req.user.infos
     const friend = await User.findOne({ where: { username: friendUsername } });
 
