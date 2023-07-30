@@ -1,112 +1,129 @@
-const express = require("express");
-const router = express.Router();
-const request = require('supertest');
-const UserRepository = require('../../services/user');
+const userService = require("../../services/user");
+const { User, Achievement, Moderation, PurchasedItem } = require("../../db");
+const { Op } = require("sequelize");
+const controller = require("../../controllers/user"); // Replace 'controller' with the actual filename where the functions are defined.
 
-const { Sequelize } = require("sequelize");
-//const db = require("../db"); // Assuming "../db" exports the Sequelize instance
-const ValidationError = require("../errors/ValidationError");
-
-// Mocking User model for testing purposes
-jest.mock( () => ({
+// Mock the database models
+jest.mock("../../db", () => ({
   User: {
+    findOne: jest.fn(),
+  },
+  Achievement: {
     findAll: jest.fn(),
-    findByPk: jest.fn(),
+  },
+  Moderation: {
+    findOne: jest.fn(),
     create: jest.fn(),
-    update: jest.fn(),
-    destroy: jest.fn(),
+  },
+  PurchasedItem: {
+    findOne: jest.fn(),
   },
 }));
 
-// Mocking ValidationError.createFromSequelizeValidationError method
-jest.mock("../errors/ValidationError", () => ({
-  createFromSequelizeValidationError: jest.fn(),
-}));
+// Mock the response and next functions
+const mockResponse = () => {
+  const res = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  res.sendStatus = jest.fn().mockReturnValue(res);
+  return res;
+};
 
-describe("UserRepository", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
+const mockNext = jest.fn();
+
+describe("Controller Tests", () => {
+  describe("cget", () => {
+    it("should call userService.findAll and return JSON response", async () => {
+      const req = {
+        query: {
+          _page: 1,
+          _itemsPerPage: 10,
+          _sort: {},
+          someOtherCriteria: "value",
+        },
+      };
+      const res = mockResponse();
+
+      // Mock the userService.findAll function to return some data
+      userService.findAll = jest.fn().mockResolvedValue(["user1", "user2"]);
+
+      await controller.cget(req, res, mockNext);
+
+      expect(userService.findAll).toHaveBeenCalledWith(
+        { someOtherCriteria: "value" },
+        {
+          offset: 0,
+          limit: 10,
+          order: {},
+        }
+      );
+
+      expect(res.json).toHaveBeenCalledWith(["user1", "user2"]);
+    });
+
+    it("should call next with an error if userService.findAll throws an error", async () => {
+      const req = {
+        query: {},
+      };
+      const res = mockResponse();
+
+      // Mock the userService.findAll function to throw an error
+      userService.findAll = jest.fn().mockRejectedValue(new Error("Database error"));
+
+      await controller.cget(req, res, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(new Error("Database error"));
+    });
   });
 
-  describe("findAll", () => {
-    it("should call User.findAll with provided criteria and options", async () => {
-      const criteria = { active: true };
-      const options = { order: [["createdAt", "DESC"]] };
-      await UserRepository.findAll(criteria, options);
+  describe("post", () => {
+    it("should call userService.create and return status 201 with JSON response", async () => {
+      const req = {
+        body: {
+          username: "testuser",
+          email: "test@example.com",
+        },
+      };
+      const res = mockResponse();
 
-      expect(User.findAll).toHaveBeenCalledWith({
-        where: criteria,
-        ...options,
-        order: Object.entries(options.order || {}),
+      // Mock the userService.create function to return some data
+      userService.create = jest.fn().mockResolvedValue({
+        id: 1,
+        username: "testuser",
+        email: "test@example.com",
+      });
+
+      await controller.post(req, res, mockNext);
+
+      expect(userService.create).toHaveBeenCalledWith({
+        username: "testuser",
+        email: "test@example.com",
+      });
+
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith({
+        id: 1,
+        username: "testuser",
+        email: "test@example.com",
       });
     });
-  });
 
-  describe("findById", () => {
-    it("should call User.findByPk with the provided id", async () => {
-      const id = 123;
-      await UserRepository.findById(id);
+    it("should call next with an error if userService.create throws an error", async () => {
+      const req = {
+        body: {
+          username: "testuser",
+          email: "test@example.com",
+        },
+      };
+      const res = mockResponse();
 
-      expect(User.findByPk).toHaveBeenCalledWith(id);
+      // Mock the userService.create function to throw an error
+      userService.create = jest.fn().mockRejectedValue(new Error("Database error"));
+
+      await controller.post(req, res, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(new Error("Database error"));
     });
   });
 
-  describe("create", () => {
-    it("should call User.create with the provided data", async () => {
-      const data = { name: "John Doe", email: "john@example.com" };
-      await UserRepository.create(data);
-
-      expect(User.create).toHaveBeenCalledWith(data);
-    });
-
-    it("should throw a ValidationError when a Sequelize.ValidationError is caught", async () => {
-      const data = { invalidField: "value" };
-      const error = new Sequelize.ValidationError("Validation error message");
-      User.create.mockRejectedValueOnce(error);
-
-      await expect(UserRepository.create(data)).rejects.toThrow(ValidationError);
-
-      expect(ValidationError.createFromSequelizeValidationError).toHaveBeenCalledWith(error);
-    });
-  });
-
-  describe("update", () => {
-    it("should call User.update with the provided criteria and data", async () => {
-      const criteria = { id: 123 };
-      const data = { name: "Updated Name" };
-      const returnValue = [1, [{ id: 123, name: "Updated Name" }]];
-      User.update.mockResolvedValueOnce(returnValue);
-
-      const result = await UserRepository.update(criteria, data);
-
-      expect(User.update).toHaveBeenCalledWith(data, {
-        where: criteria,
-        returning: true,
-        individualHooks: true,
-      });
-      expect(result).toEqual([{ id: 123, name: "Updated Name" }]);
-    });
-
-    it("should throw a ValidationError when a Sequelize.ValidationError is caught", async () => {
-      const criteria = { id: 123 };
-      const data = { invalidField: "value" };
-      const error = new Sequelize.ValidationError("Validation error message");
-      User.update.mockRejectedValueOnce(error);
-
-      await expect(UserRepository.update(criteria, data)).rejects.toThrow(ValidationError);
-
-      expect(ValidationError.createFromSequelizeValidationError).toHaveBeenCalledWith(error);
-    });
-  });
-
-  describe("remove", () => {
-    it("should call User.destroy with the provided criteria", async () => {
-      const criteria = { id: 123 };
-      await UserRepository.remove(criteria);
-
-      expect(User.destroy).toHaveBeenCalledWith({
-        where: criteria,
-      });
-    });
-  });
 });
